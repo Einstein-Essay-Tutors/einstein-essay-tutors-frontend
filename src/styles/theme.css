@@ -1,0 +1,314 @@
+/* Universal Theme System for Essay Writing Tutors */
+
+:root {
+  /* Text Colors - Semantic naming for better maintainability */
+  --text-primary: #1f2937;        /* Main headings and important text */
+  --text-secondary: #374151;       /* Secondary text, descriptions */
+  --text-tertiary: #4b5563;       /* Supporting text, less emphasis */
+  --text-muted: #6b7280;          /* Subtle text, timestamps, etc */
+  --text-light: #9ca3af;          /* Very light text, placeholders */
+
+  /* Interactive Text Colors */
+  --text-link: #2563eb;           /* Links and clickable text */
+  --text-link-hover: #1d4ed8;     /* Link hover state */
+  
+  /* Status Colors */
+  --text-success: #059669;        /* Success messages, confirmations */
+  --text-warning: #d97706;        /* Warnings, urgent items */
+  --text-error: #dc2626;          /* Errors, destructive actions */
+  --text-info: #0891b2;           /* Information, neutral status */
+
+  /* Background Colors */
+  --bg-primary: #ffffff;          /* Main background */
+  --bg-secondary: #f9fafb;        /* Secondary background */
+  --bg-tertiary: #f3f4f6;         /* Cards, sections */
+  --bg-hover: #f1f5f9;            /* Hover states */
+  
+  /* Brand Colors */
+  --brand-primary: #2563eb;       /* Primary brand color */
+  --brand-secondary: #10b981;     /* Secondary brand color */
+  
+  /* Border Colors */
+  --border-primary: #e5e7eb;      /* Main borders */
+  --border-secondary: #d1d5db;    /* Stronger borders */
+  --border-focus: #3b82f6;        /* Focus states */
+}
+
+/* Semantic Text Utility Classes - Only apply to specific contexts */
+.content-text .text-primary,
+.text-primary:not(button):not(.btn):not([role="button"]) {
+  color: var(--text-primary);
+}
+
+.content-text .text-secondary,
+.text-secondary:not(button):not(.btn):not([role="button"]) {
+  color: var(--text-secondary);
+}
+
+.content-text .text-tertiary,
+.text-tertiary:not(button):not(.btn):not([role="button"]) {
+  color: var(--text-tertiary);
+}
+
+.content-text .text-muted,
+.text-muted:not(button):not(.btn):not([role="button"]) {
+  color: var(--text-muted);
+}
+
+.text-light:not(button):not(.btn):not([role="button"]) {
+  color: var(--text-light);
+}
+
+.text-link:not(button):not(.btn):not([role="button"]) {
+  color: var(--text-link);
+}
+
+.text-link:not(button):not(.btn):not([role="button"]):hover {
+  color: var(--text-link-hover);
+}
+
+.text-success:not(button):not(.btn):not([role="button"]) {
+  color: var(--text-success);
+}
+
+.text-warning:not(button):not(.btn):not([role="button"]) {
+  color: var(--text-warning);
+}
+
+.text-error:not(button):not(.btn):not([role="button"]) {
+  color: var(--text-error);
+}
+
+.text-info:not(button):not(.btn):not([role="button"]) {
+  color: var(--text-info);
+}
+
+/* Interactive State Classes */
+.hover-text-primary:hover {
+  color: var(--text-primary);
+}
+
+.hover-text-secondary:hover {
+  color: var(--text-secondary);
+}
+
+.group-hover-text-primary {
+  color: var(--text-secondary);
+}
+
+.group:hover .group-hover-text-primary {
+  color: var(--text-primary);
+}
+
+.group-hover-text-secondary {
+  color: var(--text-tertiary);
+}
+
+.group:hover .group-hover-text-secondary {
+  color: var(--text-secondary);
+}
+
+/* Background Utility Classes */
+.bg-primary {
+  background-color: var(--bg-primary);
+}
+
+.bg-secondary {
+  background-color: var(--bg-secondary);
+}
+
+.bg-tertiary {
+  background-color: var(--bg-tertiary);
+}
+
+.bg-hover {
+  background-color: var(--bg-hover);
+}
+
+/* Border Utility Classes */
+.border-primary {
+  border-color: var(--border-primary);
+}
+
+.border-secondary {
+  border-color: var(--border-secondary);
+}
+
+.border-focus {
+  border-color: var(--border-focus);
+}
+
+/* Component-Specific Semantic Classes */
+.card-title {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.card-description {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.form-label {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.form-description {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.form-help {
+  color: var(--text-tertiary);
+  font-size: 0.75rem;
+}
+
+.option-title {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.option-description {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.loading-text {
+  color: var(--text-tertiary);
+}
+
+.status-text {
+  color: var(--text-tertiary);
+  font-size: 0.875rem;
+}
+
+/* Interactive Cards and Buttons */
+.interactive-card {
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  background-color: var(--bg-primary);
+  border-color: var(--border-primary);
+}
+
+.interactive-card:hover {
+  background-color: #f8fafc; /* Light blue-gray, not pure white */
+  border-color: var(--border-focus);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure text stays visible on hover */
+.interactive-card .card-title {
+  color: var(--text-primary);
+}
+
+.interactive-card .card-description {
+  color: var(--text-secondary);
+}
+
+.interactive-card .option-title {
+  color: var(--text-primary);
+}
+
+.interactive-card .option-description {
+  color: var(--text-secondary);
+}
+
+.interactive-card:hover .card-title,
+.interactive-card:hover .option-title {
+  color: var(--text-primary);
+}
+
+.interactive-card:hover .card-description,
+.interactive-card:hover .option-description {
+  color: var(--text-secondary);
+}
+
+/* Selected/Active States */
+.selected-card {
+  background-color: #eff6ff;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.selected-card .card-title {
+  color: var(--text-primary);
+}
+
+.selected-card .card-description {
+  color: var(--text-secondary);
+}
+
+/* Price and Badge Components */
+.price-badge {
+  background-color: #f0fdf4;
+  color: var(--text-success);
+  border: 1px solid #bbf7d0;
+  font-weight: 500;
+}
+
+.status-badge {
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+/* Quick Action Cards */
+.quick-action-card {
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  padding: 1rem;
+  border: 1px solid var(--border-primary);
+  border-radius: 0.5rem;
+  background-color: var(--bg-primary);
+}
+
+.quick-action-card:hover {
+  background-color: #f8fafc; /* Light blue-gray, not pure white */
+  border-color: var(--border-focus);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.quick-action-title {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.quick-action-description {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+/* Ensure text stays visible on hover */
+.quick-action-card:hover .quick-action-title {
+  color: var(--text-primary);
+}
+
+.quick-action-card:hover .quick-action-description {
+  color: var(--text-secondary);
+}
+
+/* Override any existing muted text in content areas */
+.content-area .text-muted-foreground,
+.interactive-card .text-muted-foreground,
+.quick-action-card .text-muted-foreground {
+  color: var(--text-secondary);
+}
+
+/* Dark mode support (future enhancement) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text-primary: #f9fafb;
+    --text-secondary: #e5e7eb;
+    --text-tertiary: #d1d5db;
+    --text-muted: #9ca3af;
+    --text-light: #6b7280;
+    
+    --bg-primary: #111827;
+    --bg-secondary: #1f2937;
+    --bg-tertiary: #374151;
+    --bg-hover: #4b5563;
+    
+    --border-primary: #374151;
+    --border-secondary: #4b5563;
+  }
+}
