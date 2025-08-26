@@ -130,7 +130,7 @@ export default function TermsPage() {
                       If you have any questions about these Terms of Service, please contact us at:
                     </p>
                     <div className="bg-gray-50 p-4 rounded-lg mt-4">
-                      <p><strong>Email:</strong> legal@einstein-essays.com</p>
+                      <p><strong>Email:</strong> legal@einsteinessaytutors.com</p>
                       <p><strong>Address:</strong> Einstein Essay Tutors Legal Department</p>
                     </div>
                   </section>

@@ -170,7 +170,7 @@ export default function PrivacyPage() {
                       If you have any questions about this Privacy Policy or our data practices, please contact us:
                     </p>
                     <div className="bg-gray-50 p-4 rounded-lg mt-4">
-                      <p><strong>Email:</strong> privacy@einstein-essays.com</p>
+                      <p><strong>Email:</strong> privacy@einsteinessaytutors.com</p>
                       <p><strong>Address:</strong> Einstein Essay Tutors Privacy Team</p>
                       <p><strong>Response Time:</strong> We will respond to your inquiry within 30 days</p>
                     </div>

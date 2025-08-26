@@ -41,10 +41,10 @@ export function Footer() {
             </p>
             <div className="flex space-x-4">
               <Link 
-                href="mailto:support@einstein-essays.com"
+                href="mailto:support@einsteinessaytutors.com"
                 className="text-sm text-muted-foreground hover:text-foreground"
               >
-                support@einstein-essays.com
+                support@einsteinessaytutors.com
               </Link>
             </div>
           </div>

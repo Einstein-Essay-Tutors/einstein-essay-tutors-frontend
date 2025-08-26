@@ -104,10 +104,10 @@ export default function ContactPage() {
                     Send us an email and we'll respond within 24 hours
                   </p>
                   <a 
-                    href="mailto:support@einstein-essays.com"
+                    href="mailto:support@einsteinessaytutors.com"
                     className="text-primary hover:underline font-medium"
                   >
-                    support@einstein-essays.com
+                    support@einsteinessaytutors.com
                   </a>
                 </CardContent>
               </Card>
