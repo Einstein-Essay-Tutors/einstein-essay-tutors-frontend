@@ -3,7 +3,7 @@ module.exports = {
     name: 'einstein-essay-tutors-frontend',
     script: 'node',
     args: 'server.js',
-    cwd: '/home/ubuntu/einstein-essay-tutors-frontend/.next/standalone',
+    cwd: '/home/ubuntu/essay-writing-tutors/einstein-essay-tutors-frontend/.next/standalone',
     instances: 1,
     autorestart: true,
     watch: false,

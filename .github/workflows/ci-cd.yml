@@ -115,13 +115,24 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         script: |
           # Set deployment variables
-          PROJECT_DIR="/home/ubuntu/einstein-essay-tutors-frontend"
+          PROJECT_DIR="/home/ubuntu/essay-writing-tutors/einstein-essay-tutors-frontend"
           APP_NAME="einstein-essay-tutors-frontend"
           BUILD_ARCHIVE="/tmp/frontend-build.tar.gz"
           
-          # Navigate to project directory and pull latest code for configs
-          cd "$PROJECT_DIR"
-          git pull origin main
+          # Create project directory structure if it doesn't exist
+          sudo mkdir -p "$PROJECT_DIR"
+          sudo chown -R ubuntu:ubuntu /home/ubuntu/essay-writing-tutors
+          
+          # Clone or update repository for configs
+          if [ -d "$PROJECT_DIR/.git" ]; then
+            echo "Repository exists, pulling latest changes..."
+            cd "$PROJECT_DIR"
+            git pull origin main
+          else
+            echo "Cloning repository..."
+            git clone https://github.com/ewt-writers/einstein-essay-tutors-frontend.git "$PROJECT_DIR"
+            cd "$PROJECT_DIR"
+          fi
           
           # Stop the current PM2 process
           pm2 stop "$APP_NAME" 2>/dev/null || echo "Process not currently running"
