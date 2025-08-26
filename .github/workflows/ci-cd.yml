@@ -64,12 +64,23 @@ jobs:
         # Create deployment directory
         mkdir -p deploy-package
         
-        # Copy built application
-        cp -r .next/standalone/* deploy-package/
-        
-        # Copy static assets
-        cp -r .next/static deploy-package/.next/
-        cp -r public deploy-package/
+        # Check if standalone build exists, otherwise use regular build
+        if [ -d ".next/standalone" ]; then
+          echo "Using standalone build"
+          # Copy standalone application
+          cp -r .next/standalone/* deploy-package/
+          # Copy static assets to standalone structure
+          cp -r .next/static deploy-package/.next/
+          cp -r public deploy-package/
+        else
+          echo "Standalone build not found, using regular build structure"
+          # Copy the entire .next directory
+          cp -r .next deploy-package/
+          cp -r public deploy-package/
+          cp -r node_modules deploy-package/
+          # Copy source for fallback
+          cp -r src deploy-package/
+        fi
         
         # Copy configuration files
         cp ecosystem.config.js deploy-package/

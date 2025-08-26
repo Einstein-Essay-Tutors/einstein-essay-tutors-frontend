@@ -1,9 +1,8 @@
 module.exports = {
   apps: [{
     name: 'einstein-essay-tutors-frontend',
-    script: 'node',
-    args: 'server.js',
-    cwd: '/home/ubuntu/essay-writing-tutors/einstein-essay-tutors-frontend/.next/standalone',
+    script: 'server.js',
+    cwd: '/home/ubuntu/essay-writing-tutors/einstein-essay-tutors-frontend',
     instances: 1,
     autorestart: true,
     watch: false,
