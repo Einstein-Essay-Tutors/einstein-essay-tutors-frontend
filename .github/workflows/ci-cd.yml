@@ -123,15 +123,42 @@ jobs:
           sudo mkdir -p "$PROJECT_DIR"
           sudo chown -R ubuntu:ubuntu /home/ubuntu/essay-writing-tutors
           
-          # Clone or update repository for configs
+          # Clone or update repository for configs with failsafe
           if [ -d "$PROJECT_DIR/.git" ]; then
             echo "Repository exists, pulling latest changes..."
             cd "$PROJECT_DIR"
-            git pull origin main
+            if git pull origin main; then
+              echo "Successfully pulled latest changes"
+            else
+              echo "Git pull failed, removing corrupted repo and recloning..."
+              cd ..
+              sudo rm -rf "$PROJECT_DIR"
+              git clone git@github.com:ewt-writers/einstein-essay-tutors-frontend.git "$PROJECT_DIR"
+              cd "$PROJECT_DIR"
+            fi
           else
+            # If directory exists but is not a git repo, remove it first
+            if [ -d "$PROJECT_DIR" ]; then
+              echo "Directory exists but is not a git repository, removing..."
+              sudo rm -rf "$PROJECT_DIR"
+            fi
             echo "Cloning repository..."
-            git clone git@github.com:ewt-writers/einstein-essay-tutors-frontend.git "$PROJECT_DIR"
-            cd "$PROJECT_DIR"
+            if git clone git@github.com:ewt-writers/einstein-essay-tutors-frontend.git "$PROJECT_DIR"; then
+              cd "$PROJECT_DIR"
+              echo "Successfully cloned repository"
+            else
+              echo "Git clone failed, exiting deployment"
+              exit 1
+            fi
+          fi
+          
+          # Verify we're in the correct directory with required files
+          if [ ! -f "ecosystem.config.js" ] || [ ! -f "package.json" ]; then
+            echo "Required configuration files not found, deployment cannot continue"
+            echo "Current directory: $(pwd)"
+            echo "Files in directory:"
+            ls -la
+            exit 1
           fi
           
           # Stop all frontend-related PM2 processes
