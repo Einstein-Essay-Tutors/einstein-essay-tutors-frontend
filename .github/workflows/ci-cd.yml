@@ -177,7 +177,7 @@ jobs:
           fi
           
           # Extract new build
-          tar -xzf "$BUILD_ARCHIVE" -C "$PROJECT_DIR"
+          tar -xzf "$BUILD_ARCHIVE" -C "$PROJECT_DIR" --overwrite
           
           # Set proper permissions
           chmod +x deploy.sh 2>/dev/null || true
