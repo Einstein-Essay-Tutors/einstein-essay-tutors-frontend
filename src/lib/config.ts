@@ -30,8 +30,10 @@ export const API_BASE_URL = `${normalizedBaseUrl}/api/`
  */
 export const BASE_APP_URL = normalizedBaseUrl
 
-export default {
+const config = {
   getApiUrl,
   API_BASE_URL,
   BASE_APP_URL,
 }
+
+export default config

@@ -37,7 +37,7 @@ api.interceptors.response.use(
           })
           
           localStorage.setItem('access_token', refreshResponse.data.access)
-          // Only update refresh token if provided (Django JWT usually doesn't rotate refresh tokens)
+          // Only update refresh token if provided (Django JWT usually doesn&apos;t rotate refresh tokens)
           if (refreshResponse.data.refresh) {
             localStorage.setItem('refresh_token', refreshResponse.data.refresh)
           }

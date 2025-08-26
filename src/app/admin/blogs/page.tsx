@@ -378,7 +378,7 @@ export default function AdminBlogsPage() {
     setBlogForm({
       title: blog.title,
       excerpt: blog.excerpt,
-      content: '', // We'll need to fetch full content
+      content: '', // We&apos;ll need to fetch full content
       status: blog.status,
       subject_id: blog.subject?.id || 'none',
       tags: Array.isArray(blog.tags) ? blog.tags.join(', ') : blog.tags || '',

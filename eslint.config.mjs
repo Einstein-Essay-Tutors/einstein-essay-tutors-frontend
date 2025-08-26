@@ -20,15 +20,9 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
     rules: {
-      // Temporarily disable strict rules for deployment
-      "@typescript-eslint/no-unused-vars": "warn",
-      "@typescript-eslint/no-explicit-any": "warn", 
-      "@typescript-eslint/no-empty-object-type": "warn",
+      // Allow deployment while we fix these gradually
+      "@typescript-eslint/no-explicit-any": "warn",
       "react/no-unescaped-entities": "warn",
-      "react-hooks/exhaustive-deps": "warn",
-      "@next/next/no-img-element": "warn",
-      "jsx-a11y/alt-text": "warn",
-      "import/no-anonymous-default-export": "warn"
     }
   },
 ];

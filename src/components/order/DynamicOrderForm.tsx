@@ -161,7 +161,7 @@ export default function DynamicOrderForm() {
       formData.append(`file_${index}`, file)
     })
 
-    // Don't set Content-Type for FormData - browser will set it with boundary
+    // Don&apos;t set Content-Type for FormData - browser will set it with boundary
     const headers = getAuthHeaders()
     delete headers['Content-Type']
     

@@ -920,7 +920,7 @@ export default function OrderDetailPage() {
                   <li>• Complete your payment using the method above</li>
                   <li>• Keep your payment confirmation/reference</li>
                   <li>• We will verify your payment within 24 hours</li>
-                  <li>• You'll receive an email confirmation once verified</li>
+                  <li>• You&apos;ll receive an email confirmation once verified</li>
                   <li>• Your order will then move to "In Progress" status</li>
                 </ul>
               </div>

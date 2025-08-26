@@ -53,7 +53,7 @@ export default function ContactPage() {
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-4">Message Sent Successfully!</h2>
             <p className="text-gray-600 mb-6">
-              Thank you for contacting us. We'll get back to you within 24 hours.
+              Thank you for contacting us. We&apos;ll get back to you within 24 hours.
             </p>
             <div className="flex gap-3">
               <Link href="/" className="flex-1">
@@ -101,7 +101,7 @@ export default function ContactPage() {
                   <Mail className="h-12 w-12 text-primary mx-auto mb-4" />
                   <h3 className="text-xl font-semibold mb-2">Email Support</h3>
                   <p className="text-gray-600 mb-4">
-                    Send us an email and we'll respond within 24 hours
+                    Send us an email and we&apos;ll respond within 24 hours
                   </p>
                   <a 
                     href="mailto:support@einsteinessaytutors.com"
@@ -297,7 +297,7 @@ export default function ContactPage() {
             Ready to Get Started?
           </h2>
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-            Don't wait! Place your order now and get expert academic writing help.
+            Don&apos;t wait! Place your order now and get expert academic writing help.
           </p>
           <Link href="/order">
             <Button size="lg" className="text-lg px-8 py-3">

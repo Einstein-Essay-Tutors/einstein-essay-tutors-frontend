@@ -28,11 +28,12 @@ export default function LoginPage() {
     try {
       await login(formData.username, formData.password)
       router.push('/dashboard')
-    } catch (err: any) {
-      if (err.response?.status === 401) {
+    } catch (err: unknown) {
+      const error = err as { response?: { status?: number; data?: { message?: string } } }
+      if (error.response?.status === 401) {
         setError('Invalid username or password')
-      } else if (err.response?.data?.message) {
-        setError(err.response.data.message)
+      } else if (error.response?.data?.message) {
+        setError(error.response.data.message)
       } else {
         setError('Login failed. Please try again.')
       }
@@ -99,7 +100,7 @@ export default function LoginPage() {
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Link href="/auth/register" className="text-primary hover:underline">
                 Create one here
               </Link>

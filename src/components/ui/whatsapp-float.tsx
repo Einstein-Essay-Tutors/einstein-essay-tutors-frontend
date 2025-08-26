@@ -110,7 +110,7 @@ export function WhatsAppFloat() {
           </Button>
 
           <p className="text-xs text-gray-500 text-center">
-            We'll respond as soon as possible
+            We&apos;ll respond as soon as possible
           </p>
         </div>
       </div>

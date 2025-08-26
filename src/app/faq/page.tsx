@@ -258,7 +258,7 @@ export default function FAQPage() {
                   <Mail className="h-12 w-12 text-primary mx-auto mb-4" />
                   <h3 className="font-semibold mb-2">Email Support</h3>
                   <p className="text-sm text-gray-600 mb-4">
-                    Send us an email and we'll respond within 24 hours
+                    Send us an email and we&apos;ll respond within 24 hours
                   </p>
                   <Link href="/contact">
                     <Button variant="outline" size="sm" className="w-full">

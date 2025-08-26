@@ -336,7 +336,7 @@ function OrderConfirmationContent() {
                     <ExternalLink className="ml-2 h-4 w-4" />
                   </Button>
                   <p className="text-xs text-gray-600 mt-2">
-                    After payment, it may take 1-2 hours for verification. You'll receive an email confirmation.
+                    After payment, it may take 1-2 hours for verification. You&apos;ll receive an email confirmation.
                   </p>
                 </div>
               )}
@@ -368,7 +368,7 @@ function OrderConfirmationContent() {
                   <div>
                     <p className="font-medium">Assignment to Tutor</p>
                     <p className="text-gray-600">
-                      We'll assign your order to a qualified tutor who specializes in your subject area
+                      We&apos;ll assign your order to a qualified tutor who specializes in your subject area
                     </p>
                   </div>
                 </div>

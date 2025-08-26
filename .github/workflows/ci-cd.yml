@@ -130,12 +130,18 @@ jobs:
             git pull origin main
           else
             echo "Cloning repository..."
-            git clone https://github.com/ewt-writers/einstein-essay-tutors-frontend.git "$PROJECT_DIR"
+            git clone git@github.com:ewt-writers/einstein-essay-tutors-frontend.git "$PROJECT_DIR"
             cd "$PROJECT_DIR"
           fi
           
-          # Stop the current PM2 process
-          pm2 stop "$APP_NAME" 2>/dev/null || echo "Process not currently running"
+          # Stop all frontend-related PM2 processes
+          pm2 stop "$APP_NAME" 2>/dev/null || echo "New process not currently running"
+          pm2 stop "ewt-frontend" 2>/dev/null || echo "Old process not currently running"
+          pm2 delete "$APP_NAME" 2>/dev/null || echo "New process not in PM2"
+          pm2 delete "ewt-frontend" 2>/dev/null || echo "Old process not in PM2"
+          
+          # Kill any processes using port 3000
+          sudo lsof -ti:3000 | xargs sudo kill -9 2>/dev/null || echo "No processes on port 3000"
           
           # Backup current build (if exists)
           if [ -d ".next" ]; then
@@ -152,6 +158,9 @@ jobs:
           # Create logs directory
           sudo mkdir -p /home/ubuntu/logs
           sudo chown ubuntu:ubuntu /home/ubuntu/logs
+          
+          # Update PM2 to resolve version mismatch
+          pm2 update
           
           # Start the application with PM2
           pm2 start ecosystem.config.js

@@ -43,15 +43,15 @@ const faqs = [
   },
   {
     question: "How do I track my order progress?",
-    answer: "You can track your order status from your dashboard. You'll receive email notifications for important updates, and you can message your writer directly through our messaging system."
+    answer: "You can track your order status from your dashboard. You&apos;ll receive email notifications for important updates, and you can message your writer directly through our messaging system."
   },
   {
     question: "What if I'm not satisfied with my order?",
-    answer: "We offer free revisions within 14 days of delivery. If you're still not satisfied, contact our support team and we'll work to resolve the issue or provide a refund according to our policy."
+    answer: "We offer free revisions within 14 days of delivery. If you're still not satisfied, contact our support team and we&apos;ll work to resolve the issue or provide a refund according to our policy."
   },
   {
     question: "How do I download my completed work?",
-    answer: "Once your order is marked as complete, you'll receive an email notification. Login to your dashboard and click on your order to download the files."
+    answer: "Once your order is marked as complete, you&apos;ll receive an email notification. Login to your dashboard and click on your order to download the files."
   },
   {
     question: "Can I communicate with my writer?",
@@ -198,7 +198,7 @@ export default function SupportPage() {
                 <CardHeader>
                   <CardTitle>Send us a Message</CardTitle>
                   <CardDescription>
-                    Describe your issue and we'll get back to you as soon as possible
+                    Describe your issue and we&apos;ll get back to you as soon as possible
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

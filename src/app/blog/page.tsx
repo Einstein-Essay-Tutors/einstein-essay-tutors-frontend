@@ -10,8 +10,7 @@ import {
   BookOpen, 
   Calendar, 
   ArrowRight,
-  User,
-  Clock
+  User
 } from 'lucide-react';
 
 interface BlogPost {
