@@ -1,167 +1,167 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Textarea } from '@/components/ui/textarea'
-import { useToast } from '@/components/ui/use-toast'
-import { useAuth } from '@/context/AuthContext'
-import { getApiUrl } from '@/lib/config'
-import { 
-  FileText, 
-  Download, 
-  CheckCircle, 
-  AlertCircle, 
-  RotateCcw, 
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/context/AuthContext';
+import { getApiUrl } from '@/lib/config';
+import {
+  FileText,
+  Download,
+  CheckCircle,
+  AlertCircle,
+  RotateCcw,
   Shield,
   Users,
   Clock,
   Send,
   Loader2,
-  BarChart3
-} from 'lucide-react'
+  BarChart3,
+} from 'lucide-react';
 
 interface SolutionFile {
-  id: string
-  original_name: string
-  file_type: string
-  description: string
-  file_size: number
-  upload_date: string
+  id: string;
+  original_name: string;
+  file_type: string;
+  description: string;
+  file_size: number;
+  upload_date: string;
 }
 
 interface OrderSolution {
-  id: string
-  version: number
-  status: string
-  description: string
-  client_feedback: string
-  writer_name: string
-  submitted_at: string
-  accepted_at: string | null
-  revision_requested_at: string | null
-  files: SolutionFile[]
+  id: string;
+  version: number;
+  status: string;
+  description: string;
+  client_feedback: string;
+  writer_name: string;
+  submitted_at: string;
+  accepted_at: string | null;
+  revision_requested_at: string | null;
+  files: SolutionFile[];
   // Admin-only fields
-  writer_id?: number
-  writer_email?: string
-  updated_at?: string
-  internal_notes?: string
-  file_count?: number
-  total_file_size?: number
+  writer_id?: number;
+  writer_email?: string;
+  updated_at?: string;
+  internal_notes?: string;
+  file_count?: number;
+  total_file_size?: number;
 }
 
 interface SolutionData {
-  solutions: OrderSolution[]
-  revision_count: number
-  can_request_revision: boolean
-  has_accepted_solution: boolean
-  max_revisions: number
+  solutions: OrderSolution[];
+  revision_count: number;
+  can_request_revision: boolean;
+  has_accepted_solution: boolean;
+  max_revisions: number;
 }
 
 interface OrderSolutionManagerProps {
-  orderId: string
+  orderId: string;
 }
 
 export default function OrderSolutionManager({ orderId }: OrderSolutionManagerProps) {
-  const [solutionData, setSolutionData] = useState<SolutionData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [downloading, setDownloading] = useState<string | null>(null)
-  const [accepting, setAccepting] = useState<string | null>(null)
-  const [requestingRevision, setRequestingRevision] = useState<string | null>(null)
-  const [revisionFeedback, setRevisionFeedback] = useState('')
+  const [solutionData, setSolutionData] = useState<SolutionData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState<string | null>(null);
+  const [accepting, setAccepting] = useState<string | null>(null);
+  const [requestingRevision, setRequestingRevision] = useState<string | null>(null);
+  const [revisionFeedback, setRevisionFeedback] = useState('');
 
-  const { getAuthHeaders, user } = useAuth()
-  const { toast } = useToast()
-  
-  const isAdmin = user?.is_staff || user?.is_superuser
+  const { getAuthHeaders, user } = useAuth();
+  const { toast } = useToast();
+
+  const isAdmin = user?.is_staff || user?.is_superuser;
 
   useEffect(() => {
     if (orderId) {
-      fetchSolutions()
+      fetchSolutions();
     }
-  }, [orderId])
+  }, [orderId]);
 
   const fetchSolutions = async () => {
     try {
       const response = await fetch(getApiUrl(`get_order_solutions/${orderId}/`), {
-        headers: getAuthHeaders()
-      })
+        headers: getAuthHeaders(),
+      });
 
       if (response.ok) {
-        const data = await response.json()
-        setSolutionData(data)
+        const data = await response.json();
+        setSolutionData(data);
       } else {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to load solutions')
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to load solutions');
       }
     } catch (error) {
-      console.error('Error fetching solutions:', error)
+      console.error('Error fetching solutions:', error);
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to load solutions',
-        variant: 'destructive'
-      })
+        variant: 'destructive',
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const downloadSolutionFile = async (fileId: string, fileName: string) => {
-    setDownloading(fileId)
+    setDownloading(fileId);
     try {
-      console.log(`Downloading solution file ${fileId}: ${fileName}`)
-      
+      console.log(`Downloading solution file ${fileId}: ${fileName}`);
+
       const response = await fetch(getApiUrl(`download_solution_file/${fileId}/`), {
         method: 'GET',
-        headers: getAuthHeaders()
-      })
+        headers: getAuthHeaders(),
+      });
 
       if (response.ok) {
-        const contentType = response.headers.get('Content-Type')
-        
+        const contentType = response.headers.get('Content-Type');
+
         if (contentType && contentType.includes('application/json')) {
-          const errorData = await response.json()
-          throw new Error(errorData.error || 'Unexpected error downloading file')
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Unexpected error downloading file');
         }
-        
-        const blob = await response.blob()
+
+        const blob = await response.blob();
         if (blob.size === 0) {
-          throw new Error('File is empty or not found')
+          throw new Error('File is empty or not found');
         }
-        
-        const url = window.URL.createObjectURL(blob)
-        const link = document.createElement('a')
-        link.href = url
-        link.download = fileName
-        document.body.appendChild(link)
-        link.click()
-        
-        window.URL.revokeObjectURL(url)
-        document.body.removeChild(link)
-        
+
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(link);
+
         toast({
           title: 'Download Started',
-          description: `Downloading "${fileName}"`
-        })
+          description: `Downloading "${fileName}"`,
+        });
       } else {
-        const errorText = await response.text()
-        throw new Error(errorText || `HTTP ${response.status}: ${response.statusText}`)
+        const errorText = await response.text();
+        throw new Error(errorText || `HTTP ${response.status}: ${response.statusText}`);
       }
     } catch (error) {
-      console.error('Error downloading solution file:', error)
+      console.error('Error downloading solution file:', error);
       toast({
         title: 'Download Error',
         description: error instanceof Error ? error.message : 'Failed to download file',
-        variant: 'destructive'
-      })
+        variant: 'destructive',
+      });
     } finally {
-      setDownloading(null)
+      setDownloading(null);
     }
-  }
+  };
 
   const acceptSolution = async (solutionId: string) => {
-    setAccepting(solutionId)
+    setAccepting(solutionId);
     try {
       const response = await fetch(getApiUrl('accept_solution/'), {
         method: 'POST',
@@ -170,45 +170,45 @@ export default function OrderSolutionManager({ orderId }: OrderSolutionManagerPr
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          solution_id: solutionId
-        })
-      })
+          solution_id: solutionId,
+        }),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok && data.success) {
         toast({
           title: 'Solution Accepted',
           description: data.message || 'Solution has been accepted successfully',
-          variant: 'default'
-        })
-        fetchSolutions() // Refresh solutions
+          variant: 'default',
+        });
+        fetchSolutions(); // Refresh solutions
       } else {
-        throw new Error(data.error || 'Failed to accept solution')
+        throw new Error(data.error || 'Failed to accept solution');
       }
     } catch (error) {
-      console.error('Error accepting solution:', error)
+      console.error('Error accepting solution:', error);
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to accept solution',
-        variant: 'destructive'
-      })
+        variant: 'destructive',
+      });
     } finally {
-      setAccepting(null)
+      setAccepting(null);
     }
-  }
+  };
 
   const requestRevision = async (solutionId: string) => {
     if (!revisionFeedback.trim()) {
       toast({
         title: 'Feedback Required',
         description: 'Please provide feedback explaining what needs to be revised',
-        variant: 'destructive'
-      })
-      return
+        variant: 'destructive',
+      });
+      return;
     }
 
-    setRequestingRevision(solutionId)
+    setRequestingRevision(solutionId);
     try {
       const response = await fetch(getApiUrl('request_revision/'), {
         method: 'POST',
@@ -218,87 +218,91 @@ export default function OrderSolutionManager({ orderId }: OrderSolutionManagerPr
         },
         body: JSON.stringify({
           solution_id: solutionId,
-          feedback: revisionFeedback.trim()
-        })
-      })
+          feedback: revisionFeedback.trim(),
+        }),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok && data.success) {
         toast({
           title: 'Revision Requested',
           description: `${data.message}. Remaining revisions: ${data.remaining_revisions}`,
-          variant: 'default'
-        })
-        setRevisionFeedback('')
-        fetchSolutions() // Refresh solutions
+          variant: 'default',
+        });
+        setRevisionFeedback('');
+        fetchSolutions(); // Refresh solutions
       } else {
-        throw new Error(data.error || 'Failed to request revision')
+        throw new Error(data.error || 'Failed to request revision');
       }
     } catch (error) {
-      console.error('Error requesting revision:', error)
+      console.error('Error requesting revision:', error);
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to request revision',
-        variant: 'destructive'
-      })
+        variant: 'destructive',
+      });
     } finally {
-      setRequestingRevision(null)
+      setRequestingRevision(null);
     }
-  }
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'submitted':
-        return <Badge className="bg-blue-100 text-blue-800 border-blue-300">Pending Review</Badge>
+        return <Badge className="bg-blue-100 text-blue-800 border-blue-300">Pending Review</Badge>;
       case 'accepted':
-        return <Badge className="bg-green-100 text-green-800 border-green-300">Accepted</Badge>
+        return <Badge className="bg-green-100 text-green-800 border-green-300">Accepted</Badge>;
       case 'revision_requested':
-        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300">Revision Requested</Badge>
+        return (
+          <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300">
+            Revision Requested
+          </Badge>
+        );
       case 'superseded':
-        return <Badge variant="secondary">Superseded</Badge>
+        return <Badge variant="secondary">Superseded</Badge>;
       default:
-        return <Badge variant="secondary">{status}</Badge>
+        return <Badge variant="secondary">{status}</Badge>;
     }
-  }
+  };
 
   const getFileTypeIcon = (fileType: string) => {
     switch (fileType) {
       case 'main_solution':
-        return <FileText className="h-4 w-4 text-blue-600" />
+        return <FileText className="h-4 w-4 text-blue-600" />;
       case 'ai_report':
-        return <Users className="h-4 w-4 text-purple-600" />
+        return <Users className="h-4 w-4 text-purple-600" />;
       case 'plagiarism_report':
-        return <Shield className="h-4 w-4 text-red-600" />
+        return <Shield className="h-4 w-4 text-red-600" />;
       case 'supplementary':
-        return <FileText className="h-4 w-4 text-gray-600" />
+        return <FileText className="h-4 w-4 text-gray-600" />;
       default:
-        return <FileText className="h-4 w-4 text-gray-600" />
+        return <FileText className="h-4 w-4 text-gray-600" />;
     }
-  }
+  };
 
   const getFileTypeLabel = (fileType: string) => {
     switch (fileType) {
       case 'main_solution':
-        return 'Main Solution'
+        return 'Main Solution';
       case 'ai_report':
-        return 'AI Report'
+        return 'AI Report';
       case 'plagiarism_report':
-        return 'Plagiarism Report'
+        return 'Plagiarism Report';
       case 'supplementary':
-        return 'Supplementary'
+        return 'Supplementary';
       default:
-        return 'File'
+        return 'File';
     }
-  }
+  };
 
   const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes'
-    const k = 1024
-    const sizes = ['Bytes', 'KB', 'MB', 'GB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
-  }
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -306,9 +310,9 @@ export default function OrderSolutionManager({ orderId }: OrderSolutionManagerPr
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
+      minute: '2-digit',
+    });
+  };
 
   if (loading) {
     return (
@@ -318,7 +322,7 @@ export default function OrderSolutionManager({ orderId }: OrderSolutionManagerPr
           <p className="text-gray-600">Loading solutions...</p>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   if (!solutionData || solutionData.solutions.length === 0) {
@@ -338,7 +342,7 @@ export default function OrderSolutionManager({ orderId }: OrderSolutionManagerPr
           </p>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -391,14 +395,15 @@ export default function OrderSolutionManager({ orderId }: OrderSolutionManagerPr
               </div>
             </div>
             <div className="mt-3 text-xs text-indigo-700">
-              Total File Size: {formatFileSize(
+              Total File Size:{' '}
+              {formatFileSize(
                 solutionData.solutions.reduce((sum, s) => sum + (s.total_file_size || 0), 0)
               )}
             </div>
           </div>
         )}
-        
-        {solutionData.solutions.map((solution) => (
+
+        {solutionData.solutions.map(solution => (
           <div key={solution.id} className="border rounded-lg p-4">
             {/* Solution Header */}
             <div className="flex items-center justify-between mb-4">
@@ -407,9 +412,7 @@ export default function OrderSolutionManager({ orderId }: OrderSolutionManagerPr
                   Version {solution.version}
                 </div>
                 {getStatusBadge(solution.status)}
-                <span className="text-sm text-gray-600">
-                  by {solution.writer_name}
-                </span>
+                <span className="text-sm text-gray-600">by {solution.writer_name}</span>
               </div>
               <div className="flex items-center gap-2 text-xs text-gray-500">
                 <Clock className="h-3 w-3" />
@@ -459,9 +462,7 @@ export default function OrderSolutionManager({ orderId }: OrderSolutionManagerPr
             {solution.description && (
               <div className="mb-4 p-3 bg-gray-50 rounded border">
                 <h4 className="font-medium text-gray-800 mb-2">Writer's Notes:</h4>
-                <p className="text-sm text-gray-700 whitespace-pre-wrap">
-                  {solution.description}
-                </p>
+                <p className="text-sm text-gray-700 whitespace-pre-wrap">{solution.description}</p>
               </div>
             )}
 
@@ -470,7 +471,7 @@ export default function OrderSolutionManager({ orderId }: OrderSolutionManagerPr
               <div className="mb-4">
                 <h4 className="font-medium text-gray-800 mb-2">Files:</h4>
                 <div className="grid grid-cols-1 gap-2">
-                  {solution.files.map((file) => (
+                  {solution.files.map(file => (
                     <div
                       key={file.id}
                       className="flex items-center justify-between p-3 bg-white border rounded hover:shadow-sm transition-shadow"
@@ -547,7 +548,7 @@ export default function OrderSolutionManager({ orderId }: OrderSolutionManagerPr
                       {formatDate(solution.submitted_at)}
                     </span>
                   </div>
-                  
+
                   {solution.revision_requested_at && (
                     <div className="flex justify-between items-center py-1 border-l-2 border-yellow-400 pl-3">
                       <span className="text-gray-700">
@@ -558,7 +559,7 @@ export default function OrderSolutionManager({ orderId }: OrderSolutionManagerPr
                       </span>
                     </div>
                   )}
-                  
+
                   {solution.accepted_at && (
                     <div className="flex justify-between items-center py-1 border-l-2 border-green-400 pl-3">
                       <span className="text-gray-700">
@@ -569,7 +570,7 @@ export default function OrderSolutionManager({ orderId }: OrderSolutionManagerPr
                       </span>
                     </div>
                   )}
-                  
+
                   {solution.updated_at && solution.updated_at !== solution.submitted_at && (
                     <div className="flex justify-between items-center py-1 border-l-2 border-purple-400 pl-3">
                       <span className="text-gray-700">
@@ -609,7 +610,7 @@ export default function OrderSolutionManager({ orderId }: OrderSolutionManagerPr
                         </>
                       )}
                     </Button>
-                    
+
                     {solutionData.can_request_revision && (
                       <Button
                         variant="outline"
@@ -628,24 +629,26 @@ export default function OrderSolutionManager({ orderId }: OrderSolutionManagerPr
                   <div className="space-y-3 p-4 bg-orange-50 rounded border border-orange-200">
                     <h4 className="font-medium text-orange-900">Request Revision</h4>
                     <p className="text-sm text-orange-800">
-                      Please provide detailed feedback explaining what needs to be changed or improved.
+                      Please provide detailed feedback explaining what needs to be changed or
+                      improved.
                     </p>
                     <Textarea
                       placeholder="Explain what needs to be revised..."
                       value={revisionFeedback}
-                      onChange={(e) => setRevisionFeedback(e.target.value)}
+                      onChange={e => setRevisionFeedback(e.target.value)}
                       className="min-h-[100px]"
                     />
                     <div className="flex justify-between items-center">
                       <p className="text-xs text-orange-700">
-                        Remaining revisions: {solutionData.max_revisions - solutionData.revision_count}
+                        Remaining revisions:{' '}
+                        {solutionData.max_revisions - solutionData.revision_count}
                       </p>
                       <div className="flex gap-2">
                         <Button
                           variant="outline"
                           onClick={() => {
-                            setRequestingRevision(null)
-                            setRevisionFeedback('')
+                            setRequestingRevision(null);
+                            setRevisionFeedback('');
                           }}
                         >
                           Cancel
@@ -702,5 +705,5 @@ export default function OrderSolutionManager({ orderId }: OrderSolutionManagerPr
         ))}
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -1,23 +1,23 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { useAuth } from '@/context/AuthContext'
-import DynamicOrderForm from '@/components/order/DynamicOrderForm'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
+import DynamicOrderForm from '@/components/order/DynamicOrderForm';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function OrderPage() {
-  const { user, loading } = useAuth()
-  const router = useRouter()
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
   // Redirect non-authenticated users to login
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/auth/login?redirect=/order')
+      router.push('/auth/login?redirect=/order');
     }
-  }, [user, loading, router])
+  }, [user, loading, router]);
 
   if (loading) {
     return (
@@ -27,7 +27,7 @@ export default function OrderPage() {
           <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!user) {
@@ -36,21 +36,21 @@ export default function OrderPage() {
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <CardTitle>Authentication Required</CardTitle>
-            <CardDescription>
-              Please sign in to place an order
-            </CardDescription>
+            <CardDescription>Please sign in to place an order</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <Link href="/auth/login?redirect=/order">
               <Button className="w-full">Sign In</Button>
             </Link>
             <Link href="/auth/register?redirect=/order">
-              <Button variant="outline" className="w-full">Create Account</Button>
+              <Button variant="outline" className="w-full">
+                Create Account
+              </Button>
             </Link>
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -70,5 +70,5 @@ export default function OrderPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

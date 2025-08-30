@@ -24,23 +24,27 @@ Next.js 15.5.0 frontend application for the Einstein Essay Tutors platform.
 ### Local Development
 
 1. Clone the repository:
+
 ```bash
 git clone git@github.com:ewt-writers/einstein-essay-tutors-frontend.git
 cd einstein-essay-tutors-frontend
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Set up environment variables:
+
 ```bash
 cp .env.example .env.local
 # Edit .env.local with your configuration
 ```
 
 4. Run development server:
+
 ```bash
 npm run dev
 ```
@@ -50,6 +54,7 @@ The application will be available at `http://localhost:3000`
 ### Docker Development
 
 1. Build and run with Docker Compose:
+
 ```bash
 docker-compose up --build
 ```
@@ -57,6 +62,7 @@ docker-compose up --build
 ## Environment Variables
 
 ### Development (.env.local)
+
 ```bash
 NEXT_PUBLIC_API_URL=http://localhost:8000
 NEXTAUTH_SECRET=your-nextauth-secret
@@ -64,6 +70,7 @@ NEXTAUTH_URL=http://localhost:3000
 ```
 
 ### Production (.env.production)
+
 ```bash
 NEXT_PUBLIC_API_URL=https://api.yourdomain.com
 NEXTAUTH_SECRET=your-production-nextauth-secret
@@ -96,23 +103,27 @@ src/
 ## Key Features
 
 ### Authentication
+
 - JWT-based authentication with the Django backend
 - Protected routes and role-based access control
 - User registration, login, and profile management
 
 ### Blog System
+
 - Rich text editing with TipTap editor
 - Blog post creation, editing, and publishing
 - Category and tag management
 - Responsive blog post display
 
 ### Dashboard
+
 - User dashboard with order statistics
 - Animated counters with smooth transitions
 - Order management and tracking
 - Admin dashboard for site management
 
 ### Responsive Design
+
 - Mobile-first responsive design
 - Tablet and desktop optimizations
 - Touch-friendly interactions
@@ -123,12 +134,14 @@ src/
 ### Docker Production Deployment
 
 1. Set up production environment file:
+
 ```bash
 cp .env.example .env.production
 # Edit .env.production with production values
 ```
 
 2. Build and deploy:
+
 ```bash
 docker-compose -f docker-compose.yml up -d
 ```
@@ -136,11 +149,13 @@ docker-compose -f docker-compose.yml up -d
 ### Manual Production Deployment
 
 1. Build the application:
+
 ```bash
 npm run build
 ```
 
 2. Start the production server:
+
 ```bash
 npm start
 ```
@@ -180,4 +195,5 @@ Required GitHub Secrets:
 ## License
 
 Private repository - All rights reserved.
+
 # Clean server deployment - Tue Aug 26 12:55:19 PM CAT 2025

@@ -7,11 +7,11 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import { getApiUrl } from '@/lib/config';
-import { 
-  Star, 
+import {
+  Star,
   StarIcon,
-  Check, 
-  X, 
+  Check,
+  X,
   Eye,
   MessageSquare,
   Calendar,
@@ -21,7 +21,7 @@ import {
   Loader2,
   ArrowLeft,
   ArrowRight,
-  FileText
+  FileText,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -56,7 +56,9 @@ export default function AdminReviewsPage() {
   const [moderatingReview, setModeratingReview] = useState<string | null>(null);
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [moderationNotes, setModerationNotes] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('pending');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>(
+    'pending'
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -73,16 +75,16 @@ export default function AdminReviewsPage() {
       const token = localStorage.getItem('access_token');
       const params = new URLSearchParams({
         page: currentPage.toString(),
-        page_size: '10'
+        page_size: '10',
       });
-      
+
       if (statusFilter !== 'all') {
         params.append('status', statusFilter);
       }
 
       const response = await fetch(getApiUrl(`admin/reviews_list/?${params.toString()}`), {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
@@ -96,7 +98,7 @@ export default function AdminReviewsPage() {
         toast({
           title: 'Error',
           description: 'Failed to fetch reviews',
-          variant: 'destructive'
+          variant: 'destructive',
         });
       }
     } catch (error) {
@@ -104,28 +106,32 @@ export default function AdminReviewsPage() {
       toast({
         title: 'Error',
         description: 'An error occurred while fetching reviews',
-        variant: 'destructive'
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
     }
   };
 
-  const moderateReview = async (reviewId: string, action: 'approve' | 'reject', isFeatured: boolean = false) => {
+  const moderateReview = async (
+    reviewId: string,
+    action: 'approve' | 'reject',
+    isFeatured: boolean = false
+  ) => {
     setModeratingReview(reviewId);
     try {
       const token = localStorage.getItem('access_token');
       const response = await fetch(getApiUrl('admin/moderate_review/'), {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           review_id: reviewId,
           action: action,
           admin_notes: moderationNotes,
-          is_featured: isFeatured
+          is_featured: isFeatured,
         }),
       });
 
@@ -133,9 +139,9 @@ export default function AdminReviewsPage() {
         const data = await response.json();
         toast({
           title: 'Success',
-          description: data.message || `Review ${action}ed successfully`
+          description: data.message || `Review ${action}ed successfully`,
         });
-        
+
         setSelectedReview(null);
         setModerationNotes('');
         fetchReviews(); // Refresh the list
@@ -144,7 +150,7 @@ export default function AdminReviewsPage() {
         toast({
           title: 'Error',
           description: errorData.error || `Failed to ${action} review`,
-          variant: 'destructive'
+          variant: 'destructive',
         });
       }
     } catch (error) {
@@ -152,7 +158,7 @@ export default function AdminReviewsPage() {
       toast({
         title: 'Error',
         description: `An error occurred while ${action}ing review`,
-        variant: 'destructive'
+        variant: 'destructive',
       });
     } finally {
       setModeratingReview(null);
@@ -200,7 +206,7 @@ export default function AdminReviewsPage() {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
@@ -230,7 +236,7 @@ export default function AdminReviewsPage() {
               <div className="flex items-center gap-4">
                 <Filter className="h-5 w-5 text-gray-500" />
                 <div className="flex gap-2">
-                  {(['all', 'pending', 'approved', 'rejected'] as const).map((filter) => (
+                  {(['all', 'pending', 'approved', 'rejected'] as const).map(filter => (
                     <Button
                       key={filter}
                       variant={statusFilter === filter ? 'default' : 'outline'}
@@ -240,9 +246,13 @@ export default function AdminReviewsPage() {
                         setCurrentPage(1);
                       }}
                     >
-                      {filter === 'all' ? 'All Reviews' : 
-                       filter === 'pending' ? 'Pending' :
-                       filter === 'approved' ? 'Approved' : 'Rejected'}
+                      {filter === 'all'
+                        ? 'All Reviews'
+                        : filter === 'pending'
+                          ? 'Pending'
+                          : filter === 'approved'
+                            ? 'Approved'
+                            : 'Rejected'}
                     </Button>
                   ))}
                 </div>
@@ -272,7 +282,7 @@ export default function AdminReviewsPage() {
             </Card>
           ) : (
             <div className="grid gap-6">
-              {reviews.map((review) => (
+              {reviews.map(review => (
                 <Card key={review.id} className="relative">
                   <CardHeader>
                     <div className="flex items-start justify-between">
@@ -289,7 +299,9 @@ export default function AdminReviewsPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => setSelectedReview(selectedReview?.id === review.id ? null : review)}
+                        onClick={() =>
+                          setSelectedReview(selectedReview?.id === review.id ? null : review)
+                        }
                       >
                         <Eye className="h-4 w-4 mr-2" />
                         {selectedReview?.id === review.id ? 'Hide' : 'Details'}
@@ -324,7 +336,9 @@ export default function AdminReviewsPage() {
                       </div>
                       {review.moderated_at && (
                         <div className="flex items-center gap-2">
-                          <span>Moderated by {review.moderated_by} on {formatDate(review.moderated_at)}</span>
+                          <span>
+                            Moderated by {review.moderated_by} on {formatDate(review.moderated_at)}
+                          </span>
                         </div>
                       )}
                     </div>
@@ -344,10 +358,12 @@ export default function AdminReviewsPage() {
                         {!review.moderated_at && (
                           <div className="space-y-3">
                             <div>
-                              <label className="block text-sm font-medium mb-2">Admin Notes (optional):</label>
+                              <label className="block text-sm font-medium mb-2">
+                                Admin Notes (optional):
+                              </label>
                               <Textarea
                                 value={moderationNotes}
-                                onChange={(e) => setModerationNotes(e.target.value)}
+                                onChange={e => setModerationNotes(e.target.value)}
                                 placeholder="Add notes about this moderation decision..."
                                 rows={3}
                               />

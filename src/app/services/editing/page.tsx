@@ -4,13 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Edit, 
-  Clock, 
-  ArrowRight,
-  ArrowLeft,
-  CheckCircle
-} from 'lucide-react';
+import { Edit, Clock, ArrowRight, ArrowLeft, CheckCircle } from 'lucide-react';
 
 export default function EditingPage() {
   return (
@@ -26,7 +20,7 @@ export default function EditingPage() {
               </Button>
             </Link>
           </div>
-          
+
           <div className="max-w-4xl mx-auto text-center">
             <div className="flex items-center justify-center gap-4 mb-6">
               <div className="p-4 bg-primary/10 rounded-lg">
@@ -39,18 +33,17 @@ export default function EditingPage() {
                 <div className="flex items-center gap-4 mt-2">
                   <Badge variant="secondary">Starting at $8/page</Badge>
                   <span className="flex items-center gap-1 text-gray-600">
-                    <Clock className="h-4 w-4" />
-                    1 hour - 7 days
+                    <Clock className="h-4 w-4" />1 hour - 7 days
                   </span>
                 </div>
               </div>
             </div>
-            
+
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Professional editing and proofreading services to polish your academic work 
-              to perfection. Grammar, style, structure, and plagiarism checks included.
+              Professional editing and proofreading services to polish your academic work to
+              perfection. Grammar, style, structure, and plagiarism checks included.
             </p>
-            
+
             <Link href="/order">
               <Button size="lg" className="text-lg px-8 py-3">
                 Get Editing Help
@@ -65,36 +58,54 @@ export default function EditingPage() {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
-              Editing Services
-            </h2>
-            
+            <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Editing Services</h2>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
                 {
                   title: 'Proofreading',
                   price: '$8/page',
                   description: 'Grammar, spelling, and punctuation corrections.',
-                  features: ['Grammar check', 'Spelling correction', 'Punctuation fix', 'Basic formatting']
+                  features: [
+                    'Grammar check',
+                    'Spelling correction',
+                    'Punctuation fix',
+                    'Basic formatting',
+                  ],
                 },
                 {
                   title: 'Copy Editing',
-                  price: '$12/page', 
+                  price: '$12/page',
                   description: 'Language improvement and clarity enhancement.',
-                  features: ['Style improvement', 'Clarity enhancement', 'Sentence structure', 'Word choice']
+                  features: [
+                    'Style improvement',
+                    'Clarity enhancement',
+                    'Sentence structure',
+                    'Word choice',
+                  ],
                 },
                 {
                   title: 'Substantive Editing',
                   price: '$15/page',
                   description: 'Structure, logic, and argument improvement.',
-                  features: ['Structure review', 'Logic check', 'Argument flow', 'Content organization']
+                  features: [
+                    'Structure review',
+                    'Logic check',
+                    'Argument flow',
+                    'Content organization',
+                  ],
                 },
                 {
                   title: 'Complete Package',
                   price: '$18/page',
                   description: 'All editing services plus plagiarism check.',
-                  features: ['All editing services', 'Plagiarism check', 'Formatting', 'Quality report']
-                }
+                  features: [
+                    'All editing services',
+                    'Plagiarism check',
+                    'Formatting',
+                    'Quality report',
+                  ],
+                },
               ].map((service, index) => (
                 <Card key={index} className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
@@ -122,9 +133,7 @@ export default function EditingPage() {
       {/* CTA */}
       <section className="py-20 bg-primary text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-            Polish Your Academic Work
-          </h2>
+          <h2 className="text-3xl lg:text-4xl font-bold mb-4">Polish Your Academic Work</h2>
           <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
             Professional editing to make your work shine. Fast turnaround available.
           </p>

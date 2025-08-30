@@ -4,13 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  GraduationCap, 
-  Clock, 
-  ArrowRight,
-  ArrowLeft,
-  CheckCircle
-} from 'lucide-react';
+import { GraduationCap, Clock, ArrowRight, ArrowLeft, CheckCircle } from 'lucide-react';
 
 export default function DissertationsPage() {
   return (
@@ -26,7 +20,7 @@ export default function DissertationsPage() {
               </Button>
             </Link>
           </div>
-          
+
           <div className="max-w-4xl mx-auto text-center">
             <div className="flex items-center justify-center gap-4 mb-6">
               <div className="p-4 bg-primary/10 rounded-lg">
@@ -45,12 +39,12 @@ export default function DissertationsPage() {
                 </div>
               </div>
             </div>
-            
+
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Complete dissertation and thesis writing support from proposal to defense. 
-              Expert guidance through every chapter of your doctoral journey.
+              Complete dissertation and thesis writing support from proposal to defense. Expert
+              guidance through every chapter of your doctoral journey.
             </p>
-            
+
             <Link href="/order">
               <Button size="lg" className="text-lg px-8 py-3">
                 Get Dissertation Help
@@ -68,29 +62,49 @@ export default function DissertationsPage() {
             <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
               Comprehensive Dissertation Support
             </h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
                 {
                   title: 'Dissertation Writing',
                   description: 'Complete dissertation writing from introduction to conclusion.',
-                  features: ['Full dissertation', 'Chapter-by-chapter delivery', 'Regular consultations', 'Defense preparation']
+                  features: [
+                    'Full dissertation',
+                    'Chapter-by-chapter delivery',
+                    'Regular consultations',
+                    'Defense preparation',
+                  ],
                 },
                 {
-                  title: 'Thesis Writing', 
-                  description: 'Master\'s thesis writing with comprehensive research and analysis.',
-                  features: ['Complete thesis', 'Literature review', 'Methodology design', 'Data analysis']
+                  title: 'Thesis Writing',
+                  description: "Master's thesis writing with comprehensive research and analysis.",
+                  features: [
+                    'Complete thesis',
+                    'Literature review',
+                    'Methodology design',
+                    'Data analysis',
+                  ],
                 },
                 {
                   title: 'Proposal Writing',
                   description: 'Dissertation and thesis proposals that get approved.',
-                  features: ['Research proposal', 'Literature review', 'Methodology outline', 'Timeline planning']
+                  features: [
+                    'Research proposal',
+                    'Literature review',
+                    'Methodology outline',
+                    'Timeline planning',
+                  ],
                 },
                 {
                   title: 'Individual Chapters',
                   description: 'Help with specific dissertation or thesis chapters.',
-                  features: ['Any chapter', 'Literature review', 'Methodology', 'Results & discussion']
-                }
+                  features: [
+                    'Any chapter',
+                    'Literature review',
+                    'Methodology',
+                    'Results & discussion',
+                  ],
+                },
               ].map((service, index) => (
                 <Card key={index} className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
@@ -115,9 +129,7 @@ export default function DissertationsPage() {
       {/* CTA */}
       <section className="py-20 bg-primary text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-            Start Your Dissertation Journey
-          </h2>
+          <h2 className="text-3xl lg:text-4xl font-bold mb-4">Start Your Dissertation Journey</h2>
           <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
             Get expert support for your dissertation or thesis. From proposal to defense.
           </p>

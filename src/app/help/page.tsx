@@ -3,17 +3,17 @@
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { 
-  HelpCircle, 
-  BookOpen, 
-  CreditCard, 
-  FileText, 
+import {
+  HelpCircle,
+  BookOpen,
+  CreditCard,
+  FileText,
   MessageCircle,
   ArrowRight,
   Search,
   Users,
   Shield,
-  Clock
+  Clock,
 } from 'lucide-react';
 
 const helpCategories = [
@@ -25,9 +25,9 @@ const helpCategories = [
       'How to create an account',
       'Placing your first order',
       'Understanding our services',
-      'Choosing the right service level'
+      'Choosing the right service level',
     ],
-    link: '/faq'
+    link: '/faq',
   },
   {
     icon: CreditCard,
@@ -37,9 +37,9 @@ const helpCategories = [
       'Payment methods accepted',
       'How pricing is calculated',
       'Refund policy',
-      'Billing questions'
+      'Billing questions',
     ],
-    link: '/faq'
+    link: '/faq',
   },
   {
     icon: FileText,
@@ -49,9 +49,9 @@ const helpCategories = [
       'Tracking your order progress',
       'Revision requests',
       'Download completed work',
-      'Order status meanings'
+      'Order status meanings',
     ],
-    link: '/faq'
+    link: '/faq',
   },
   {
     icon: MessageCircle,
@@ -61,10 +61,10 @@ const helpCategories = [
       'Messaging your writer',
       'Contacting support',
       'Live chat support',
-      'Email notifications'
+      'Email notifications',
     ],
-    link: '/contact'
-  }
+    link: '/contact',
+  },
 ];
 
 const quickActions = [
@@ -73,22 +73,22 @@ const quickActions = [
     title: 'Search FAQs',
     description: 'Find answers to common questions',
     link: '/faq',
-    buttonText: 'Browse FAQs'
+    buttonText: 'Browse FAQs',
   },
   {
     icon: MessageCircle,
     title: 'Contact Support',
     description: 'Get help from our support team',
     link: '/contact',
-    buttonText: 'Contact Us'
+    buttonText: 'Contact Us',
   },
   {
     icon: FileText,
     title: 'Place an Order',
     description: 'Start your order now',
     link: '/order',
-    buttonText: 'Order Now'
-  }
+    buttonText: 'Order Now',
+  },
 ];
 
 export default function HelpPage() {
@@ -106,8 +106,8 @@ export default function HelpPage() {
               <span className="text-primary"> Center</span>
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Find answers, get support, and learn how to make the most of our 
-              academic writing services.
+              Find answers, get support, and learn how to make the most of our academic writing
+              services.
             </p>
           </div>
         </div>
@@ -117,10 +117,8 @@ export default function HelpPage() {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
-              Quick Actions
-            </h2>
-            
+            <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Quick Actions</h2>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
               {quickActions.map((action, index) => (
                 <Card key={index} className="hover:shadow-lg transition-shadow text-center">
@@ -152,9 +150,10 @@ export default function HelpPage() {
               Browse Help Topics
             </h2>
             <p className="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto">
-              Find detailed information organized by category to help you get the most out of our services.
+              Find detailed information organized by category to help you get the most out of our
+              services.
             </p>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {helpCategories.map((category, index) => (
                 <Card key={index} className="hover:shadow-lg transition-shadow">
@@ -172,7 +171,10 @@ export default function HelpPage() {
                   <CardContent>
                     <ul className="space-y-2 mb-6">
                       {category.topics.map((topic, topicIndex) => (
-                        <li key={topicIndex} className="flex items-center gap-2 text-sm text-gray-700">
+                        <li
+                          key={topicIndex}
+                          className="flex items-center gap-2 text-sm text-gray-700"
+                        >
                           <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0" />
                           {topic}
                         </li>
@@ -199,7 +201,7 @@ export default function HelpPage() {
             <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
               Why Students Choose Us
             </h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center">
                 <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
@@ -210,7 +212,7 @@ export default function HelpPage() {
                   PhD holders and subject experts with proven academic writing experience.
                 </p>
               </div>
-              
+
               <div className="text-center">
                 <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <Clock className="h-8 w-8 text-primary" />
@@ -220,7 +222,7 @@ export default function HelpPage() {
                   Round-the-clock customer support for all your questions and concerns.
                 </p>
               </div>
-              
+
               <div className="text-center">
                 <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <Shield className="h-8 w-8 text-primary" />
@@ -239,13 +241,11 @@ export default function HelpPage() {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Still Need Help?
-            </h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Still Need Help?</h2>
             <p className="text-lg text-gray-600 mb-8">
               Our support team is available 24/7 to assist you with any questions or concerns.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/contact">
                 <Button size="lg" className="text-lg px-8 py-3">

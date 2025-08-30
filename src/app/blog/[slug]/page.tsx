@@ -7,16 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getApiUrl } from '@/lib/config';
-import { 
-  Calendar, 
-  ArrowLeft, 
-  User, 
-  Eye,
-  Share2,
-  BookOpen,
-  Tag,
-  Clock
-} from 'lucide-react';
+import { Calendar, ArrowLeft, User, Eye, Share2, BookOpen, Tag, Clock } from 'lucide-react';
 
 interface BlogPost {
   id: string;
@@ -57,15 +48,15 @@ export default function BlogPostPage() {
   const fetchBlogPost = async () => {
     try {
       const response = await fetch(getApiUrl(`blog_posts/${slug}/`));
-      
+
       if (response.ok) {
         const data: BlogPost = await response.json();
         setPost(data);
-        
+
         // Update document title and meta description
         if (typeof window !== 'undefined') {
           document.title = data.meta_title || data.title;
-          
+
           // Update meta description
           const metaDescription = document.querySelector('meta[name="description"]');
           if (metaDescription) {
@@ -89,7 +80,7 @@ export default function BlogPostPage() {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
@@ -128,10 +119,9 @@ export default function BlogPostPage() {
               {error === 'Blog post not found' ? 'Post Not Found' : 'Error Loading Post'}
             </h2>
             <p className="text-gray-600 mb-6">
-              {error === 'Blog post not found' 
-                ? 'The blog post you\'re looking for doesn\'t exist or may have been moved.'
-                : 'Sorry, we couldn\'t load this blog post. Please try again later.'
-              }
+              {error === 'Blog post not found'
+                ? "The blog post you're looking for doesn't exist or may have been moved."
+                : "Sorry, we couldn't load this blog post. Please try again later."}
             </p>
             <Link href="/blog">
               <Button>
@@ -164,57 +154,67 @@ export default function BlogPostPage() {
         {/* Cover Image Background */}
         {post.cover_image && (
           <div className="relative h-96 lg:h-[500px] overflow-hidden">
-            <img 
-              src={post.cover_image} 
-              alt={post.title}
-              className="w-full h-full object-cover"
-            />
+            <img src={post.cover_image} alt={post.title} className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
           </div>
         )}
-        
+
         {/* Hero Content */}
-        <div className={`${post.cover_image ? 'absolute inset-0 flex items-end' : 'py-16 bg-gradient-to-br from-blue-50 to-indigo-100'}`}>
+        <div
+          className={`${post.cover_image ? 'absolute inset-0 flex items-end' : 'py-16 bg-gradient-to-br from-blue-50 to-indigo-100'}`}
+        >
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               <div className={`${post.cover_image ? 'text-white pb-16' : 'text-gray-900'}`}>
                 {/* Category Badge */}
                 {post.subject && (
-                  <Badge 
+                  <Badge
                     className={`mb-4 ${post.cover_image ? 'bg-white/20 text-white border-white/30' : 'bg-blue-100 text-blue-800 border-blue-200'}`}
                   >
                     <BookOpen className="mr-1 h-3 w-3" />
                     {post.subject.name}
                   </Badge>
                 )}
-                
+
                 {/* Title */}
-                <h1 className={`text-4xl lg:text-6xl font-bold leading-tight mb-6 ${post.cover_image ? 'text-white drop-shadow-lg' : 'text-gray-900'}`}>
+                <h1
+                  className={`text-4xl lg:text-6xl font-bold leading-tight mb-6 ${post.cover_image ? 'text-white drop-shadow-lg' : 'text-gray-900'}`}
+                >
                   {post.title}
                 </h1>
-                
+
                 {/* Excerpt */}
                 {post.excerpt && (
-                  <p className={`text-xl lg:text-2xl leading-relaxed mb-8 ${post.cover_image ? 'text-gray-100 drop-shadow' : 'text-gray-600'} max-w-3xl`}>
+                  <p
+                    className={`text-xl lg:text-2xl leading-relaxed mb-8 ${post.cover_image ? 'text-gray-100 drop-shadow' : 'text-gray-600'} max-w-3xl`}
+                  >
                     {post.excerpt}
                   </p>
                 )}
-                
+
                 {/* Meta Information */}
                 <div className="flex flex-wrap items-center gap-6 text-sm">
-                  <div className={`flex items-center gap-2 ${post.cover_image ? 'text-gray-200' : 'text-gray-600'}`}>
+                  <div
+                    className={`flex items-center gap-2 ${post.cover_image ? 'text-gray-200' : 'text-gray-600'}`}
+                  >
                     <User className="h-4 w-4" />
                     <span className="font-medium">{post.author.name}</span>
                   </div>
-                  <div className={`flex items-center gap-2 ${post.cover_image ? 'text-gray-200' : 'text-gray-600'}`}>
+                  <div
+                    className={`flex items-center gap-2 ${post.cover_image ? 'text-gray-200' : 'text-gray-600'}`}
+                  >
                     <Calendar className="h-4 w-4" />
                     <span>{formatDate(post.published_at || post.created_at)}</span>
                   </div>
-                  <div className={`flex items-center gap-2 ${post.cover_image ? 'text-gray-200' : 'text-gray-600'}`}>
+                  <div
+                    className={`flex items-center gap-2 ${post.cover_image ? 'text-gray-200' : 'text-gray-600'}`}
+                  >
                     <Eye className="h-4 w-4" />
                     <span>{post.view_count.toLocaleString()} views</span>
                   </div>
-                  <div className={`flex items-center gap-2 ${post.cover_image ? 'text-gray-200' : 'text-gray-600'}`}>
+                  <div
+                    className={`flex items-center gap-2 ${post.cover_image ? 'text-gray-200' : 'text-gray-600'}`}
+                  >
                     <Clock className="h-4 w-4" />
                     <span>5 min read</span>
                   </div>
@@ -233,7 +233,7 @@ export default function BlogPostPage() {
               {/* Main Content */}
               <div className="lg:col-span-8">
                 <article className="prose prose-lg max-w-none prose-gray">
-                  <div 
+                  <div
                     dangerouslySetInnerHTML={{ __html: post.content }}
                     className="text-gray-800 leading-relaxed [&>h1]:text-3xl [&>h1]:font-bold [&>h1]:text-gray-900 [&>h1]:mt-12 [&>h1]:mb-6 [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-gray-900 [&>h2]:mt-10 [&>h2]:mb-4 [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:text-gray-900 [&>h3]:mt-8 [&>h3]:mb-3 [&>p]:text-gray-700 [&>p]:text-lg [&>p]:leading-relaxed [&>p]:mb-6 [&>ul]:text-gray-700 [&>ol]:text-gray-700 [&>li]:mb-2 [&>blockquote]:border-l-4 [&>blockquote]:border-blue-500 [&>blockquote]:pl-6 [&>blockquote]:italic [&>blockquote]:text-gray-600 [&>code]:bg-gray-100 [&>code]:px-2 [&>code]:py-1 [&>code]:rounded [&>code]:text-sm [&>code]:text-gray-800"
                   />
@@ -245,9 +245,9 @@ export default function BlogPostPage() {
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Tags</h3>
                     <div className="flex flex-wrap gap-2">
                       {post.tags.map((tag, index) => (
-                        <Badge 
-                          key={index} 
-                          variant="outline" 
+                        <Badge
+                          key={index}
+                          variant="outline"
                           className="px-3 py-1 text-sm bg-gray-50 text-gray-700 border-gray-300 hover:bg-gray-100"
                         >
                           <Tag className="mr-1 h-3 w-3" />
@@ -275,11 +275,12 @@ export default function BlogPostPage() {
                         </div>
                       </div>
                       <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                        Passionate about helping students excel in their academic journey through quality writing assistance and expert guidance.
+                        Passionate about helping students excel in their academic journey through
+                        quality writing assistance and expert guidance.
                       </p>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={handleShare}
                         className="w-full border-blue-200 text-blue-700 hover:bg-blue-50"
                       >

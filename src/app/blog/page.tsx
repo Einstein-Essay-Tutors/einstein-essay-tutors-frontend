@@ -6,12 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getApiUrl } from '@/lib/config';
-import { 
-  BookOpen, 
-  Calendar, 
-  ArrowRight,
-  User
-} from 'lucide-react';
+import { BookOpen, Calendar, ArrowRight, User } from 'lucide-react';
 
 interface BlogPost {
   id: string;
@@ -50,7 +45,7 @@ export default function BlogPage() {
   const fetchBlogPosts = async () => {
     try {
       const response = await fetch(getApiUrl('blog_posts/?limit=12'));
-      
+
       if (response.ok) {
         const data: BlogResponse = await response.json();
         setBlogData(data);
@@ -66,7 +61,7 @@ export default function BlogPage() {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
@@ -95,10 +90,10 @@ export default function BlogPage() {
               <span className="text-primary"> Blog</span>
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Insights, tips, and resources for academic success. Learn from our experts 
-              and improve your writing skills.
+              Insights, tips, and resources for academic success. Learn from our experts and improve
+              your writing skills.
             </p>
-            
+
             {blogData && (
               <div className="flex items-center justify-center gap-6 text-sm text-gray-600">
                 <span>{blogData.count} Articles</span>
@@ -116,54 +111,59 @@ export default function BlogPage() {
           <div className="max-w-7xl mx-auto">
             {blogData && blogData.blogs.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {blogData.blogs.map((post) => (
+                {blogData.blogs.map(post => (
                   <Link key={post.id} href={`/blog/${post.slug}`}>
                     <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer group">
-                    {post.cover_image && (
-                      <div className="relative h-48 overflow-hidden rounded-t-lg">
-                        <img 
-                          src={post.cover_image} 
-                          alt={post.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                    )}
-                    
-                    <CardHeader>
-                      <div className="flex items-center justify-between mb-2">
-                        {post.subject && (
-                          <Badge variant="secondary" className="text-xs">
-                            {post.subject.name}
-                          </Badge>
-                        )}
-                        <div className="flex items-center gap-1 text-xs text-gray-500">
-                          <Calendar className="h-3 w-3" />
-                          {formatDate(post.created_at)}
+                      {post.cover_image && (
+                        <div className="relative h-48 overflow-hidden rounded-t-lg">
+                          <img
+                            src={post.cover_image}
+                            alt={post.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
                         </div>
-                      </div>
-                      <CardTitle className="text-xl group-hover:text-primary transition-colors line-clamp-2">
-                        {post.title}
-                      </CardTitle>
-                    </CardHeader>
-                    
-                    <CardContent className="space-y-4">
-                      <p className="text-gray-600 leading-relaxed line-clamp-3">
-                        {post.excerpt || post.content.replace(/<[^>]*>/g, '').substring(0, 150) + '...'}
-                      </p>
-                      
-                      <div className="flex items-center justify-between pt-4 border-t">
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
-                          <User className="h-4 w-4" />
-                          <span>{post.author.name}</span>
+                      )}
+
+                      <CardHeader>
+                        <div className="flex items-center justify-between mb-2">
+                          {post.subject && (
+                            <Badge variant="secondary" className="text-xs">
+                              {post.subject.name}
+                            </Badge>
+                          )}
+                          <div className="flex items-center gap-1 text-xs text-gray-500">
+                            <Calendar className="h-3 w-3" />
+                            {formatDate(post.created_at)}
+                          </div>
                         </div>
-                        
-                        <Button variant="ghost" size="sm" className="group-hover:bg-primary group-hover:text-white transition-colors">
-                          Read More
-                          <ArrowRight className="ml-1 h-3 w-3" />
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
+                        <CardTitle className="text-xl group-hover:text-primary transition-colors line-clamp-2">
+                          {post.title}
+                        </CardTitle>
+                      </CardHeader>
+
+                      <CardContent className="space-y-4">
+                        <p className="text-gray-600 leading-relaxed line-clamp-3">
+                          {post.excerpt ||
+                            post.content.replace(/<[^>]*>/g, '').substring(0, 150) + '...'}
+                        </p>
+
+                        <div className="flex items-center justify-between pt-4 border-t">
+                          <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <User className="h-4 w-4" />
+                            <span>{post.author.name}</span>
+                          </div>
+
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="group-hover:bg-primary group-hover:text-white transition-colors"
+                          >
+                            Read More
+                            <ArrowRight className="ml-1 h-3 w-3" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
                   </Link>
                 ))}
               </div>
@@ -171,12 +171,10 @@ export default function BlogPage() {
               <Card className="text-center py-16">
                 <CardContent>
                   <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-6" />
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                    No Blog Posts Yet
-                  </h3>
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">No Blog Posts Yet</h3>
                   <p className="text-lg text-gray-600 mb-8 max-w-md mx-auto">
-                    We're working on creating valuable content for you. Check back soon for 
-                    helpful articles about academic writing and study tips.
+                    We're working on creating valuable content for you. Check back soon for helpful
+                    articles about academic writing and study tips.
                   </p>
                   <Link href="/services">
                     <Button size="lg">
@@ -195,24 +193,20 @@ export default function BlogPage() {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Stay Updated
-            </h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Stay Updated</h2>
             <p className="text-lg text-gray-600 mb-8">
               Subscribe to our newsletter to get the latest academic writing tips and resources.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto mb-8">
               <input
                 type="email"
                 placeholder="Enter your email"
                 className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
-              <Button className="px-8 py-3">
-                Subscribe
-              </Button>
+              <Button className="px-8 py-3">Subscribe</Button>
             </div>
-            
+
             <p className="text-sm text-gray-500">
               We respect your privacy. Unsubscribe at any time.
             </p>
@@ -223,9 +217,7 @@ export default function BlogPage() {
       {/* CTA Section */}
       <section className="py-16 bg-primary text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">
-            Need Academic Writing Help?
-          </h2>
+          <h2 className="text-3xl font-bold mb-4">Need Academic Writing Help?</h2>
           <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
             Our expert writers are here to help you succeed in your academic journey.
           </p>

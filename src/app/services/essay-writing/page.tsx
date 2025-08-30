@@ -4,15 +4,15 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  BookOpen, 
-  CheckCircle, 
-  Clock, 
+import {
+  BookOpen,
+  CheckCircle,
+  Clock,
   ArrowRight,
   ArrowLeft,
   Star,
   FileText,
-  Users
+  Users,
 } from 'lucide-react';
 
 const essayTypes = [
@@ -27,7 +27,7 @@ const essayTypes = [
   'Persuasive Essays',
   'Reflective Essays',
   'Application Essays',
-  'Scholarship Essays'
+  'Scholarship Essays',
 ];
 
 const subjects = [
@@ -42,35 +42,35 @@ const subjects = [
   'Nursing',
   'Education',
   'Law',
-  'And 50+ More Subjects'
+  'And 50+ More Subjects',
 ];
 
 const processSteps = [
   {
     step: 1,
     title: 'Place Your Order',
-    description: 'Provide essay requirements, topic, length, and deadline.'
+    description: 'Provide essay requirements, topic, length, and deadline.',
   },
   {
     step: 2,
     title: 'Writer Assignment',
-    description: 'We match you with an expert writer in your subject area.'
+    description: 'We match you with an expert writer in your subject area.',
   },
   {
     step: 3,
     title: 'Writing Process',
-    description: 'Your writer researches and crafts your essay with regular updates.'
+    description: 'Your writer researches and crafts your essay with regular updates.',
   },
   {
     step: 4,
     title: 'Quality Review',
-    description: 'Our editors review the essay for quality and plagiarism.'
+    description: 'Our editors review the essay for quality and plagiarism.',
   },
   {
     step: 5,
     title: 'Delivery',
-    description: 'Receive your completed essay on time, ready for submission.'
-  }
+    description: 'Receive your completed essay on time, ready for submission.',
+  },
 ];
 
 export default function EssayWritingPage() {
@@ -87,7 +87,7 @@ export default function EssayWritingPage() {
               </Button>
             </Link>
           </div>
-          
+
           <div className="max-w-4xl mx-auto text-center">
             <div className="flex items-center justify-center gap-4 mb-6">
               <div className="p-4 bg-primary/10 rounded-lg">
@@ -100,18 +100,17 @@ export default function EssayWritingPage() {
                 <div className="flex items-center gap-4 mt-2">
                   <Badge variant="secondary">Starting at $12/page</Badge>
                   <span className="flex items-center gap-1 text-gray-600">
-                    <Clock className="h-4 w-4" />
-                    3 hours - 14 days
+                    <Clock className="h-4 w-4" />3 hours - 14 days
                   </span>
                 </div>
               </div>
             </div>
-            
+
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Professional essay writing help from expert writers. Original, well-researched essays 
+              Professional essay writing help from expert writers. Original, well-researched essays
               delivered on time for all academic levels and subjects.
             </p>
-            
+
             <Link href="/order">
               <Button size="lg" className="text-lg px-8 py-3">
                 Order Your Essay Now
@@ -129,39 +128,43 @@ export default function EssayWritingPage() {
             <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
               What You Get With Our Essay Writing Service
             </h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
                 {
                   icon: FileText,
                   title: 'Original Content',
-                  description: 'Every essay is written from scratch according to your specific requirements.'
+                  description:
+                    'Every essay is written from scratch according to your specific requirements.',
                 },
                 {
                   icon: Users,
                   title: 'Expert Writers',
-                  description: 'PhD holders and subject experts with proven academic writing experience.'
+                  description:
+                    'PhD holders and subject experts with proven academic writing experience.',
                 },
                 {
                   icon: CheckCircle,
                   title: 'Quality Guarantee',
-                  description: 'Free revisions until you are completely satisfied with your essay.'
+                  description: 'Free revisions until you are completely satisfied with your essay.',
                 },
                 {
                   icon: Clock,
                   title: 'On-Time Delivery',
-                  description: 'Your essay will be delivered exactly when you need it, guaranteed.'
+                  description: 'Your essay will be delivered exactly when you need it, guaranteed.',
                 },
                 {
                   icon: Star,
                   title: 'Top Grades',
-                  description: 'Our essays are crafted to help you achieve the highest possible grades.'
+                  description:
+                    'Our essays are crafted to help you achieve the highest possible grades.',
                 },
                 {
                   icon: CheckCircle,
                   title: 'Plagiarism-Free',
-                  description: 'All work is 100% original and comes with a detailed plagiarism report.'
-                }
+                  description:
+                    'All work is 100% original and comes with a detailed plagiarism report.',
+                },
               ].map((feature, index) => (
                 <div key={index} className="text-center">
                   <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
@@ -186,7 +189,7 @@ export default function EssayWritingPage() {
             <p className="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto">
               Our expert writers can handle any type of essay across all academic disciplines.
             </p>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <Card>
                 <CardHeader>
@@ -203,7 +206,7 @@ export default function EssayWritingPage() {
                   </div>
                 </CardContent>
               </Card>
-              
+
               <Card>
                 <CardHeader>
                   <CardTitle>Subject Areas</CardTitle>
@@ -234,7 +237,7 @@ export default function EssayWritingPage() {
             <p className="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto">
               Simple, transparent process from order to delivery.
             </p>
-            
+
             <div className="space-y-8">
               {processSteps.map((step, index) => (
                 <div key={index} className="flex items-start gap-6">
@@ -256,40 +259,42 @@ export default function EssayWritingPage() {
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">
-              Transparent Pricing
-            </h2>
-            
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">Transparent Pricing</h2>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
                 {
                   level: 'High School',
                   price: '$12',
-                  turnaround: '3 hours minimum'
+                  turnaround: '3 hours minimum',
                 },
                 {
                   level: 'Undergraduate',
                   price: '$15',
-                  turnaround: '3 hours minimum'
+                  turnaround: '3 hours minimum',
                 },
                 {
                   level: 'Graduate',
                   price: '$18',
-                  turnaround: '6 hours minimum'
-                }
+                  turnaround: '6 hours minimum',
+                },
               ].map((tier, index) => (
                 <Card key={index} className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6 text-center">
                     <h3 className="text-xl font-semibold mb-2">{tier.level}</h3>
-                    <div className="text-3xl font-bold text-primary mb-2">{tier.price}<span className="text-lg font-normal text-gray-600">/page</span></div>
+                    <div className="text-3xl font-bold text-primary mb-2">
+                      {tier.price}
+                      <span className="text-lg font-normal text-gray-600">/page</span>
+                    </div>
                     <p className="text-sm text-gray-600">{tier.turnaround}</p>
                   </CardContent>
                 </Card>
               ))}
             </div>
-            
+
             <p className="text-sm text-gray-600 mt-6">
-              * Prices may vary based on deadline and complexity. Final price calculated at checkout.
+              * Prices may vary based on deadline and complexity. Final price calculated at
+              checkout.
             </p>
           </div>
         </div>
@@ -298,12 +303,10 @@ export default function EssayWritingPage() {
       {/* CTA Section */}
       <section className="py-20 bg-primary text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-            Ready to Order Your Essay?
-          </h2>
+          <h2 className="text-3xl lg:text-4xl font-bold mb-4">Ready to Order Your Essay?</h2>
           <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-            Get professional essay writing help from our expert writers. 
-            Quality guaranteed, delivered on time.
+            Get professional essay writing help from our expert writers. Quality guaranteed,
+            delivered on time.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/order">
@@ -313,7 +316,11 @@ export default function EssayWritingPage() {
               </Button>
             </Link>
             <Link href="/contact">
-              <Button size="lg" variant="outline" className="text-lg px-8 py-3 border-white text-white hover:bg-white hover:text-primary">
+              <Button
+                size="lg"
+                variant="outline"
+                className="text-lg px-8 py-3 border-white text-white hover:bg-white hover:text-primary"
+              >
                 Ask Questions
               </Button>
             </Link>

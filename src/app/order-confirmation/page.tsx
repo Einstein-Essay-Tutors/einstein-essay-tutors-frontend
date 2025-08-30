@@ -1,52 +1,60 @@
-'use client'
+'use client';
 
-import { useState, useEffect, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useAuth } from '@/context/AuthContext'
-import { getApiUrl } from '@/lib/config'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { useToast } from '@/components/ui/use-toast'
-import Link from 'next/link'
-import { CheckCircle, Clock, CreditCard, FileText, ArrowRight, Copy, ExternalLink } from 'lucide-react'
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
+import { getApiUrl } from '@/lib/config';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/components/ui/use-toast';
+import Link from 'next/link';
+import {
+  CheckCircle,
+  Clock,
+  CreditCard,
+  FileText,
+  ArrowRight,
+  Copy,
+  ExternalLink,
+} from 'lucide-react';
 
 interface OrderDetails {
-  order_id: string
-  order_number: string
-  final_price: number
+  order_id: string;
+  order_number: string;
+  final_price: number;
   payment_method: {
-    type: string
-    name: string
-    config: any
-  }
+    type: string;
+    name: string;
+    config: any;
+  };
 }
 
 function OrderConfirmationContent() {
-  const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [paymentProcessing, setPaymentProcessing] = useState(false)
-  
-  const { user, getAuthHeaders } = useAuth()
-  const { toast } = useToast()
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const orderId = searchParams.get('order_id')
+  const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [paymentProcessing, setPaymentProcessing] = useState(false);
+
+  const { user, getAuthHeaders } = useAuth();
+  const { toast } = useToast();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get('order_id');
 
   useEffect(() => {
     if (!orderId) {
-      router.push('/dashboard')
-      return
+      router.push('/dashboard');
+      return;
     }
 
     const fetchOrderDetails = async () => {
       try {
         const response = await fetch(getApiUrl(`get_order_details/${orderId}/`), {
-          headers: getAuthHeaders()
-        })
+          headers: getAuthHeaders(),
+        });
 
         if (response.ok) {
-          const data = await response.json()
+          const data = await response.json();
           setOrderDetails({
             order_id: data.order_id,
             order_number: data.order_number,
@@ -54,33 +62,33 @@ function OrderConfirmationContent() {
             payment_method: {
               type: data.payment_method.type,
               name: data.payment_method.name,
-              config: data.payment_method.config
-            }
-          })
+              config: data.payment_method.config,
+            },
+          });
         } else {
-          const errorData = await response.json()
-          throw new Error(errorData.error || 'Failed to fetch order details')
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to fetch order details');
         }
       } catch (error) {
-        console.error('Error fetching order details:', error)
+        console.error('Error fetching order details:', error);
         toast({
           title: 'Error',
           description: error instanceof Error ? error.message : 'Failed to load order details',
-          variant: 'destructive'
-        })
-        router.push('/dashboard')
+          variant: 'destructive',
+        });
+        router.push('/dashboard');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchOrderDetails()
-  }, [orderId, router, getAuthHeaders, toast])
+    fetchOrderDetails();
+  }, [orderId, router, getAuthHeaders, toast]);
 
   const handlePayment = async () => {
-    if (!orderDetails) return
+    if (!orderDetails) return;
 
-    setPaymentProcessing(true)
+    setPaymentProcessing(true);
 
     try {
       // Initiate payment through backend
@@ -93,54 +101,58 @@ function OrderConfirmationContent() {
         body: JSON.stringify({
           order_id: orderDetails.order_id,
           return_url: `${window.location.origin}/payment-return?order_id=${orderDetails.order_id}`,
-          cancel_url: window.location.href
-        })
-      })
+          cancel_url: window.location.href,
+        }),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok && data.success) {
         if (data.payment_method === 'paypal_business') {
           // Redirect to PayPal for approval
-          window.location.href = data.approval_url
+          window.location.href = data.approval_url;
         } else if (data.payment_method === 'paypal_personal') {
           // Open PayPal.me link
-          window.open(data.payment_url, '_blank')
-          
+          window.open(data.payment_url, '_blank');
+
           toast({
             title: 'Payment Link Opened',
-            description: data.instructions || 'Please complete your payment in the new window.'
-          })
-          
+            description: data.instructions || 'Please complete your payment in the new window.',
+          });
+
           // Show manual confirmation dialog
           setTimeout(() => {
-            handleManualPaymentConfirmation()
-          }, 3000)
+            handleManualPaymentConfirmation();
+          }, 3000);
         } else if (data.payment_method === 'manual') {
           // Show payment instructions
-          showManualPaymentInstructions(data)
+          showManualPaymentInstructions(data);
         }
       } else {
-        throw new Error(data.error || 'Payment initiation failed')
+        throw new Error(data.error || 'Payment initiation failed');
       }
     } catch (error) {
       toast({
         title: 'Payment Error',
-        description: error instanceof Error ? error.message : 'There was an error processing your payment. Please try again.',
-        variant: 'destructive'
-      })
+        description:
+          error instanceof Error
+            ? error.message
+            : 'There was an error processing your payment. Please try again.',
+        variant: 'destructive',
+      });
     } finally {
-      setPaymentProcessing(false)
+      setPaymentProcessing(false);
     }
-  }
+  };
 
   const handleManualPaymentConfirmation = () => {
-    const reference = prompt('Please enter your payment reference/transaction ID (optional):')
-    
-    if (reference !== null) { // User didn't cancel
-      confirmManualPayment(reference || '')
+    const reference = prompt('Please enter your payment reference/transaction ID (optional):');
+
+    if (reference !== null) {
+      // User didn't cancel
+      confirmManualPayment(reference || '');
     }
-  }
+  };
 
   const confirmManualPayment = async (reference: string) => {
     try {
@@ -152,44 +164,47 @@ function OrderConfirmationContent() {
         },
         body: JSON.stringify({
           order_id: orderDetails?.order_id,
-          payment_reference: reference
-        })
-      })
+          payment_reference: reference,
+        }),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok && data.success) {
         toast({
           title: 'Payment Submitted',
-          description: data.message || 'Your payment confirmation has been submitted for verification.'
-        })
-        router.push('/dashboard')
+          description:
+            data.message || 'Your payment confirmation has been submitted for verification.',
+        });
+        router.push('/dashboard');
       } else {
-        throw new Error(data.error || 'Failed to confirm payment')
+        throw new Error(data.error || 'Failed to confirm payment');
       }
     } catch (error) {
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to confirm payment',
-        variant: 'destructive'
-      })
+        variant: 'destructive',
+      });
     }
-  }
+  };
 
   const showManualPaymentInstructions = (data: any) => {
-    alert(`Payment Instructions:\n\n${data.instructions}\n\nOrder Reference: ${data.order_reference}\nAmount: $${data.amount}`)
-    handleManualPaymentConfirmation()
-  }
+    alert(
+      `Payment Instructions:\n\n${data.instructions}\n\nOrder Reference: ${data.order_reference}\nAmount: $${data.amount}`
+    );
+    handleManualPaymentConfirmation();
+  };
 
   const copyOrderNumber = () => {
     if (orderDetails) {
-      navigator.clipboard.writeText(orderDetails.order_number)
+      navigator.clipboard.writeText(orderDetails.order_number);
       toast({
         title: 'Copied',
-        description: 'Order number copied to clipboard'
-      })
+        description: 'Order number copied to clipboard',
+      });
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -199,7 +214,7 @@ function OrderConfirmationContent() {
           <p className="text-gray-600">Loading order details...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!orderDetails) {
@@ -214,7 +229,7 @@ function OrderConfirmationContent() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -271,14 +286,20 @@ function OrderConfirmationContent() {
 
               <div className="flex justify-between items-center p-4 bg-purple-50 rounded-lg border-2 border-purple-200 shadow-sm">
                 <span className="font-semibold text-gray-800">Payment Method</span>
-                <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-300 font-medium">
+                <Badge
+                  variant="outline"
+                  className="bg-purple-100 text-purple-800 border-purple-300 font-medium"
+                >
                   {orderDetails.payment_method.name}
                 </Badge>
               </div>
 
               <div className="flex justify-between items-center p-4 bg-orange-50 rounded-lg border-2 border-orange-200 shadow-sm">
                 <span className="font-semibold text-gray-800">Status</span>
-                <Badge variant="secondary" className="bg-orange-100 text-orange-800 border-orange-300 font-medium">
+                <Badge
+                  variant="secondary"
+                  className="bg-orange-100 text-orange-800 border-orange-300 font-medium"
+                >
                   <Clock className="h-3 w-3 mr-1" />
                   Awaiting Payment
                 </Badge>
@@ -336,7 +357,8 @@ function OrderConfirmationContent() {
                     <ExternalLink className="ml-2 h-4 w-4" />
                   </Button>
                   <p className="text-xs text-gray-600 mt-2">
-                    After payment, it may take 1-2 hours for verification. You&apos;ll receive an email confirmation.
+                    After payment, it may take 1-2 hours for verification. You&apos;ll receive an
+                    email confirmation.
                   </p>
                 </div>
               )}
@@ -368,7 +390,8 @@ function OrderConfirmationContent() {
                   <div>
                     <p className="font-medium">Assignment to Tutor</p>
                     <p className="text-gray-600">
-                      We&apos;ll assign your order to a qualified tutor who specializes in your subject area
+                      We&apos;ll assign your order to a qualified tutor who specializes in your
+                      subject area
                     </p>
                   </div>
                 </div>
@@ -414,20 +437,22 @@ function OrderConfirmationContent() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default function OrderConfirmationPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading order details...</p>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading order details...</p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <OrderConfirmationContent />
     </Suspense>
-  )
+  );
 }

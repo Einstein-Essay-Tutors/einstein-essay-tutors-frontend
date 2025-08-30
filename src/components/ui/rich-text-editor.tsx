@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { useEditor, EditorContent } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import Image from '@tiptap/extension-image'
-import Link from '@tiptap/extension-link'
-import { Button } from '@/components/ui/button'
+import { useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Image from '@tiptap/extension-image';
+import Link from '@tiptap/extension-link';
+import { Button } from '@/components/ui/button';
 import {
   Bold,
   Italic,
@@ -23,18 +23,23 @@ import {
   Heading3,
   AlignLeft,
   AlignCenter,
-  AlignRight
-} from 'lucide-react'
-import { useCallback } from 'react'
+  AlignRight,
+} from 'lucide-react';
+import { useCallback } from 'react';
 
 interface RichTextEditorProps {
-  content: string
-  onChange: (content: string) => void
-  placeholder?: string
-  className?: string
+  content: string;
+  onChange: (content: string) => void;
+  placeholder?: string;
+  className?: string;
 }
 
-export function RichTextEditor({ content, onChange, placeholder = 'Start writing...', className }: RichTextEditorProps) {
+export function RichTextEditor({
+  content,
+  onChange,
+  placeholder = 'Start writing...',
+  className,
+}: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -53,44 +58,45 @@ export function RichTextEditor({ content, onChange, placeholder = 'Start writing
     content,
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML())
+      onChange(editor.getHTML());
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[200px] px-4 py-2',
+        class:
+          'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[200px] px-4 py-2',
         spellcheck: 'true',
       },
     },
-  })
+  });
 
   const addImage = useCallback(() => {
-    const url = window.prompt('Enter image URL:')
+    const url = window.prompt('Enter image URL:');
     if (url && editor) {
-      editor.chain().focus().setImage({ src: url }).run()
+      editor.chain().focus().setImage({ src: url }).run();
     }
-  }, [editor])
+  }, [editor]);
 
   const addLink = useCallback(() => {
-    const previousUrl = editor?.getAttributes('link').href
-    const url = window.prompt('Enter link URL:', previousUrl)
+    const previousUrl = editor?.getAttributes('link').href;
+    const url = window.prompt('Enter link URL:', previousUrl);
 
     // cancelled
     if (url === null) {
-      return
+      return;
     }
 
     // empty
     if (url === '') {
-      editor?.chain().focus().extendMarkRange('link').unsetLink().run()
-      return
+      editor?.chain().focus().extendMarkRange('link').unsetLink().run();
+      return;
     }
 
     // update link
-    editor?.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
-  }, [editor])
+    editor?.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+  }, [editor]);
 
   if (!editor) {
-    return null
+    return null;
   }
 
   return (
@@ -257,10 +263,11 @@ export function RichTextEditor({ content, onChange, placeholder = 'Start writing
 
       {/* Word Count */}
       <div className="px-3 py-2 text-xs text-gray-500 border-t bg-gray-50">
-        {editor.storage.characterCount?.characters()} characters, {editor.storage.characterCount?.words()} words
+        {editor.storage.characterCount?.characters()} characters,{' '}
+        {editor.storage.characterCount?.words()} words
       </div>
     </div>
-  )
+  );
 }
 
-export default RichTextEditor
+export default RichTextEditor;

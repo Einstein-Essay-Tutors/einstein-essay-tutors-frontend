@@ -18,18 +18,23 @@ export default function TermsPage() {
                 Back to Home
               </Button>
             </Link>
-            
+
             <div className="flex items-center gap-4 mb-6">
               <div className="p-3 bg-primary/10 rounded-lg">
                 <FileText className="h-8 w-8 text-primary" />
               </div>
               <div>
-                <h1 className="text-3xl lg:text-4xl font-bold text-gray-900">
-                  Terms of Service
-                </h1>
+                <h1 className="text-3xl lg:text-4xl font-bold text-gray-900">Terms of Service</h1>
                 <div className="flex items-center gap-2 text-gray-600 mt-2">
                   <Calendar className="h-4 w-4" />
-                  <span className="text-sm">Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                  <span className="text-sm">
+                    Last updated:{' '}
+                    {new Date().toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </span>
                 </div>
               </div>
             </div>
@@ -47,14 +52,18 @@ export default function TermsPage() {
                   <section>
                     <h2 className="text-2xl font-semibold mb-4">1. Acceptance of Terms</h2>
                     <p>
-                      By accessing and using Einstein Essay Tutors ("we", "our", or "us"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
+                      By accessing and using Einstein Essay Tutors ("we", "our", or "us"), you
+                      accept and agree to be bound by the terms and provision of this agreement. If
+                      you do not agree to abide by the above, please do not use this service.
                     </p>
                   </section>
 
                   <section>
                     <h2 className="text-2xl font-semibold mb-4">2. Service Description</h2>
                     <p>
-                      Einstein Essay Tutors provides academic writing assistance, including but not limited to essays, research papers, dissertations, and editing services. Our services are intended for research and study purposes only.
+                      Einstein Essay Tutors provides academic writing assistance, including but not
+                      limited to essays, research papers, dissertations, and editing services. Our
+                      services are intended for research and study purposes only.
                     </p>
                   </section>
 
@@ -62,7 +71,10 @@ export default function TermsPage() {
                     <h2 className="text-2xl font-semibold mb-4">3. User Responsibilities</h2>
                     <ul className="list-disc pl-6 space-y-2">
                       <li>Provide accurate and complete information when placing orders</li>
-                      <li>Use our services ethically and in accordance with your institution's policies</li>
+                      <li>
+                        Use our services ethically and in accordance with your institution's
+                        policies
+                      </li>
                       <li>Respect intellectual property rights and avoid plagiarism</li>
                       <li>Communicate respectfully with our staff and writers</li>
                       <li>Make payments according to agreed terms</li>
@@ -82,7 +94,10 @@ export default function TermsPage() {
                   <section>
                     <h2 className="text-2xl font-semibold mb-4">5. Quality Guarantee</h2>
                     <p>
-                      We guarantee that all work delivered meets the specified requirements. If you are not satisfied with the quality of work, you may request revisions within 14 days of delivery at no additional cost, provided the revision requests are within the original order requirements.
+                      We guarantee that all work delivered meets the specified requirements. If you
+                      are not satisfied with the quality of work, you may request revisions within
+                      14 days of delivery at no additional cost, provided the revision requests are
+                      within the original order requirements.
                     </p>
                   </section>
 
@@ -99,28 +114,37 @@ export default function TermsPage() {
                   <section>
                     <h2 className="text-2xl font-semibold mb-4">7. Intellectual Property</h2>
                     <p>
-                      Upon full payment, you receive full ownership rights to the completed work. However, we retain the right to use anonymized versions of completed work for quality assurance and training purposes.
+                      Upon full payment, you receive full ownership rights to the completed work.
+                      However, we retain the right to use anonymized versions of completed work for
+                      quality assurance and training purposes.
                     </p>
                   </section>
 
                   <section>
                     <h2 className="text-2xl font-semibold mb-4">8. Privacy and Confidentiality</h2>
                     <p>
-                      We are committed to protecting your privacy and maintaining the confidentiality of your personal information. Please refer to our Privacy Policy for detailed information about how we collect, use, and protect your data.
+                      We are committed to protecting your privacy and maintaining the
+                      confidentiality of your personal information. Please refer to our Privacy
+                      Policy for detailed information about how we collect, use, and protect your
+                      data.
                     </p>
                   </section>
 
                   <section>
                     <h2 className="text-2xl font-semibold mb-4">9. Limitation of Liability</h2>
                     <p>
-                      Einstein Essay Tutors shall not be liable for any direct, indirect, incidental, special, or consequential damages arising from your use of our services, except where prohibited by law.
+                      Einstein Essay Tutors shall not be liable for any direct, indirect,
+                      incidental, special, or consequential damages arising from your use of our
+                      services, except where prohibited by law.
                     </p>
                   </section>
 
                   <section>
                     <h2 className="text-2xl font-semibold mb-4">10. Modifications to Terms</h2>
                     <p>
-                      We reserve the right to modify these terms at any time. Changes will be effective immediately upon posting on our website. Your continued use of our services after any such changes constitutes acceptance of the new terms.
+                      We reserve the right to modify these terms at any time. Changes will be
+                      effective immediately upon posting on our website. Your continued use of our
+                      services after any such changes constitutes acceptance of the new terms.
                     </p>
                   </section>
 
@@ -130,8 +154,12 @@ export default function TermsPage() {
                       If you have any questions about these Terms of Service, please contact us at:
                     </p>
                     <div className="bg-gray-50 p-4 rounded-lg mt-4">
-                      <p><strong>Email:</strong> legal@einsteinessaytutors.com</p>
-                      <p><strong>Address:</strong> Einstein Essay Tutors Legal Department</p>
+                      <p>
+                        <strong>Email:</strong> legal@einsteinessaytutors.com
+                      </p>
+                      <p>
+                        <strong>Address:</strong> Einstein Essay Tutors Legal Department
+                      </p>
                     </div>
                   </section>
                 </div>

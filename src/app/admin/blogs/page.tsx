@@ -1,17 +1,23 @@
-'use client'
+'use client';
 
-import { useState, useEffect, useCallback } from 'react'
-import { useAuth } from '@/context/AuthContext'
-import { useRouter } from 'next/navigation'
-import { getApiUrl } from '@/lib/config'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import { useToast } from '@/components/ui/use-toast'
-import RichTextEditor from '@/components/ui/rich-text-editor'
+import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
+import { getApiUrl } from '@/lib/config';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/components/ui/use-toast';
+import RichTextEditor from '@/components/ui/rich-text-editor';
 import {
   Search,
   Plus,
@@ -26,58 +32,58 @@ import {
   BookOpen,
   Loader2,
   ChevronLeft,
-  ChevronRight
-} from 'lucide-react'
-import Link from 'next/link'
+  ChevronRight,
+} from 'lucide-react';
+import Link from 'next/link';
 
 interface Blog {
-  id: string
-  title: string
-  slug: string
-  excerpt: string
-  status: 'draft' | 'published' | 'archived'
-  published_at: string | null
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  status: 'draft' | 'published' | 'archived';
+  published_at: string | null;
   author: {
-    id: number
-    username: string
-    name: string
-  }
+    id: number;
+    username: string;
+    name: string;
+  };
   subject: {
-    id: string
-    name: string
-  } | null
-  tags: string[]
-  view_count: number
-  created_at: string
-  updated_at: string
-  cover_image: string | null
+    id: string;
+    name: string;
+  } | null;
+  tags: string[];
+  view_count: number;
+  created_at: string;
+  updated_at: string;
+  cover_image: string | null;
 }
 
 interface Subject {
-  id: string
-  name: string
+  id: string;
+  name: string;
 }
 
 export default function AdminBlogsPage() {
-  const [blogs, setBlogs] = useState<Blog[]>([])
-  const [subjects, setSubjects] = useState<Subject[]>([])
-  const [loading, setLoading] = useState(true)
-  const [blogsLoading, setBlogsLoading] = useState(false)
-  
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [blogsLoading, setBlogsLoading] = useState(false);
+
   // Filters and pagination
-  const [statusFilter, setStatusFilter] = useState('all')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [currentPage, setCurrentPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
-  const [totalCount, setTotalCount] = useState(0)
-  
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+
   // Modals
-  const [showCreateModal, setShowCreateModal] = useState(false)
-  const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null)
-  const [showEditModal, setShowEditModal] = useState(false)
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-  const [loadingBlogDetails, setLoadingBlogDetails] = useState(false)
-  
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [loadingBlogDetails, setLoadingBlogDetails] = useState(false);
+
   // Form state
   const [blogForm, setBlogForm] = useState({
     title: '',
@@ -87,64 +93,63 @@ export default function AdminBlogsPage() {
     subject_id: 'none',
     tags: '',
     meta_title: '',
-    meta_description: ''
-  })
+    meta_description: '',
+  });
 
-  const { user, getAuthHeaders } = useAuth()
-  const { toast } = useToast()
-  const router = useRouter()
+  const { user, getAuthHeaders } = useAuth();
+  const { toast } = useToast();
+  const router = useRouter();
 
   const fetchSubjects = useCallback(async () => {
     try {
       const response = await fetch(getApiUrl('admin/blog_subjects/'), {
-        headers: getAuthHeaders()
-      })
-      
+        headers: getAuthHeaders(),
+      });
+
       if (response.ok) {
-        const data = await response.json()
-        setSubjects(data.subjects)
+        const data = await response.json();
+        setSubjects(data.subjects);
       }
     } catch (error) {
-      console.error('Error fetching subjects:', error)
+      console.error('Error fetching subjects:', error);
     }
-  }, [getAuthHeaders])
+  }, [getAuthHeaders]);
 
   const fetchBlogs = useCallback(async () => {
-    setBlogsLoading(true)
+    setBlogsLoading(true);
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
-        page_size: '20'
-      })
-      
-      if (statusFilter && statusFilter !== 'all') params.append('status', statusFilter)
-      if (searchQuery) params.append('search', searchQuery)
+        page_size: '20',
+      });
+
+      if (statusFilter && statusFilter !== 'all') params.append('status', statusFilter);
+      if (searchQuery) params.append('search', searchQuery);
 
       const response = await fetch(getApiUrl(`admin/blogs/?${params}`), {
-        headers: getAuthHeaders()
-      })
+        headers: getAuthHeaders(),
+      });
 
       if (response.ok) {
-        const data = await response.json()
-        setBlogs(data.blogs)
-        setTotalPages(data.total_pages)
-        setTotalCount(data.total_count)
+        const data = await response.json();
+        setBlogs(data.blogs);
+        setTotalPages(data.total_pages);
+        setTotalCount(data.total_count);
       } else {
-        throw new Error('Failed to fetch blogs')
+        throw new Error('Failed to fetch blogs');
       }
-
     } catch (error) {
-      console.error('Error fetching blogs:', error)
+      console.error('Error fetching blogs:', error);
       toast({
         title: 'Error',
         description: 'Failed to load blog posts',
-        variant: 'destructive'
-      })
+        variant: 'destructive',
+      });
     } finally {
-      setBlogsLoading(false)
-      setLoading(false)
+      setBlogsLoading(false);
+      setLoading(false);
     }
-  }, [currentPage, statusFilter, searchQuery, getAuthHeaders, toast])
+  }, [currentPage, statusFilter, searchQuery, getAuthHeaders, toast]);
 
   // Check admin access
   useEffect(() => {
@@ -152,24 +157,24 @@ export default function AdminBlogsPage() {
       toast({
         title: 'Access Denied',
         description: 'You need admin privileges to access this page',
-        variant: 'destructive'
-      })
-      router.push('/dashboard')
+        variant: 'destructive',
+      });
+      router.push('/dashboard');
     }
-  }, [user, router, toast])
+  }, [user, router, toast]);
 
   // Fetch data
   useEffect(() => {
     if (user && (user.is_staff || user.is_superuser)) {
-      fetchSubjects()
+      fetchSubjects();
     }
-  }, [user, fetchSubjects])
+  }, [user, fetchSubjects]);
 
   useEffect(() => {
     if (user && (user.is_staff || user.is_superuser)) {
-      fetchBlogs()
+      fetchBlogs();
     }
-  }, [statusFilter, searchQuery, currentPage, user, fetchBlogs])
+  }, [statusFilter, searchQuery, currentPage, user, fetchBlogs]);
 
   const resetForm = () => {
     setBlogForm({
@@ -180,18 +185,18 @@ export default function AdminBlogsPage() {
       subject_id: 'none',
       tags: '',
       meta_title: '',
-      meta_description: ''
-    })
-  }
+      meta_description: '',
+    });
+  };
 
   const handleCreateBlog = async () => {
     if (!blogForm.title.trim() || !blogForm.content.trim()) {
       toast({
         title: 'Validation Error',
         description: 'Title and content are required',
-        variant: 'destructive'
-      })
-      return
+        variant: 'destructive',
+      });
+      return;
     }
 
     try {
@@ -199,47 +204,46 @@ export default function AdminBlogsPage() {
         method: 'POST',
         headers: {
           ...getAuthHeaders(),
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           ...blogForm,
-          subject_id: blogForm.subject_id === 'none' ? null : blogForm.subject_id
-        })
-      })
+          subject_id: blogForm.subject_id === 'none' ? null : blogForm.subject_id,
+        }),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
         toast({
           title: 'Blog Created',
           description: data.message,
-          variant: 'default'
-        })
-        setShowCreateModal(false)
-        resetForm()
-        fetchBlogs()
+          variant: 'default',
+        });
+        setShowCreateModal(false);
+        resetForm();
+        fetchBlogs();
       } else {
-        throw new Error(data.error || 'Failed to create blog post')
+        throw new Error(data.error || 'Failed to create blog post');
       }
-
     } catch (error) {
-      console.error('Error creating blog:', error)
+      console.error('Error creating blog:', error);
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to create blog post',
-        variant: 'destructive'
-      })
+        variant: 'destructive',
+      });
     }
-  }
+  };
 
   const handleUpdateBlog = async () => {
     if (!selectedBlog || !blogForm.title.trim() || !blogForm.content.trim()) {
       toast({
         title: 'Validation Error',
         description: 'Title and content are required',
-        variant: 'destructive'
-      })
-      return
+        variant: 'destructive',
+      });
+      return;
     }
 
     try {
@@ -247,73 +251,71 @@ export default function AdminBlogsPage() {
         method: 'PUT',
         headers: {
           ...getAuthHeaders(),
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           ...blogForm,
-          subject_id: blogForm.subject_id === 'none' ? null : blogForm.subject_id
-        })
-      })
+          subject_id: blogForm.subject_id === 'none' ? null : blogForm.subject_id,
+        }),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
         toast({
           title: 'Blog Updated',
           description: data.message,
-          variant: 'default'
-        })
-        setShowEditModal(false)
-        setSelectedBlog(null)
-        resetForm()
-        fetchBlogs()
+          variant: 'default',
+        });
+        setShowEditModal(false);
+        setSelectedBlog(null);
+        resetForm();
+        fetchBlogs();
       } else {
-        throw new Error(data.error || 'Failed to update blog post')
+        throw new Error(data.error || 'Failed to update blog post');
       }
-
     } catch (error) {
-      console.error('Error updating blog:', error)
+      console.error('Error updating blog:', error);
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to update blog post',
-        variant: 'destructive'
-      })
+        variant: 'destructive',
+      });
     }
-  }
+  };
 
   const handleDeleteBlog = async () => {
-    if (!selectedBlog) return
+    if (!selectedBlog) return;
 
     try {
       const response = await fetch(getApiUrl(`admin/blogs/${selectedBlog.id}/delete/`), {
         method: 'DELETE',
-        headers: getAuthHeaders()
-      })
+        headers: getAuthHeaders(),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
         toast({
           title: 'Blog Deleted',
           description: data.message,
-          variant: 'default'
-        })
-        setShowDeleteConfirm(false)
-        setSelectedBlog(null)
-        fetchBlogs()
+          variant: 'default',
+        });
+        setShowDeleteConfirm(false);
+        setSelectedBlog(null);
+        fetchBlogs();
       } else {
-        throw new Error(data.error || 'Failed to delete blog post')
+        throw new Error(data.error || 'Failed to delete blog post');
       }
-
     } catch (error) {
-      console.error('Error deleting blog:', error)
+      console.error('Error deleting blog:', error);
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to delete blog post',
-        variant: 'destructive'
-      })
+        variant: 'destructive',
+      });
     }
-  }
+  };
 
   const handleStatusChange = async (blog: Blog, newStatus: 'draft' | 'published' | 'archived') => {
     try {
@@ -321,47 +323,48 @@ export default function AdminBlogsPage() {
         method: 'PUT',
         headers: {
           ...getAuthHeaders(),
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ status: newStatus })
-      })
+        body: JSON.stringify({ status: newStatus }),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
         toast({
           title: 'Status Updated',
           description: data.message,
-          variant: 'default'
-        })
-        fetchBlogs()
+          variant: 'default',
+        });
+        fetchBlogs();
       } else {
-        throw new Error(data.error || 'Failed to update status')
+        throw new Error(data.error || 'Failed to update status');
       }
-
     } catch (error) {
-      console.error('Error updating status:', error)
+      console.error('Error updating status:', error);
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to update status',
-        variant: 'destructive'
-      })
+        variant: 'destructive',
+      });
     }
-  }
+  };
 
   const getStatusBadge = (status: string) => {
     const statusColors = {
-      'draft': 'bg-gray-100 text-gray-800',
-      'published': 'bg-green-100 text-green-800',
-      'archived': 'bg-orange-100 text-orange-800'
-    }
+      draft: 'bg-gray-100 text-gray-800',
+      published: 'bg-green-100 text-green-800',
+      archived: 'bg-orange-100 text-orange-800',
+    };
 
     return (
-      <Badge className={statusColors[status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800'}>
+      <Badge
+        className={statusColors[status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800'}
+      >
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </Badge>
-    )
-  }
+    );
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -369,12 +372,12 @@ export default function AdminBlogsPage() {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
+      minute: '2-digit',
+    });
+  };
 
   const openEditModal = (blog: Blog) => {
-    setSelectedBlog(blog)
+    setSelectedBlog(blog);
     setBlogForm({
       title: blog.title,
       excerpt: blog.excerpt,
@@ -383,57 +386,57 @@ export default function AdminBlogsPage() {
       subject_id: blog.subject?.id || 'none',
       tags: Array.isArray(blog.tags) ? blog.tags.join(', ') : blog.tags || '',
       meta_title: '',
-      meta_description: ''
-    })
-    setShowEditModal(true)
-    
+      meta_description: '',
+    });
+    setShowEditModal(true);
+
     // Fetch full blog details
-    fetchBlogDetails(blog.id)
-  }
+    fetchBlogDetails(blog.id);
+  };
 
   const fetchBlogDetails = async (blogId: string) => {
-    setLoadingBlogDetails(true)
+    setLoadingBlogDetails(true);
     try {
       const response = await fetch(getApiUrl(`admin/blogs/${blogId}/`), {
-        headers: getAuthHeaders()
-      })
+        headers: getAuthHeaders(),
+      });
 
       if (response.ok) {
-        const blog = await response.json()
-        console.log('Fetched blog details:', blog) // Debug log
-        console.log('Blog content length:', blog.content?.length || 0) // Debug content length
+        const blog = await response.json();
+        console.log('Fetched blog details:', blog); // Debug log
+        console.log('Blog content length:', blog.content?.length || 0); // Debug content length
         setBlogForm(prev => {
           const updatedForm = {
             ...prev,
             content: blog.content || '',
             meta_title: blog.meta_title || '',
-            meta_description: blog.meta_description || ''
-          }
-          console.log('Updated form content length:', updatedForm.content?.length || 0) // Debug
-          return updatedForm
-        })
+            meta_description: blog.meta_description || '',
+          };
+          console.log('Updated form content length:', updatedForm.content?.length || 0); // Debug
+          return updatedForm;
+        });
       } else {
-        console.error('Failed to fetch blog details:', response.status, response.statusText)
+        console.error('Failed to fetch blog details:', response.status, response.statusText);
         toast({
           title: 'Error',
           description: 'Failed to load blog details',
-          variant: 'destructive'
-        })
+          variant: 'destructive',
+        });
       }
     } catch (error) {
-      console.error('Error fetching blog details:', error)
+      console.error('Error fetching blog details:', error);
       toast({
         title: 'Error',
         description: 'Failed to load blog details',
-        variant: 'destructive'
-      })
+        variant: 'destructive',
+      });
     } finally {
-      setLoadingBlogDetails(false)
+      setLoadingBlogDetails(false);
     }
-  }
+  };
 
   if (!user || (!user.is_staff && !user.is_superuser)) {
-    return null
+    return null;
   }
 
   if (loading) {
@@ -444,7 +447,7 @@ export default function AdminBlogsPage() {
           <p className="text-gray-400">Loading blog management...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -467,7 +470,10 @@ export default function AdminBlogsPage() {
             </h1>
             <p className="text-gray-400 mt-2">Create, edit, and manage blog posts</p>
           </div>
-          <Button onClick={() => setShowCreateModal(true)} className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
+          <Button
+            onClick={() => setShowCreateModal(true)}
+            className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
+          >
             <Plus className="h-4 w-4 mr-2" />
             New Blog Post
           </Button>
@@ -555,7 +561,7 @@ export default function AdminBlogsPage() {
                   <Input
                     placeholder="Search by title or content..."
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={e => setSearchQuery(e.target.value)}
                     className="pl-10"
                   />
                 </div>
@@ -583,10 +589,7 @@ export default function AdminBlogsPage() {
               <div className="text-center py-8">
                 <BookOpen className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                 <p className="text-gray-400">No blog posts found</p>
-                <Button 
-                  onClick={() => setShowCreateModal(true)} 
-                  className="mt-4"
-                >
+                <Button onClick={() => setShowCreateModal(true)} className="mt-4">
                   Create Your First Post
                 </Button>
               </div>
@@ -605,7 +608,7 @@ export default function AdminBlogsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {blogs.map((blog) => (
+                    {blogs.map(blog => (
                       <tr key={blog.id} className="border-b hover:bg-blue-50 transition-colors">
                         <td className="py-3 px-2">
                           <div>
@@ -688,11 +691,7 @@ export default function AdminBlogsPage() {
                         </td>
                         <td className="py-3 px-2">
                           <div className="flex gap-1">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => openEditModal(blog)}
-                            >
+                            <Button size="sm" variant="outline" onClick={() => openEditModal(blog)}>
                               <Edit className="h-3 w-3" />
                             </Button>
                             {blog.status === 'published' && (
@@ -706,8 +705,8 @@ export default function AdminBlogsPage() {
                               size="sm"
                               variant="outline"
                               onClick={() => {
-                                setSelectedBlog(blog)
-                                setShowDeleteConfirm(true)
+                                setSelectedBlog(blog);
+                                setShowDeleteConfirm(true);
                               }}
                               className="text-red-600 hover:text-red-700"
                             >
@@ -763,12 +762,17 @@ export default function AdminBlogsPage() {
                     <Input
                       placeholder="Blog post title"
                       value={blogForm.title}
-                      onChange={(e) => setBlogForm(prev => ({ ...prev, title: e.target.value }))}
+                      onChange={e => setBlogForm(prev => ({ ...prev, title: e.target.value }))}
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2">Status</label>
-                    <Select value={blogForm.status} onValueChange={(value: 'draft' | 'published' | 'archived') => setBlogForm(prev => ({ ...prev, status: value }))}>
+                    <Select
+                      value={blogForm.status}
+                      onValueChange={(value: 'draft' | 'published' | 'archived') =>
+                        setBlogForm(prev => ({ ...prev, status: value }))
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -786,7 +790,7 @@ export default function AdminBlogsPage() {
                   <Textarea
                     placeholder="Brief description for blog listings (optional)"
                     value={blogForm.excerpt}
-                    onChange={(e) => setBlogForm(prev => ({ ...prev, excerpt: e.target.value }))}
+                    onChange={e => setBlogForm(prev => ({ ...prev, excerpt: e.target.value }))}
                     rows={3}
                   />
                 </div>
@@ -795,7 +799,7 @@ export default function AdminBlogsPage() {
                   <label className="block text-sm font-medium mb-2">Content *</label>
                   <RichTextEditor
                     content={blogForm.content}
-                    onChange={(content) => setBlogForm(prev => ({ ...prev, content }))}
+                    onChange={content => setBlogForm(prev => ({ ...prev, content }))}
                     placeholder="Write your blog post content here..."
                     className="min-h-[300px]"
                   />
@@ -804,13 +808,16 @@ export default function AdminBlogsPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-2">Subject</label>
-                    <Select value={blogForm.subject_id} onValueChange={(value) => setBlogForm(prev => ({ ...prev, subject_id: value }))}>
+                    <Select
+                      value={blogForm.subject_id}
+                      onValueChange={value => setBlogForm(prev => ({ ...prev, subject_id: value }))}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select a subject" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="none">No subject</SelectItem>
-                        {subjects.map((subject) => (
+                        {subjects.map(subject => (
                           <SelectItem key={subject.id} value={subject.id}>
                             {subject.name}
                           </SelectItem>
@@ -823,7 +830,7 @@ export default function AdminBlogsPage() {
                     <Input
                       placeholder="Comma-separated tags (e.g. essay, writing, tips)"
                       value={blogForm.tags}
-                      onChange={(e) => setBlogForm(prev => ({ ...prev, tags: e.target.value }))}
+                      onChange={e => setBlogForm(prev => ({ ...prev, tags: e.target.value }))}
                     />
                   </div>
                 </div>
@@ -834,7 +841,7 @@ export default function AdminBlogsPage() {
                     <Input
                       placeholder="SEO title (optional)"
                       value={blogForm.meta_title}
-                      onChange={(e) => setBlogForm(prev => ({ ...prev, meta_title: e.target.value }))}
+                      onChange={e => setBlogForm(prev => ({ ...prev, meta_title: e.target.value }))}
                     />
                   </div>
                   <div>
@@ -842,24 +849,24 @@ export default function AdminBlogsPage() {
                     <Input
                       placeholder="SEO description (optional)"
                       value={blogForm.meta_description}
-                      onChange={(e) => setBlogForm(prev => ({ ...prev, meta_description: e.target.value }))}
+                      onChange={e =>
+                        setBlogForm(prev => ({ ...prev, meta_description: e.target.value }))
+                      }
                     />
                   </div>
                 </div>
 
                 <div className="flex justify-end gap-2 pt-4">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => {
-                      setShowCreateModal(false)
-                      resetForm()
+                      setShowCreateModal(false);
+                      resetForm();
                     }}
                   >
                     Cancel
                   </Button>
-                  <Button onClick={handleCreateBlog}>
-                    Create Blog Post
-                  </Button>
+                  <Button onClick={handleCreateBlog}>Create Blog Post</Button>
                 </div>
               </CardContent>
             </Card>
@@ -880,12 +887,17 @@ export default function AdminBlogsPage() {
                     <Input
                       placeholder="Blog post title"
                       value={blogForm.title}
-                      onChange={(e) => setBlogForm(prev => ({ ...prev, title: e.target.value }))}
+                      onChange={e => setBlogForm(prev => ({ ...prev, title: e.target.value }))}
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2">Status</label>
-                    <Select value={blogForm.status} onValueChange={(value: 'draft' | 'published' | 'archived') => setBlogForm(prev => ({ ...prev, status: value }))}>
+                    <Select
+                      value={blogForm.status}
+                      onValueChange={(value: 'draft' | 'published' | 'archived') =>
+                        setBlogForm(prev => ({ ...prev, status: value }))
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -903,7 +915,7 @@ export default function AdminBlogsPage() {
                   <Textarea
                     placeholder="Brief description for blog listings (optional)"
                     value={blogForm.excerpt}
-                    onChange={(e) => setBlogForm(prev => ({ ...prev, excerpt: e.target.value }))}
+                    onChange={e => setBlogForm(prev => ({ ...prev, excerpt: e.target.value }))}
                     rows={3}
                   />
                 </div>
@@ -912,7 +924,7 @@ export default function AdminBlogsPage() {
                   <label className="block text-sm font-medium mb-2">Content *</label>
                   <RichTextEditor
                     content={blogForm.content}
-                    onChange={(content) => setBlogForm(prev => ({ ...prev, content }))}
+                    onChange={content => setBlogForm(prev => ({ ...prev, content }))}
                     placeholder="Write your blog post content here..."
                     className="min-h-[300px]"
                   />
@@ -921,13 +933,16 @@ export default function AdminBlogsPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-2">Subject</label>
-                    <Select value={blogForm.subject_id} onValueChange={(value) => setBlogForm(prev => ({ ...prev, subject_id: value }))}>
+                    <Select
+                      value={blogForm.subject_id}
+                      onValueChange={value => setBlogForm(prev => ({ ...prev, subject_id: value }))}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select a subject" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="none">No subject</SelectItem>
-                        {subjects.map((subject) => (
+                        {subjects.map(subject => (
                           <SelectItem key={subject.id} value={subject.id}>
                             {subject.name}
                           </SelectItem>
@@ -940,7 +955,7 @@ export default function AdminBlogsPage() {
                     <Input
                       placeholder="Comma-separated tags (e.g. essay, writing, tips)"
                       value={blogForm.tags}
-                      onChange={(e) => setBlogForm(prev => ({ ...prev, tags: e.target.value }))}
+                      onChange={e => setBlogForm(prev => ({ ...prev, tags: e.target.value }))}
                     />
                   </div>
                 </div>
@@ -951,7 +966,7 @@ export default function AdminBlogsPage() {
                     <Input
                       placeholder="SEO title (optional)"
                       value={blogForm.meta_title}
-                      onChange={(e) => setBlogForm(prev => ({ ...prev, meta_title: e.target.value }))}
+                      onChange={e => setBlogForm(prev => ({ ...prev, meta_title: e.target.value }))}
                     />
                   </div>
                   <div>
@@ -959,25 +974,25 @@ export default function AdminBlogsPage() {
                     <Input
                       placeholder="SEO description (optional)"
                       value={blogForm.meta_description}
-                      onChange={(e) => setBlogForm(prev => ({ ...prev, meta_description: e.target.value }))}
+                      onChange={e =>
+                        setBlogForm(prev => ({ ...prev, meta_description: e.target.value }))
+                      }
                     />
                   </div>
                 </div>
 
                 <div className="flex justify-end gap-2 pt-4">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => {
-                      setShowEditModal(false)
-                      setSelectedBlog(null)
-                      resetForm()
+                      setShowEditModal(false);
+                      setSelectedBlog(null);
+                      resetForm();
                     }}
                   >
                     Cancel
                   </Button>
-                  <Button onClick={handleUpdateBlog}>
-                    Update Blog Post
-                  </Button>
+                  <Button onClick={handleUpdateBlog}>Update Blog Post</Button>
                 </div>
               </CardContent>
             </Card>
@@ -993,23 +1008,21 @@ export default function AdminBlogsPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-gray-500">
-                  Are you sure you want to delete &quot;{selectedBlog.title}&quot;? This action cannot be undone.
+                  Are you sure you want to delete &quot;{selectedBlog.title}&quot;? This action
+                  cannot be undone.
                 </p>
-                
+
                 <div className="flex justify-end gap-2">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => {
-                      setShowDeleteConfirm(false)
-                      setSelectedBlog(null)
+                      setShowDeleteConfirm(false);
+                      setSelectedBlog(null);
                     }}
                   >
                     Cancel
                   </Button>
-                  <Button 
-                    onClick={handleDeleteBlog}
-                    className="bg-red-600 hover:bg-red-700"
-                  >
+                  <Button onClick={handleDeleteBlog} className="bg-red-600 hover:bg-red-700">
                     Delete
                   </Button>
                 </div>
@@ -1019,5 +1032,5 @@ export default function AdminBlogsPage() {
         )}
       </div>
     </div>
-  )
+  );
 }

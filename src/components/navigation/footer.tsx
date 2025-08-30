@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
+import Link from 'next/link';
 
 const footerLinks = {
   company: [
@@ -21,7 +21,7 @@ const footerLinks = {
     { name: 'Dissertations', href: '/services/dissertations' },
     { name: 'Editing', href: '/services/editing' },
   ],
-}
+};
 
 export function Footer() {
   return (
@@ -37,10 +37,11 @@ export function Footer() {
               <span className="text-xl font-bold">Einstein Essay Tutors</span>
             </div>
             <p className="text-sm text-muted-foreground max-w-xs">
-              Professional academic writing services with expert tutors, delivering quality work on time.
+              Professional academic writing services with expert tutors, delivering quality work on
+              time.
             </p>
             <div className="flex space-x-4">
-              <Link 
+              <Link
                 href="mailto:support@einsteinessaytutors.com"
                 className="text-sm text-muted-foreground hover:text-foreground"
               >
@@ -53,7 +54,7 @@ export function Footer() {
           <div>
             <h3 className="font-semibold mb-4">Company</h3>
             <ul className="space-y-3">
-              {footerLinks.company.map((link) => (
+              {footerLinks.company.map(link => (
                 <li key={link.name}>
                   <Link
                     href={link.href}
@@ -70,7 +71,7 @@ export function Footer() {
           <div>
             <h3 className="font-semibold mb-4">Services</h3>
             <ul className="space-y-3">
-              {footerLinks.services.map((link) => (
+              {footerLinks.services.map(link => (
                 <li key={link.name}>
                   <Link
                     href={link.href}
@@ -87,7 +88,7 @@ export function Footer() {
           <div>
             <h3 className="font-semibold mb-4">Support</h3>
             <ul className="space-y-3">
-              {footerLinks.support.map((link) => (
+              {footerLinks.support.map(link => (
                 <li key={link.name}>
                   <Link
                     href={link.href}
@@ -107,21 +108,15 @@ export function Footer() {
             © {new Date().getFullYear()} Einstein Essay Tutors. All rights reserved.
           </p>
           <div className="flex items-center space-x-4 mt-4 md:mt-0">
-            <Link
-              href="/privacy"
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
+            <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground">
               Privacy
             </Link>
-            <Link
-              href="/terms"
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
+            <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground">
               Terms
             </Link>
           </div>
         </div>
       </div>
     </footer>
-  )
+  );
 }

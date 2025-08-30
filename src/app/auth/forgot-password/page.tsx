@@ -1,177 +1,173 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { validateEmail, validatePassword, validateOTP } from '@/lib/validation'
-import { authAPI } from '@/lib/api'
-import { Eye, EyeOff } from 'lucide-react'
+import { useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { validateEmail, validatePassword, validateOTP } from '@/lib/validation';
+import { authAPI } from '@/lib/api';
+import { Eye, EyeOff } from 'lucide-react';
 
-type ResetStep = 'request' | 'verify-otp' | 'reset-password' | 'success'
+type ResetStep = 'request' | 'verify-otp' | 'reset-password' | 'success';
 
 export default function ForgotPasswordPage() {
-  const [step, setStep] = useState<ResetStep>('request')
+  const [step, setStep] = useState<ResetStep>('request');
   const [formData, setFormData] = useState({
     email: '',
     otp: '',
     newPassword: '',
-    confirmPassword: ''
-  })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({})
-  const [resendCooldown, setResendCooldown] = useState(0)
-  const [resetToken, setResetToken] = useState('')
-  const [showNewPassword, setShowNewPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    confirmPassword: '',
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [resetToken, setResetToken] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const router = useRouter()
+  const router = useRouter();
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
+    setFormData(prev => ({ ...prev, [field]: value }));
     // Clear field-specific errors when user starts typing
     if (fieldErrors[field]) {
       setFieldErrors(prev => {
-        const newErrors = { ...prev }
-        delete newErrors[field]
-        return newErrors
-      })
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
     }
-    if (error) setError('')
-  }
+    if (error) setError('');
+  };
 
   const handleRequestReset = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (!validateEmail(formData.email)) {
-      setError('Please enter a valid email address')
-      return
+      setError('Please enter a valid email address');
+      return;
     }
 
-    setLoading(true)
-    setError('')
+    setLoading(true);
+    setError('');
 
     try {
-      const response = await authAPI.requestPasswordReset(formData.email)
-      setResetToken(response.data.reset_token)
-      setStep('verify-otp')
+      const response = await authAPI.requestPasswordReset(formData.email);
+      setResetToken(response.data.reset_token);
+      setStep('verify-otp');
     } catch (err) {
-      const error = err as { response?: { status?: number; data?: { error?: string } } }
+      const error = err as { response?: { status?: number; data?: { error?: string } } };
       if (error.response?.status === 429) {
-        setError('Too many password reset requests. Please try again later.')
+        setError('Too many password reset requests. Please try again later.');
       } else if (error.response?.status === 404) {
-        setError('No account found with this email address')
+        setError('No account found with this email address');
       } else if (error.response?.data?.error) {
-        setError(error.response.data.error)
+        setError(error.response.data.error);
       } else {
-        setError('Failed to send password reset email. Please try again.')
+        setError('Failed to send password reset email. Please try again.');
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleVerifyOTP = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (!validateOTP(formData.otp)) {
-      setError('Please enter a valid 6-digit verification code')
-      return
+      setError('Please enter a valid 6-digit verification code');
+      return;
     }
 
-    setLoading(true)
-    setError('')
+    setLoading(true);
+    setError('');
 
     try {
-      await authAPI.verifyPasswordResetOTP(formData.email, formData.otp, resetToken)
-      setStep('reset-password')
+      await authAPI.verifyPasswordResetOTP(formData.email, formData.otp, resetToken);
+      setStep('reset-password');
     } catch (err) {
-      const error = err as { response?: { status?: number; data?: { error?: string } } }
+      const error = err as { response?: { status?: number; data?: { error?: string } } };
       if (error.response?.status === 400) {
-        setError('Invalid or expired verification code')
+        setError('Invalid or expired verification code');
       } else if (error.response?.data?.error) {
-        setError(error.response.data.error)
+        setError(error.response.data.error);
       } else {
-        setError('Verification failed. Please try again.')
+        setError('Verification failed. Please try again.');
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleResetPassword = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    const passwordValidation = validatePassword(formData.newPassword)
+    e.preventDefault();
+
+    const passwordValidation = validatePassword(formData.newPassword);
     if (!passwordValidation.isValid) {
-      setFieldErrors({ newPassword: passwordValidation.errors })
-      return
+      setFieldErrors({ newPassword: passwordValidation.errors });
+      return;
     }
 
     if (formData.newPassword !== formData.confirmPassword) {
-      setFieldErrors({ confirmPassword: ['Passwords do not match'] })
-      return
+      setFieldErrors({ confirmPassword: ['Passwords do not match'] });
+      return;
     }
 
-    setLoading(true)
-    setError('')
-    setFieldErrors({})
+    setLoading(true);
+    setError('');
+    setFieldErrors({});
 
     try {
-      await authAPI.resetPassword(
-        formData.email, 
-        formData.otp, 
-        formData.newPassword, 
-        resetToken
-      )
-      setStep('success')
+      await authAPI.resetPassword(formData.email, formData.otp, formData.newPassword, resetToken);
+      setStep('success');
     } catch (err) {
-      const error = err as { response?: { status?: number; data?: { error?: string } } }
+      const error = err as { response?: { status?: number; data?: { error?: string } } };
       if (error.response?.data?.error) {
-        setError(error.response.data.error)
+        setError(error.response.data.error);
       } else {
-        setError('Password reset failed. Please try again.')
+        setError('Password reset failed. Please try again.');
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleResendOTP = async () => {
-    if (resendCooldown > 0) return
+    if (resendCooldown > 0) return;
 
     try {
-      const response = await authAPI.requestPasswordReset(formData.email)
-      setResetToken(response.data.reset_token)
-      setError('')
-      setResendCooldown(60)
-      
+      const response = await authAPI.requestPasswordReset(formData.email);
+      setResetToken(response.data.reset_token);
+      setError('');
+      setResendCooldown(60);
+
       // Countdown timer
       const timer = setInterval(() => {
-        setResendCooldown((prev) => {
+        setResendCooldown(prev => {
           if (prev <= 1) {
-            clearInterval(timer)
-            return 0
+            clearInterval(timer);
+            return 0;
           }
-          return prev - 1
-        })
-      }, 1000)
+          return prev - 1;
+        });
+      }, 1000);
     } catch (err) {
-      const error = err as { response?: { status?: number; data?: { error?: string } } }
-      setError('Failed to resend verification code. Please try again.')
+      const error = err as { response?: { status?: number; data?: { error?: string } } };
+      setError('Failed to resend verification code. Please try again.');
     }
-  }
+  };
 
   const renderRequestForm = () => (
     <div className="space-y-6">
       <div className="text-center">
         <h1 className="text-3xl font-bold text-gray-900">Forgot Your Password?</h1>
         <p className="mt-2 text-gray-600">
-          No worries! Enter your email address and we&apos;ll send you a verification code to reset your password.
+          No worries! Enter your email address and we&apos;ll send you a verification code to reset
+          your password.
         </p>
       </div>
 
@@ -188,17 +184,13 @@ export default function ForgotPasswordPage() {
             id="email"
             type="email"
             value={formData.email}
-            onChange={(e) => handleInputChange('email', e.target.value)}
+            onChange={e => handleInputChange('email', e.target.value)}
             required
             placeholder="Enter your registered email address"
           />
         </div>
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={loading}
-        >
+        <Button type="submit" className="w-full" disabled={loading}>
           {loading ? 'Sending...' : 'Send Verification Code'}
         </Button>
       </form>
@@ -212,7 +204,7 @@ export default function ForgotPasswordPage() {
         </p>
       </div>
     </div>
-  )
+  );
 
   const renderVerifyOTPForm = () => (
     <div className="space-y-6">
@@ -236,7 +228,7 @@ export default function ForgotPasswordPage() {
             id="otp"
             type="text"
             value={formData.otp}
-            onChange={(e) => handleInputChange('otp', e.target.value.replace(/\D/g, '').slice(0, 6))}
+            onChange={e => handleInputChange('otp', e.target.value.replace(/\D/g, '').slice(0, 6))}
             required
             placeholder="Enter 6-digit code"
             className="text-center text-2xl tracking-widest"
@@ -244,19 +236,13 @@ export default function ForgotPasswordPage() {
           />
         </div>
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={loading || formData.otp.length !== 6}
-        >
+        <Button type="submit" className="w-full" disabled={loading || formData.otp.length !== 6}>
           {loading ? 'Verifying...' : 'Verify Code'}
         </Button>
       </form>
 
       <div className="text-center">
-        <p className="text-sm text-gray-600 mb-2">
-          Didn't receive the code?
-        </p>
+        <p className="text-sm text-gray-600 mb-2">Didn't receive the code?</p>
         <Button
           type="button"
           variant="outline"
@@ -264,10 +250,7 @@ export default function ForgotPasswordPage() {
           disabled={resendCooldown > 0}
           className="text-sm"
         >
-          {resendCooldown > 0 
-            ? `Resend in ${resendCooldown}s` 
-            : 'Resend Code'
-          }
+          {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Code'}
         </Button>
       </div>
 
@@ -277,7 +260,7 @@ export default function ForgotPasswordPage() {
         </Link>
       </div>
     </div>
-  )
+  );
 
   const renderResetPasswordForm = () => (
     <div className="space-y-6">
@@ -300,9 +283,9 @@ export default function ForgotPasswordPage() {
           <div className="relative">
             <Input
               id="newPassword"
-              type={showNewPassword ? "text" : "password"}
+              type={showNewPassword ? 'text' : 'password'}
               value={formData.newPassword}
-              onChange={(e) => handleInputChange('newPassword', e.target.value)}
+              onChange={e => handleInputChange('newPassword', e.target.value)}
               required
               placeholder="Create a strong password"
               className="pr-10"
@@ -333,9 +316,9 @@ export default function ForgotPasswordPage() {
           <div className="relative">
             <Input
               id="confirmPassword"
-              type={showConfirmPassword ? "text" : "password"}
+              type={showConfirmPassword ? 'text' : 'password'}
               value={formData.confirmPassword}
-              onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+              onChange={e => handleInputChange('confirmPassword', e.target.value)}
               required
               placeholder="Confirm your new password"
               className="pr-10"
@@ -361,25 +344,26 @@ export default function ForgotPasswordPage() {
           )}
         </div>
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={loading}
-        >
+        <Button type="submit" className="w-full" disabled={loading}>
           {loading ? 'Updating Password...' : 'Update Password'}
         </Button>
       </form>
     </div>
-  )
+  );
 
   const renderSuccessMessage = () => (
     <div className="text-center space-y-6">
       <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-        <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-8 h-8 text-green-600"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
         </svg>
       </div>
-      
+
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Password Updated Successfully!</h1>
         <p className="mt-2 text-gray-600">
@@ -388,17 +372,15 @@ export default function ForgotPasswordPage() {
       </div>
 
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm text-yellow-800">
-        <strong>Security Notice:</strong> If you didn't request this password change, please contact our support team immediately.
+        <strong>Security Notice:</strong> If you didn't request this password change, please contact
+        our support team immediately.
       </div>
 
-      <Button
-        onClick={() => router.push('/auth/login')}
-        className="w-full"
-      >
+      <Button onClick={() => router.push('/auth/login')} className="w-full">
         Continue to Sign In
       </Button>
     </div>
-  )
+  );
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -411,5 +393,5 @@ export default function ForgotPasswordPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

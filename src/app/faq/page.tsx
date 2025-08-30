@@ -6,15 +6,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { getApiUrl } from '@/lib/config';
-import { 
-  ChevronDown, 
-  ChevronUp, 
-  Search, 
+import {
+  ChevronDown,
+  ChevronUp,
+  Search,
   HelpCircle,
   ArrowRight,
   MessageCircle,
   Phone,
-  Mail
+  Mail,
 } from 'lucide-react';
 
 interface FAQ {
@@ -53,14 +53,17 @@ export default function FAQPage() {
   useEffect(() => {
     if (faqData && searchQuery) {
       // Filter FAQs based on search query
-      const filtered = faqData.categories.map(category => ({
-        ...category,
-        faqs: category.faqs.filter(faq => 
-          faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-      })).filter(category => category.faqs.length > 0);
-      
+      const filtered = faqData.categories
+        .map(category => ({
+          ...category,
+          faqs: category.faqs.filter(
+            faq =>
+              faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
+          ),
+        }))
+        .filter(category => category.faqs.length > 0);
+
       setFilteredData(filtered);
     } else if (faqData) {
       setFilteredData(faqData.categories);
@@ -70,7 +73,7 @@ export default function FAQPage() {
   const fetchFAQs = async () => {
     try {
       const response = await fetch(getApiUrl('faqs/'));
-      
+
       if (response.ok) {
         const data: FAQResponse = await response.json();
         setFaqData(data);
@@ -118,10 +121,10 @@ export default function FAQPage() {
               <span className="text-primary"> Questions</span>
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Find answers to common questions about our academic writing services, 
-              ordering process, and policies.
+              Find answers to common questions about our academic writing services, ordering
+              process, and policies.
             </p>
-            
+
             {/* Search Bar */}
             <div className="relative max-w-2xl mx-auto mb-8">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -131,7 +134,7 @@ export default function FAQPage() {
                 type="text"
                 placeholder="Search frequently asked questions..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={e => setSearchQuery(e.target.value)}
                 className="pl-10 pr-4 py-3 text-lg"
               />
             </div>
@@ -156,14 +159,12 @@ export default function FAQPage() {
                 <CardContent>
                   <HelpCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                   <p className="text-lg text-gray-600 mb-2">
-                    {searchQuery ? 'No FAQs found matching your search.' : 'No FAQs available at the moment.'}
+                    {searchQuery
+                      ? 'No FAQs found matching your search.'
+                      : 'No FAQs available at the moment.'}
                   </p>
                   {searchQuery && (
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setSearchQuery('')}
-                      className="mt-4"
-                    >
+                    <Button variant="outline" onClick={() => setSearchQuery('')} className="mt-4">
                       Clear Search
                     </Button>
                   )}
@@ -171,7 +172,7 @@ export default function FAQPage() {
               </Card>
             ) : (
               <div className="space-y-8">
-                {filteredData.map((category) => (
+                {filteredData.map(category => (
                   <Card key={category.id} className="shadow-lg">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-3">
@@ -187,7 +188,7 @@ export default function FAQPage() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      {category.faqs.map((faq) => {
+                      {category.faqs.map(faq => {
                         const isExpanded = expandedItems.has(faq.id);
                         return (
                           <div key={faq.id} className="border rounded-lg">
@@ -195,9 +196,7 @@ export default function FAQPage() {
                               onClick={() => toggleExpanded(faq.id)}
                               className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
                             >
-                              <h3 className="font-semibold text-gray-900 pr-4">
-                                {faq.question}
-                              </h3>
+                              <h3 className="font-semibold text-gray-900 pr-4">{faq.question}</h3>
                               {isExpanded ? (
                                 <ChevronUp className="h-5 w-5 text-gray-500 flex-shrink-0" />
                               ) : (
@@ -209,8 +208,8 @@ export default function FAQPage() {
                                 <div className="prose prose-gray max-w-none pt-4">
                                   <div
                                     className="text-gray-700 leading-relaxed"
-                                    dangerouslySetInnerHTML={{ 
-                                      __html: faq.answer.replace(/\n/g, '<br />') 
+                                    dangerouslySetInnerHTML={{
+                                      __html: faq.answer.replace(/\n/g, '<br />'),
                                     }}
                                   />
                                 </div>
@@ -232,13 +231,11 @@ export default function FAQPage() {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Still Need Help?
-            </h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Still Need Help?</h2>
             <p className="text-lg text-gray-600 mb-8">
               Can't find the answer you're looking for? Our support team is here to help.
             </p>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <Card className="hover:shadow-lg transition-shadow">
                 <CardContent className="p-6 text-center">
@@ -252,7 +249,7 @@ export default function FAQPage() {
                   </Button>
                 </CardContent>
               </Card>
-              
+
               <Card className="hover:shadow-lg transition-shadow">
                 <CardContent className="p-6 text-center">
                   <Mail className="h-12 w-12 text-primary mx-auto mb-4" />
@@ -267,21 +264,19 @@ export default function FAQPage() {
                   </Link>
                 </CardContent>
               </Card>
-              
+
               <Card className="hover:shadow-lg transition-shadow">
                 <CardContent className="p-6 text-center">
                   <Phone className="h-12 w-12 text-primary mx-auto mb-4" />
                   <h3 className="font-semibold mb-2">Phone Support</h3>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Call us for immediate assistance
-                  </p>
+                  <p className="text-sm text-gray-600 mb-4">Call us for immediate assistance</p>
                   <Button variant="outline" size="sm" className="w-full">
                     Call Now
                   </Button>
                 </CardContent>
               </Card>
             </div>
-            
+
             <Link href="/order">
               <Button size="lg" className="text-lg px-8 py-3">
                 Place Your Order

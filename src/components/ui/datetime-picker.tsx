@@ -1,21 +1,27 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
-import { Calendar, Clock, Globe } from 'lucide-react'
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Calendar, Clock, Globe } from 'lucide-react';
 
 interface DateTimePickerProps {
-  value: string
-  onChange: (datetime: string) => void
-  minDate?: Date
-  required?: boolean
-  label?: string
-  description?: string
+  value: string;
+  onChange: (datetime: string) => void;
+  minDate?: Date;
+  required?: boolean;
+  label?: string;
+  description?: string;
 }
 
 export default function DateTimePicker({
@@ -23,13 +29,13 @@ export default function DateTimePicker({
   onChange,
   minDate,
   required = false,
-  label = "Date & Time",
-  description
+  label = 'Date & Time',
+  description,
 }: DateTimePickerProps) {
-  const [userTimezone, setUserTimezone] = useState<string>('')
-  const [selectedDate, setSelectedDate] = useState<string>('')
-  const [selectedTime, setSelectedTime] = useState<string>('')
-  const [selectedTimezone, setSelectedTimezone] = useState<string>('')
+  const [userTimezone, setUserTimezone] = useState<string>('');
+  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [selectedTime, setSelectedTime] = useState<string>('');
+  const [selectedTimezone, setSelectedTimezone] = useState<string>('');
 
   // Common timezone options
   const timezoneOptions = [
@@ -42,82 +48,82 @@ export default function DateTimePicker({
     { value: 'Asia/Tokyo', label: 'Tokyo (JST)' },
     { value: 'Asia/Shanghai', label: 'Shanghai (CST)' },
     { value: 'Australia/Sydney', label: 'Sydney (AEST)' },
-    { value: 'UTC', label: 'UTC' }
-  ]
+    { value: 'UTC', label: 'UTC' },
+  ];
 
   // Detect user's timezone on component mount
   useEffect(() => {
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-    setUserTimezone(timezone)
-    setSelectedTimezone(timezone)
-  }, [])
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    setUserTimezone(timezone);
+    setSelectedTimezone(timezone);
+  }, []);
 
   // Parse initial value
   useEffect(() => {
     if (value) {
-      const date = new Date(value)
+      const date = new Date(value);
       if (!isNaN(date.getTime())) {
         // Format date as YYYY-MM-DD
-        const dateStr = date.toISOString().split('T')[0]
-        setSelectedDate(dateStr)
-        
+        const dateStr = date.toISOString().split('T')[0];
+        setSelectedDate(dateStr);
+
         // Format time as HH:MM
-        const timeStr = date.toTimeString().split(' ')[0].substring(0, 5)
-        setSelectedTime(timeStr)
+        const timeStr = date.toTimeString().split(' ')[0].substring(0, 5);
+        setSelectedTime(timeStr);
       }
     }
-  }, [value])
+  }, [value]);
 
   // Update parent when date, time, or timezone changes
   useEffect(() => {
     if (selectedDate && selectedTime && selectedTimezone) {
       // Create datetime string that matches the expected format (YYYY-MM-DDTHH:mm)
-      const dateTimeStr = `${selectedDate}T${selectedTime}`
-      onChange(dateTimeStr)
+      const dateTimeStr = `${selectedDate}T${selectedTime}`;
+      onChange(dateTimeStr);
     }
-  }, [selectedDate, selectedTime, selectedTimezone, onChange])
+  }, [selectedDate, selectedTime, selectedTimezone, onChange]);
 
   // Get minimum date string
   const getMinDate = () => {
-    const min = minDate || new Date()
-    return min.toISOString().split('T')[0]
-  }
+    const min = minDate || new Date();
+    return min.toISOString().split('T')[0];
+  };
 
   // Get minimum time for today
   const getMinTime = () => {
-    const now = new Date()
-    const today = now.toISOString().split('T')[0]
-    
+    const now = new Date();
+    const today = now.toISOString().split('T')[0];
+
     if (selectedDate === today) {
       // Add 1 hour buffer for same day
-      now.setHours(now.getHours() + 1)
-      return now.toTimeString().split(' ')[0].substring(0, 5)
+      now.setHours(now.getHours() + 1);
+      return now.toTimeString().split(' ')[0].substring(0, 5);
     }
-    return '00:00'
-  }
+    return '00:00';
+  };
 
   // Format timezone display
   const getTimezoneDisplay = (timezone: string) => {
-    const option = timezoneOptions.find(opt => opt.value === timezone)
-    if (option) return option.label
-    
+    const option = timezoneOptions.find(opt => opt.value === timezone);
+    if (option) return option.label;
+
     // Fallback for user's detected timezone
     if (timezone === userTimezone) {
-      return `${timezone} (Your timezone)`
+      return `${timezone} (Your timezone)`;
     }
-    return timezone
-  }
+    return timezone;
+  };
 
   // Calculate time difference
   const getTimezoneDifference = () => {
     if (!selectedDate || !selectedTime || !selectedTimezone || selectedTimezone === userTimezone) {
-      return null
+      return null;
     }
 
     try {
-      const dateTimeStr: string = `${selectedDate}T${selectedTime}:00`
-      const selectedDateTime: Date = new Date(dateTimeStr)
-      
+      const dateTimeStr: string = `${selectedDate}T${selectedTime}:00`;
+      const selectedDateTime: Date = new Date(dateTimeStr);
+
       // Get time in user's timezone
       const userTime: string = selectedDateTime.toLocaleString('en-US', {
         timeZone: userTimezone,
@@ -126,8 +132,8 @@ export default function DateTimePicker({
         month: '2-digit',
         day: '2-digit',
         hour: '2-digit',
-        minute: '2-digit'
-      })
+        minute: '2-digit',
+      });
 
       // Get time in selected timezone
       const selectedTimeFormatted: string = selectedDateTime.toLocaleString('en-US', {
@@ -137,18 +143,18 @@ export default function DateTimePicker({
         month: '2-digit',
         day: '2-digit',
         hour: '2-digit',
-        minute: '2-digit'
-      })
+        minute: '2-digit',
+      });
 
       if (userTime !== selectedTimeFormatted) {
-        return `${userTime} in your timezone`
+        return `${userTime} in your timezone`;
       }
     } catch (error) {
-      console.error('Error calculating timezone difference:', error)
+      console.error('Error calculating timezone difference:', error);
     }
 
-    return null
-  }
+    return null;
+  };
 
   return (
     <Card>
@@ -158,9 +164,7 @@ export default function DateTimePicker({
           {label}
           {required && <span className="text-destructive">*</span>}
         </CardTitle>
-        {description && (
-          <p className="text-sm text-gray-700">{description}</p>
-        )}
+        {description && <p className="text-sm text-gray-700">{description}</p>}
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Date Selection */}
@@ -174,7 +178,7 @@ export default function DateTimePicker({
               id="date-picker"
               type="date"
               value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
+              onChange={e => setSelectedDate(e.target.value)}
               min={getMinDate()}
               required={required}
               className="w-full pl-10 pr-8 
@@ -196,7 +200,7 @@ export default function DateTimePicker({
                 focus:ring-2
                 focus:ring-blue-200"
               style={{
-                colorScheme: 'light'
+                colorScheme: 'light',
               }}
             />
             <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-600 pointer-events-none" />
@@ -214,7 +218,7 @@ export default function DateTimePicker({
               id="time-picker"
               type="time"
               value={selectedTime}
-              onChange={(e) => setSelectedTime(e.target.value)}
+              onChange={e => setSelectedTime(e.target.value)}
               min={selectedDate === getMinDate() ? getMinTime() : '00:00'}
               required={required}
               className="w-full pl-10 pr-8
@@ -236,7 +240,7 @@ export default function DateTimePicker({
                 focus:ring-2
                 focus:ring-blue-200"
               style={{
-                colorScheme: 'light'
+                colorScheme: 'light',
               }}
             />
             <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-600 pointer-events-none" />
@@ -260,20 +264,24 @@ export default function DateTimePicker({
                   <SelectItem value={userTimezone}>
                     <div className="flex items-center justify-between w-full">
                       <span>{userTimezone} (Your timezone)</span>
-                      <Badge variant="default" className="ml-2">Detected</Badge>
+                      <Badge variant="default" className="ml-2">
+                        Detected
+                      </Badge>
                     </div>
                   </SelectItem>
                   <hr className="my-1" />
                 </>
               )}
-              
+
               {/* Common timezones */}
-              {timezoneOptions.map((option) => (
+              {timezoneOptions.map(option => (
                 <SelectItem key={option.value} value={option.value}>
                   <div className="flex items-center justify-between w-full">
                     <span>{option.label}</span>
                     {option.value === userTimezone && (
-                      <Badge variant="default" className="ml-2">Your timezone</Badge>
+                      <Badge variant="default" className="ml-2">
+                        Your timezone
+                      </Badge>
                     )}
                   </div>
                 </SelectItem>
@@ -307,8 +315,9 @@ export default function DateTimePicker({
                     weekday: 'long',
                     year: 'numeric',
                     month: 'long',
-                    day: 'numeric'
-                  })} at {selectedTime}
+                    day: 'numeric',
+                  })}{' '}
+                  at {selectedTime}
                 </p>
                 <p className="text-green-600 text-xs mt-1">
                   Timezone: {getTimezoneDisplay(selectedTimezone)}
@@ -319,5 +328,5 @@ export default function DateTimePicker({
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

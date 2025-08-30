@@ -26,7 +26,7 @@ export default function TestimonialsSection() {
   const fetchFeaturedReviews = async () => {
     try {
       const response = await fetch(getApiUrl('featured_reviews/?limit=6'));
-      
+
       if (response.ok) {
         const data = await response.json();
         setReviews(data.reviews);
@@ -66,8 +66,11 @@ export default function TestimonialsSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {reviews.map((review) => (
-            <Card key={review.id} className="relative bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+          {reviews.map(review => (
+            <Card
+              key={review.id}
+              className="relative bg-white shadow-lg hover:shadow-xl transition-shadow duration-300"
+            >
               <CardContent className="p-6">
                 {/* Quote Icon */}
                 <div className="absolute top-4 right-4">
@@ -76,9 +79,7 @@ export default function TestimonialsSection() {
 
                 {/* Rating */}
                 <div className="flex items-center mb-4">
-                  <div className="flex items-center gap-1">
-                    {renderStars(review.rating)}
-                  </div>
+                  <div className="flex items-center gap-1">{renderStars(review.rating)}</div>
                   <span className="ml-2 text-sm text-gray-600">({review.rating}/5)</span>
                 </div>
 
@@ -90,7 +91,11 @@ export default function TestimonialsSection() {
                 {/* Review Comment */}
                 <div className="mb-4">
                   <p className="text-gray-700 leading-relaxed">
-                    "{review.comment.length > 150 ? review.comment.substring(0, 150) + '...' : review.comment}"
+                    "
+                    {review.comment.length > 150
+                      ? review.comment.substring(0, 150) + '...'
+                      : review.comment}
+                    "
                   </p>
                 </div>
 
@@ -100,9 +105,10 @@ export default function TestimonialsSection() {
                     <div>
                       <p className="font-medium text-gray-900">{review.customer_name}</p>
                       <p className="text-sm text-gray-500 capitalize">
-                        {review.order_type.replace(/_/g, ' ')} • {new Date(review.created_at).toLocaleDateString('en-US', {
+                        {review.order_type.replace(/_/g, ' ')} •{' '}
+                        {new Date(review.created_at).toLocaleDateString('en-US', {
                           month: 'short',
-                          year: 'numeric'
+                          year: 'numeric',
                         })}
                       </p>
                     </div>
@@ -119,12 +125,8 @@ export default function TestimonialsSection() {
         {/* Additional Trust Indicators */}
         <div className="mt-16 text-center">
           <div className="inline-flex items-center px-6 py-3 bg-white rounded-full shadow-md">
-            <div className="flex items-center gap-1 mr-3">
-              {renderStars(5)}
-            </div>
-            <span className="text-gray-700 font-medium">
-              Rated 4.9/5 by over 10,000+ students
-            </span>
+            <div className="flex items-center gap-1 mr-3">{renderStars(5)}</div>
+            <span className="text-gray-700 font-medium">Rated 4.9/5 by over 10,000+ students</span>
           </div>
         </div>
       </div>

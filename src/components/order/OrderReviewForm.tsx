@@ -32,11 +32,11 @@ export default function OrderReviewForm({ orderId, onReviewSubmitted }: OrderRev
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [editing, setEditing] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     rating: 0,
     title: '',
-    comment: ''
+    comment: '',
   });
 
   const { toast } = useToast();
@@ -50,7 +50,7 @@ export default function OrderReviewForm({ orderId, onReviewSubmitted }: OrderRev
       const token = localStorage.getItem('access_token');
       const response = await fetch(getApiUrl(`get_order_review/${orderId}/`), {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
@@ -59,12 +59,12 @@ export default function OrderReviewForm({ orderId, onReviewSubmitted }: OrderRev
         const data = await response.json();
         setReview(data.review);
         setCanReview(data.can_review);
-        
+
         if (data.review) {
           setFormData({
             rating: data.review.rating,
             title: data.review.title,
-            comment: data.review.comment
+            comment: data.review.comment,
           });
         }
       } else {
@@ -84,46 +84,44 @@ export default function OrderReviewForm({ orderId, onReviewSubmitted }: OrderRev
       toast({
         title: 'Error',
         description: 'Please select a rating',
-        variant: 'destructive'
+        variant: 'destructive',
       });
       return;
     }
-    
+
     if (!formData.title.trim()) {
       toast({
-        title: 'Error', 
+        title: 'Error',
         description: 'Please enter a review title',
-        variant: 'destructive'
+        variant: 'destructive',
       });
       return;
     }
-    
+
     if (!formData.comment.trim()) {
       toast({
         title: 'Error',
-        description: 'Please enter a review comment', 
-        variant: 'destructive'
+        description: 'Please enter a review comment',
+        variant: 'destructive',
       });
       return;
     }
 
     setSubmitting(true);
-    
+
     try {
       const token = localStorage.getItem('access_token');
-      const url = review 
+      const url = review
         ? getApiUrl(`update_order_review/${review.id}/`)
         : getApiUrl('submit_order_review/');
-      
+
       const method = review ? 'PUT' : 'POST';
-      const payload = review 
-        ? formData
-        : { ...formData, order_id: orderId };
+      const payload = review ? formData : { ...formData, order_id: orderId };
 
       const response = await fetch(url, {
         method,
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
@@ -133,14 +131,14 @@ export default function OrderReviewForm({ orderId, onReviewSubmitted }: OrderRev
         const data = await response.json();
         toast({
           title: 'Success',
-          description: data.message || 'Review submitted successfully'
+          description: data.message || 'Review submitted successfully',
         });
-        
+
         if (data.review) {
           setReview(data.review);
           setCanReview(false);
         }
-        
+
         setEditing(false);
         onReviewSubmitted?.();
       } else {
@@ -148,7 +146,7 @@ export default function OrderReviewForm({ orderId, onReviewSubmitted }: OrderRev
         toast({
           title: 'Error',
           description: errorData.error || 'Failed to submit review',
-          variant: 'destructive'
+          variant: 'destructive',
         });
       }
     } catch (error) {
@@ -156,7 +154,7 @@ export default function OrderReviewForm({ orderId, onReviewSubmitted }: OrderRev
       toast({
         title: 'Error',
         description: 'An error occurred while submitting review',
-        variant: 'destructive'
+        variant: 'destructive',
       });
     } finally {
       setSubmitting(false);
@@ -216,29 +214,25 @@ export default function OrderReviewForm({ orderId, onReviewSubmitted }: OrderRev
                 <span className="ml-2 text-sm text-gray-600">({review.rating}/5)</span>
               </div>
             </div>
-            
+
             <div>
               <Label className="text-sm font-medium">Title</Label>
               <p className="mt-1 text-sm text-gray-700">{review.title}</p>
             </div>
-            
+
             <div>
               <Label className="text-sm font-medium">Comment</Label>
               <p className="mt-1 text-sm text-gray-700 whitespace-pre-wrap">{review.comment}</p>
             </div>
-            
+
             <div className="text-xs text-gray-500">
               Submitted on {new Date(review.created_at).toLocaleDateString()}
               {review.updated_at && review.updated_at !== review.created_at && (
                 <span> • Updated on {new Date(review.updated_at).toLocaleDateString()}</span>
               )}
             </div>
-            
-            <Button 
-              variant="outline" 
-              onClick={() => setEditing(true)}
-              className="w-full"
-            >
+
+            <Button variant="outline" onClick={() => setEditing(true)} className="w-full">
               Edit Review
             </Button>
           </div>
@@ -253,7 +247,7 @@ export default function OrderReviewForm({ orderId, onReviewSubmitted }: OrderRev
                 </span>
               </div>
             </div>
-            
+
             <div>
               <Label htmlFor="title" className="text-sm font-medium">
                 Review Title *
@@ -261,12 +255,12 @@ export default function OrderReviewForm({ orderId, onReviewSubmitted }: OrderRev
               <Input
                 id="title"
                 value={formData.title}
-                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
                 placeholder="Enter a title for your review"
                 className="mt-1"
               />
             </div>
-            
+
             <div>
               <Label htmlFor="comment" className="text-sm font-medium">
                 Review Comment *
@@ -274,22 +268,18 @@ export default function OrderReviewForm({ orderId, onReviewSubmitted }: OrderRev
               <Textarea
                 id="comment"
                 value={formData.comment}
-                onChange={(e) => setFormData(prev => ({ ...prev, comment: e.target.value }))}
+                onChange={e => setFormData(prev => ({ ...prev, comment: e.target.value }))}
                 placeholder="Share your experience with this order..."
                 rows={4}
                 className="mt-1"
               />
             </div>
-            
+
             <div className="flex gap-2">
-              <Button
-                onClick={handleSubmitReview}
-                disabled={submitting}
-                className="flex-1"
-              >
-                {submitting ? 'Submitting...' : (review ? 'Update Review' : 'Submit Review')}
+              <Button onClick={handleSubmitReview} disabled={submitting} className="flex-1">
+                {submitting ? 'Submitting...' : review ? 'Update Review' : 'Submit Review'}
               </Button>
-              
+
               {editing && (
                 <Button
                   variant="outline"
@@ -298,7 +288,7 @@ export default function OrderReviewForm({ orderId, onReviewSubmitted }: OrderRev
                     setFormData({
                       rating: review!.rating,
                       title: review!.title,
-                      comment: review!.comment
+                      comment: review!.comment,
                     });
                   }}
                   disabled={submitting}

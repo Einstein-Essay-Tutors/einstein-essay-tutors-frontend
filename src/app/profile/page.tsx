@@ -1,114 +1,115 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { useAuth } from '@/context/AuthContext'
-import { getApiUrl } from '@/lib/config'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { useToast } from '@/components/ui/use-toast'
-import { ArrowLeft, User, Mail, Calendar, Shield, Save, Edit } from 'lucide-react'
-import Link from 'next/link'
-import { UserProfile } from '@/types'
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
+import { getApiUrl } from '@/lib/config';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/components/ui/use-toast';
+import { ArrowLeft, User, Mail, Calendar, Shield, Save, Edit } from 'lucide-react';
+import Link from 'next/link';
+import { UserProfile } from '@/types';
 
 export default function ProfilePage() {
-  const [profile, setProfile] = useState<UserProfile | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [editing, setEditing] = useState(false)
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
     email: '',
     current_password: '',
     new_password: '',
-    confirm_password: ''
-  })
+    confirm_password: '',
+  });
 
-  const { user, getAuthHeaders } = useAuth()
-  const { toast } = useToast()
-  const router = useRouter()
+  const { user, getAuthHeaders } = useAuth();
+  const { toast } = useToast();
+  const router = useRouter();
 
   // Redirect non-authenticated users
   useEffect(() => {
     if (!user && !loading) {
-      router.push('/auth/login')
+      router.push('/auth/login');
     }
-  }, [user, loading, router])
+  }, [user, loading, router]);
 
   useEffect(() => {
     if (user) {
       // Use the user data from auth context instead of fetching
-      setProfile(user)
+      setProfile(user);
       setFormData({
         first_name: user.first_name || '',
         last_name: user.last_name || '',
         email: user.email || '',
         current_password: '',
         new_password: '',
-        confirm_password: ''
-      })
-      setLoading(false)
+        confirm_password: '',
+      });
+      setLoading(false);
     }
-  }, [user])
+  }, [user]);
 
   const handleUpdateProfile = async () => {
     if (formData.new_password && formData.new_password !== formData.confirm_password) {
       toast({
         title: 'Password Mismatch',
         description: 'New password and confirmation do not match',
-        variant: 'destructive'
-      })
-      return
+        variant: 'destructive',
+      });
+      return;
     }
 
-    setSaving(true)
+    setSaving(true);
     try {
       const updateData: any = {
         first_name: formData.first_name,
         last_name: formData.last_name,
-        email: formData.email
-      }
+        email: formData.email,
+      };
 
       if (formData.new_password) {
-        updateData.current_password = formData.current_password
-        updateData.new_password = formData.new_password
+        updateData.current_password = formData.current_password;
+        updateData.new_password = formData.new_password;
       }
 
       // For now, just simulate the update since the backend endpoint needs to be created
       toast({
         title: 'Feature Coming Soon',
-        description: 'Profile update functionality will be available soon. Your changes have been noted.',
-        variant: 'default'
-      })
-      setEditing(false)
+        description:
+          'Profile update functionality will be available soon. Your changes have been noted.',
+        variant: 'default',
+      });
+      setEditing(false);
       setFormData(prev => ({
         ...prev,
         current_password: '',
         new_password: '',
-        confirm_password: ''
-      }))
+        confirm_password: '',
+      }));
     } catch (error) {
-      console.error('Error updating profile:', error)
+      console.error('Error updating profile:', error);
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to update profile',
-        variant: 'destructive'
-      })
+        variant: 'destructive',
+      });
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
-    })
-  }
+      day: 'numeric',
+    });
+  };
 
   if (loading) {
     return (
@@ -118,11 +119,11 @@ export default function ProfilePage() {
           <p className="text-gray-600">Loading profile...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!user || !profile) {
-    return null
+    return null;
   }
 
   return (
@@ -152,10 +153,9 @@ export default function ProfilePage() {
                     <User className="h-12 w-12 text-white" />
                   </div>
                   <CardTitle className="text-xl">
-                    {profile.first_name || profile.last_name 
+                    {profile.first_name || profile.last_name
                       ? `${profile.first_name} ${profile.last_name}`.trim()
-                      : profile.username
-                    }
+                      : profile.username}
                   </CardTitle>
                   <CardDescription className="flex items-center justify-center gap-2">
                     <Mail className="h-4 w-4" />
@@ -187,11 +187,7 @@ export default function ProfilePage() {
                       Update your personal information and account settings
                     </CardDescription>
                   </div>
-                  <Button
-                    variant="outline"
-                    onClick={() => setEditing(!editing)}
-                    disabled={saving}
-                  >
+                  <Button variant="outline" onClick={() => setEditing(!editing)} disabled={saving}>
                     <Edit className="mr-2 h-4 w-4" />
                     {editing ? 'Cancel' : 'Edit'}
                   </Button>
@@ -203,7 +199,9 @@ export default function ProfilePage() {
                       <Input
                         id="first_name"
                         value={formData.first_name}
-                        onChange={(e) => setFormData(prev => ({ ...prev, first_name: e.target.value }))}
+                        onChange={e =>
+                          setFormData(prev => ({ ...prev, first_name: e.target.value }))
+                        }
                         disabled={!editing}
                       />
                     </div>
@@ -212,7 +210,9 @@ export default function ProfilePage() {
                       <Input
                         id="last_name"
                         value={formData.last_name}
-                        onChange={(e) => setFormData(prev => ({ ...prev, last_name: e.target.value }))}
+                        onChange={e =>
+                          setFormData(prev => ({ ...prev, last_name: e.target.value }))
+                        }
                         disabled={!editing}
                       />
                     </div>
@@ -224,19 +224,14 @@ export default function ProfilePage() {
                       id="email"
                       type="email"
                       value={formData.email}
-                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                      onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
                       disabled={!editing}
                     />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="username">Username</Label>
-                    <Input
-                      id="username"
-                      value={profile.username}
-                      disabled
-                      className="bg-gray-50"
-                    />
+                    <Input id="username" value={profile.username} disabled className="bg-gray-50" />
                     <p className="text-xs text-gray-500">Username cannot be changed</p>
                   </div>
 
@@ -245,15 +240,19 @@ export default function ProfilePage() {
                       <hr className="my-6" />
                       <div className="space-y-4">
                         <h3 className="text-lg font-medium">Change Password</h3>
-                        <p className="text-sm text-gray-600">Leave blank to keep current password</p>
-                        
+                        <p className="text-sm text-gray-600">
+                          Leave blank to keep current password
+                        </p>
+
                         <div className="space-y-2">
                           <Label htmlFor="current_password">Current Password</Label>
                           <Input
                             id="current_password"
                             type="password"
                             value={formData.current_password}
-                            onChange={(e) => setFormData(prev => ({ ...prev, current_password: e.target.value }))}
+                            onChange={e =>
+                              setFormData(prev => ({ ...prev, current_password: e.target.value }))
+                            }
                             placeholder="Enter current password"
                           />
                         </div>
@@ -265,7 +264,9 @@ export default function ProfilePage() {
                               id="new_password"
                               type="password"
                               value={formData.new_password}
-                              onChange={(e) => setFormData(prev => ({ ...prev, new_password: e.target.value }))}
+                              onChange={e =>
+                                setFormData(prev => ({ ...prev, new_password: e.target.value }))
+                              }
                               placeholder="Enter new password"
                             />
                           </div>
@@ -275,7 +276,9 @@ export default function ProfilePage() {
                               id="confirm_password"
                               type="password"
                               value={formData.confirm_password}
-                              onChange={(e) => setFormData(prev => ({ ...prev, confirm_password: e.target.value }))}
+                              onChange={e =>
+                                setFormData(prev => ({ ...prev, confirm_password: e.target.value }))
+                              }
                               placeholder="Confirm new password"
                             />
                           </div>
@@ -299,5 +302,5 @@ export default function ProfilePage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

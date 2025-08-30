@@ -1,53 +1,53 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { useAuth } from '@/context/AuthContext'
-import { Eye, EyeOff } from 'lucide-react'
+import { useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useAuth } from '@/context/AuthContext';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
     username: '',
-    password: ''
-  })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
+    password: '',
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
-  const { login } = useAuth()
-  const router = useRouter()
+  const { login } = useAuth();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+    e.preventDefault();
+    setLoading(true);
+    setError('');
 
     try {
-      await login(formData.username, formData.password)
-      router.push('/dashboard')
+      await login(formData.username, formData.password);
+      router.push('/dashboard');
     } catch (err: unknown) {
-      const error = err as { response?: { status?: number; data?: { message?: string } } }
+      const error = err as { response?: { status?: number; data?: { message?: string } } };
       if (error.response?.status === 401) {
-        setError('Invalid username or password')
+        setError('Invalid username or password');
       } else if (error.response?.data?.message) {
-        setError(error.response.data.message)
+        setError(error.response.data.message);
       } else {
-        setError('Login failed. Please try again.')
+        setError('Login failed. Please try again.');
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-    if (error) setError('')
-  }
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (error) setError('');
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -55,9 +55,7 @@ export default function LoginPage() {
         <div className="bg-white rounded-lg shadow-md p-8">
           <div className="text-center space-y-4">
             <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
-            <p className="text-gray-600">
-              Sign in to access your Einstein Essay Tutors account
-            </p>
+            <p className="text-gray-600">Sign in to access your Einstein Essay Tutors account</p>
           </div>
 
           {error && (
@@ -73,7 +71,7 @@ export default function LoginPage() {
                 id="username"
                 type="text"
                 value={formData.username}
-                onChange={(e) => handleInputChange('username', e.target.value)}
+                onChange={e => handleInputChange('username', e.target.value)}
                 required
                 placeholder="Enter your username"
               />
@@ -84,9 +82,9 @@ export default function LoginPage() {
               <div className="relative">
                 <Input
                   id="password"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  onChange={e => handleInputChange('password', e.target.value)}
                   required
                   placeholder="Enter your password"
                   className="pr-10"
@@ -105,11 +103,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={loading}
-            >
+            <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Signing In...' : 'Sign In'}
             </Button>
           </form>
@@ -124,15 +118,12 @@ export default function LoginPage() {
           </div>
 
           <div className="mt-4 text-center">
-            <Link 
-              href="/auth/forgot-password" 
-              className="text-sm text-primary hover:underline"
-            >
+            <Link href="/auth/forgot-password" className="text-sm text-primary hover:underline">
               Forgot your password?
             </Link>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

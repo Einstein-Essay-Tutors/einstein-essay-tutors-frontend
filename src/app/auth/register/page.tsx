@@ -1,152 +1,152 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { useAuth } from '@/context/AuthContext'
-import { validateEmail, validatePassword, validateUsername, validateOTP } from '@/lib/validation'
-import { Eye, EyeOff } from 'lucide-react'
+import { useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useAuth } from '@/context/AuthContext';
+import { validateEmail, validatePassword, validateUsername, validateOTP } from '@/lib/validation';
+import { Eye, EyeOff } from 'lucide-react';
 
-type RegistrationStep = 'register' | 'verify-email' | 'success'
+type RegistrationStep = 'register' | 'verify-email' | 'success';
 
 export default function RegisterPage() {
-  const [step, setStep] = useState<RegistrationStep>('register')
+  const [step, setStep] = useState<RegistrationStep>('register');
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
-    confirmPassword: ''
-  })
-  const [otp, setOtp] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({})
-  const [resendCooldown, setResendCooldown] = useState(0)
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    confirmPassword: '',
+  });
+  const [otp, setOtp] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const { register, verifyEmail, resendOTP } = useAuth()
-  const router = useRouter()
+  const { register, verifyEmail, resendOTP } = useAuth();
+  const router = useRouter();
 
   const validateForm = () => {
-    const errors: Record<string, string[]> = {}
-    
-    const usernameValidation = validateUsername(formData.username)
+    const errors: Record<string, string[]> = {};
+
+    const usernameValidation = validateUsername(formData.username);
     if (!usernameValidation.isValid) {
-      errors.username = usernameValidation.errors
+      errors.username = usernameValidation.errors;
     }
 
     if (!validateEmail(formData.email)) {
-      errors.email = ['Please enter a valid email address']
+      errors.email = ['Please enter a valid email address'];
     }
 
-    const passwordValidation = validatePassword(formData.password)
+    const passwordValidation = validatePassword(formData.password);
     if (!passwordValidation.isValid) {
-      errors.password = passwordValidation.errors
+      errors.password = passwordValidation.errors;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      errors.confirmPassword = ['Passwords do not match']
+      errors.confirmPassword = ['Passwords do not match'];
     }
 
-    setFieldErrors(errors)
-    return Object.keys(errors).length === 0
-  }
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!validateForm()) return
+    e.preventDefault();
+    if (!validateForm()) return;
 
-    setLoading(true)
-    setError('')
+    setLoading(true);
+    setError('');
 
     try {
-      await register(formData.username, formData.email, formData.password)
-      setStep('verify-email')
+      await register(formData.username, formData.email, formData.password);
+      setStep('verify-email');
     } catch (err: any) {
       if (err.response?.data?.message) {
-        setError(err.response.data.message)
+        setError(err.response.data.message);
       } else if (err.response?.data?.error) {
-        setError(err.response.data.error)
+        setError(err.response.data.error);
       } else if (err.response?.data) {
         // Handle field-specific errors from backend
-        const backendErrors: Record<string, string[]> = {}
+        const backendErrors: Record<string, string[]> = {};
         Object.entries(err.response.data).forEach(([field, messages]) => {
           if (Array.isArray(messages)) {
-            backendErrors[field] = messages
+            backendErrors[field] = messages;
           }
-        })
-        setFieldErrors(backendErrors)
+        });
+        setFieldErrors(backendErrors);
       } else {
-        setError('Registration failed. Please try again.')
+        setError('Registration failed. Please try again.');
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleVerifyEmail = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!validateOTP(otp)) {
-      setError('Please enter a valid 6-digit verification code')
-      return
+      setError('Please enter a valid 6-digit verification code');
+      return;
     }
 
-    setLoading(true)
-    setError('')
+    setLoading(true);
+    setError('');
 
     try {
-      await verifyEmail(formData.email, otp)
-      setStep('success')
+      await verifyEmail(formData.email, otp);
+      setStep('success');
     } catch (err: any) {
       if (err.response?.data?.message) {
-        setError(err.response.data.message)
+        setError(err.response.data.message);
       } else {
-        setError('Verification failed. Please check your code and try again.')
+        setError('Verification failed. Please check your code and try again.');
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleResendOTP = async () => {
-    if (resendCooldown > 0) return
+    if (resendCooldown > 0) return;
 
     try {
-      await resendOTP(formData.email)
-      setError('')
-      setResendCooldown(60)
-      
+      await resendOTP(formData.email);
+      setError('');
+      setResendCooldown(60);
+
       // Countdown timer
       const timer = setInterval(() => {
-        setResendCooldown((prev) => {
+        setResendCooldown(prev => {
           if (prev <= 1) {
-            clearInterval(timer)
-            return 0
+            clearInterval(timer);
+            return 0;
           }
-          return prev - 1
-        })
-      }, 1000)
+          return prev - 1;
+        });
+      }, 1000);
     } catch (err: any) {
-      setError('Failed to resend verification code. Please try again.')
+      setError('Failed to resend verification code. Please try again.');
     }
-  }
+  };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
+    setFormData(prev => ({ ...prev, [field]: value }));
     // Clear field-specific errors when user starts typing
     if (fieldErrors[field]) {
       setFieldErrors(prev => {
-        const newErrors = { ...prev }
-        delete newErrors[field]
-        return newErrors
-      })
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
     }
-  }
+  };
 
   const renderRegisterForm = () => (
     <div className="space-y-6">
@@ -170,7 +170,7 @@ export default function RegisterPage() {
             id="username"
             type="text"
             value={formData.username}
-            onChange={(e) => handleInputChange('username', e.target.value)}
+            onChange={e => handleInputChange('username', e.target.value)}
             required
             placeholder="Choose a unique username"
           />
@@ -189,7 +189,7 @@ export default function RegisterPage() {
             id="email"
             type="email"
             value={formData.email}
-            onChange={(e) => handleInputChange('email', e.target.value)}
+            onChange={e => handleInputChange('email', e.target.value)}
             required
             placeholder="your.email@university.edu"
           />
@@ -207,9 +207,9 @@ export default function RegisterPage() {
           <div className="relative">
             <Input
               id="password"
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               value={formData.password}
-              onChange={(e) => handleInputChange('password', e.target.value)}
+              onChange={e => handleInputChange('password', e.target.value)}
               required
               placeholder="Create a strong password"
               className="pr-10"
@@ -240,9 +240,9 @@ export default function RegisterPage() {
           <div className="relative">
             <Input
               id="confirmPassword"
-              type={showConfirmPassword ? "text" : "password"}
+              type={showConfirmPassword ? 'text' : 'password'}
               value={formData.confirmPassword}
-              onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+              onChange={e => handleInputChange('confirmPassword', e.target.value)}
               required
               placeholder="Confirm your password"
               className="pr-10"
@@ -268,11 +268,7 @@ export default function RegisterPage() {
           )}
         </div>
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={loading}
-        >
+        <Button type="submit" className="w-full" disabled={loading}>
           {loading ? 'Creating Account...' : 'Create Account'}
         </Button>
       </form>
@@ -286,7 +282,7 @@ export default function RegisterPage() {
         </p>
       </div>
     </div>
-  )
+  );
 
   const renderVerificationForm = () => (
     <div className="space-y-6">
@@ -310,7 +306,7 @@ export default function RegisterPage() {
             id="otp"
             type="text"
             value={otp}
-            onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+            onChange={e => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
             required
             placeholder="Enter 6-digit code"
             className="text-center text-2xl tracking-widest"
@@ -318,19 +314,13 @@ export default function RegisterPage() {
           />
         </div>
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={loading || otp.length !== 6}
-        >
+        <Button type="submit" className="w-full" disabled={loading || otp.length !== 6}>
           {loading ? 'Verifying...' : 'Verify Email'}
         </Button>
       </form>
 
       <div className="text-center">
-        <p className="text-sm text-gray-600 mb-2">
-          Didn't receive the code?
-        </p>
+        <p className="text-sm text-gray-600 mb-2">Didn't receive the code?</p>
         <Button
           type="button"
           variant="outline"
@@ -338,23 +328,25 @@ export default function RegisterPage() {
           disabled={resendCooldown > 0}
           className="text-sm"
         >
-          {resendCooldown > 0 
-            ? `Resend in ${resendCooldown}s` 
-            : 'Resend Code'
-          }
+          {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Code'}
         </Button>
       </div>
     </div>
-  )
+  );
 
   const renderSuccessMessage = () => (
     <div className="text-center space-y-6">
       <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-        <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-8 h-8 text-green-600"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
         </svg>
       </div>
-      
+
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Account Created Successfully!</h1>
         <p className="mt-2 text-gray-600">
@@ -362,14 +354,11 @@ export default function RegisterPage() {
         </p>
       </div>
 
-      <Button
-        onClick={() => router.push('/auth/login')}
-        className="w-full"
-      >
+      <Button onClick={() => router.push('/auth/login')} className="w-full">
         Sign In to Your Account
       </Button>
     </div>
-  )
+  );
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -381,5 +370,5 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

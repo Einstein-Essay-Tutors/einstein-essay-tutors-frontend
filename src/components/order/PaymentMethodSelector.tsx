@@ -1,71 +1,71 @@
-'use client'
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
-import { CreditCard, DollarSign, Shield } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { CreditCard, DollarSign, Shield } from 'lucide-react';
 
 interface PaymentMethod {
-  id: string
-  name: string
-  description: string
-  type: string
-  is_default: boolean
-  icon_url: string
-  config: any
+  id: string;
+  name: string;
+  description: string;
+  type: string;
+  is_default: boolean;
+  icon_url: string;
+  config: any;
 }
 
 interface PaymentMethodSelectorProps {
-  paymentMethods: PaymentMethod[]
-  selected: string
-  onSelect: (methodId: string) => void
+  paymentMethods: PaymentMethod[];
+  selected: string;
+  onSelect: (methodId: string) => void;
 }
 
 export default function PaymentMethodSelector({
   paymentMethods,
   selected,
-  onSelect
+  onSelect,
 }: PaymentMethodSelectorProps) {
   const getPaymentIcon = (type: string) => {
     switch (type) {
       case 'paypal_business':
       case 'paypal_personal':
-        return <DollarSign className="h-5 w-5 text-blue-600" />
+        return <DollarSign className="h-5 w-5 text-blue-600" />;
       case 'stripe':
-        return <CreditCard className="h-5 w-5 text-purple-600" />
+        return <CreditCard className="h-5 w-5 text-purple-600" />;
       default:
-        return <Shield className="h-5 w-5 text-gray-600" />
+        return <Shield className="h-5 w-5 text-gray-600" />;
     }
-  }
+  };
 
   const getPaymentTypeDescription = (type: string) => {
     switch (type) {
       case 'paypal_business':
-        return 'Pay securely through PayPal Business'
+        return 'Pay securely through PayPal Business';
       case 'paypal_personal':
-        return 'Pay via PayPal.me link'
+        return 'Pay via PayPal.me link';
       case 'stripe':
-        return 'Pay with credit/debit card via Stripe'
+        return 'Pay with credit/debit card via Stripe';
       case 'manual':
-        return 'Manual payment processing'
+        return 'Manual payment processing';
       default:
-        return 'Payment processing'
+        return 'Payment processing';
     }
-  }
+  };
 
   const getPaymentBadgeVariant = (type: string) => {
     switch (type) {
       case 'paypal_business':
-        return 'default'
+        return 'default';
       case 'paypal_personal':
-        return 'secondary'
+        return 'secondary';
       case 'stripe':
-        return 'outline'
+        return 'outline';
       default:
-        return 'secondary'
+        return 'secondary';
     }
-  }
+  };
 
   return (
     <Card>
@@ -78,14 +78,17 @@ export default function PaymentMethodSelector({
       </CardHeader>
       <CardContent>
         <RadioGroup value={selected} onValueChange={onSelect} required>
-          {paymentMethods.map((method) => (
-            <div key={method.id} className="flex items-start space-x-2 p-4 border-2 border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 shadow-sm group">
+          {paymentMethods.map(method => (
+            <div
+              key={method.id}
+              className="flex items-start space-x-2 p-4 border-2 border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 shadow-sm group"
+            >
               <RadioGroupItem value={method.id} id={`payment-${method.id}`} />
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
                   {getPaymentIcon(method.type)}
-                  <Label 
-                    htmlFor={`payment-${method.id}`} 
+                  <Label
+                    htmlFor={`payment-${method.id}`}
                     className="font-medium cursor-pointer flex-1 text-gray-500 group-hover:text-gray-900"
                   >
                     {method.name}
@@ -94,12 +97,10 @@ export default function PaymentMethodSelector({
                     <Badge variant={getPaymentBadgeVariant(method.type)}>
                       {method.type.replace('_', ' ').toUpperCase()}
                     </Badge>
-                    {method.is_default && (
-                      <Badge variant="default">Recommended</Badge>
-                    )}
+                    {method.is_default && <Badge variant="default">Recommended</Badge>}
                   </div>
                 </div>
-                
+
                 <p className="text-sm text-gray-600 group-hover:text-gray-700 mb-2">
                   {method.description || getPaymentTypeDescription(method.type)}
                 </p>
@@ -154,11 +155,14 @@ export default function PaymentMethodSelector({
             <Shield className="h-5 w-5 text-blue-700 mt-0.5" />
             <div className="text-sm text-blue-800">
               <p className="font-semibold mb-1">Security & Privacy</p>
-              <p>All payments are processed securely. We never store your payment information on our servers. Your financial data is protected by industry-standard encryption.</p>
+              <p>
+                All payments are processed securely. We never store your payment information on our
+                servers. Your financial data is protected by industry-standard encryption.
+              </p>
             </div>
           </div>
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

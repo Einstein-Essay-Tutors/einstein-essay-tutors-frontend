@@ -2,84 +2,84 @@
 
 :root {
   /* Text Colors - Semantic naming for better maintainability */
-  --text-primary: #1f2937;        /* Main headings and important text */
-  --text-secondary: #374151;       /* Secondary text, descriptions */
-  --text-tertiary: #4b5563;       /* Supporting text, less emphasis */
-  --text-muted: #6b7280;          /* Subtle text, timestamps, etc */
-  --text-light: #9ca3af;          /* Very light text, placeholders */
+  --text-primary: #1f2937; /* Main headings and important text */
+  --text-secondary: #374151; /* Secondary text, descriptions */
+  --text-tertiary: #4b5563; /* Supporting text, less emphasis */
+  --text-muted: #6b7280; /* Subtle text, timestamps, etc */
+  --text-light: #9ca3af; /* Very light text, placeholders */
 
   /* Interactive Text Colors */
-  --text-link: #2563eb;           /* Links and clickable text */
-  --text-link-hover: #1d4ed8;     /* Link hover state */
-  
+  --text-link: #2563eb; /* Links and clickable text */
+  --text-link-hover: #1d4ed8; /* Link hover state */
+
   /* Status Colors */
-  --text-success: #059669;        /* Success messages, confirmations */
-  --text-warning: #d97706;        /* Warnings, urgent items */
-  --text-error: #dc2626;          /* Errors, destructive actions */
-  --text-info: #0891b2;           /* Information, neutral status */
+  --text-success: #059669; /* Success messages, confirmations */
+  --text-warning: #d97706; /* Warnings, urgent items */
+  --text-error: #dc2626; /* Errors, destructive actions */
+  --text-info: #0891b2; /* Information, neutral status */
 
   /* Background Colors */
-  --bg-primary: #ffffff;          /* Main background */
-  --bg-secondary: #f9fafb;        /* Secondary background */
-  --bg-tertiary: #f3f4f6;         /* Cards, sections */
-  --bg-hover: #f1f5f9;            /* Hover states */
-  
+  --bg-primary: #ffffff; /* Main background */
+  --bg-secondary: #f9fafb; /* Secondary background */
+  --bg-tertiary: #f3f4f6; /* Cards, sections */
+  --bg-hover: #f1f5f9; /* Hover states */
+
   /* Brand Colors */
-  --brand-primary: #2563eb;       /* Primary brand color */
-  --brand-secondary: #10b981;     /* Secondary brand color */
-  
+  --brand-primary: #2563eb; /* Primary brand color */
+  --brand-secondary: #10b981; /* Secondary brand color */
+
   /* Border Colors */
-  --border-primary: #e5e7eb;      /* Main borders */
-  --border-secondary: #d1d5db;    /* Stronger borders */
-  --border-focus: #3b82f6;        /* Focus states */
+  --border-primary: #e5e7eb; /* Main borders */
+  --border-secondary: #d1d5db; /* Stronger borders */
+  --border-focus: #3b82f6; /* Focus states */
 }
 
 /* Semantic Text Utility Classes - Only apply to specific contexts */
 .content-text .text-primary,
-.text-primary:not(button):not(.btn):not([role="button"]) {
+.text-primary:not(button):not(.btn):not([role='button']) {
   color: var(--text-primary);
 }
 
 .content-text .text-secondary,
-.text-secondary:not(button):not(.btn):not([role="button"]) {
+.text-secondary:not(button):not(.btn):not([role='button']) {
   color: var(--text-secondary);
 }
 
 .content-text .text-tertiary,
-.text-tertiary:not(button):not(.btn):not([role="button"]) {
+.text-tertiary:not(button):not(.btn):not([role='button']) {
   color: var(--text-tertiary);
 }
 
 .content-text .text-muted,
-.text-muted:not(button):not(.btn):not([role="button"]) {
+.text-muted:not(button):not(.btn):not([role='button']) {
   color: var(--text-muted);
 }
 
-.text-light:not(button):not(.btn):not([role="button"]) {
+.text-light:not(button):not(.btn):not([role='button']) {
   color: var(--text-light);
 }
 
-.text-link:not(button):not(.btn):not([role="button"]) {
+.text-link:not(button):not(.btn):not([role='button']) {
   color: var(--text-link);
 }
 
-.text-link:not(button):not(.btn):not([role="button"]):hover {
+.text-link:not(button):not(.btn):not([role='button']):hover {
   color: var(--text-link-hover);
 }
 
-.text-success:not(button):not(.btn):not([role="button"]) {
+.text-success:not(button):not(.btn):not([role='button']) {
   color: var(--text-success);
 }
 
-.text-warning:not(button):not(.btn):not([role="button"]) {
+.text-warning:not(button):not(.btn):not([role='button']) {
   color: var(--text-warning);
 }
 
-.text-error:not(button):not(.btn):not([role="button"]) {
+.text-error:not(button):not(.btn):not([role='button']) {
   color: var(--text-error);
 }
 
-.text-info:not(button):not(.btn):not([role="button"]) {
+.text-info:not(button):not(.btn):not([role='button']) {
   color: var(--text-info);
 }
 
@@ -302,12 +302,12 @@
     --text-tertiary: #d1d5db;
     --text-muted: #9ca3af;
     --text-light: #6b7280;
-    
+
     --bg-primary: #111827;
     --bg-secondary: #1f2937;
     --bg-tertiary: #374151;
     --bg-hover: #4b5563;
-    
+
     --border-primary: #374151;
     --border-secondary: #4b5563;
   }

@@ -1,27 +1,33 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { useToast } from '@/components/ui/use-toast'
-import { 
-  ArrowLeft, 
-  MessageSquare, 
-  Phone, 
-  Mail, 
+import { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useToast } from '@/components/ui/use-toast';
+import {
+  ArrowLeft,
+  MessageSquare,
+  Phone,
+  Mail,
   Clock,
   HelpCircle,
   FileText,
   CreditCard,
   User,
   Send,
-  CheckCircle
-} from 'lucide-react'
-import Link from 'next/link'
+  CheckCircle,
+} from 'lucide-react';
+import Link from 'next/link';
 
 const supportCategories = [
   { value: 'general', label: 'General Inquiry' },
@@ -29,35 +35,41 @@ const supportCategories = [
   { value: 'payment', label: 'Payment Issues' },
   { value: 'technical', label: 'Technical Support' },
   { value: 'account', label: 'Account Issues' },
-  { value: 'feedback', label: 'Feedback & Suggestions' }
-]
+  { value: 'feedback', label: 'Feedback & Suggestions' },
+];
 
 const faqs = [
   {
-    question: "How do I place an order?",
-    answer: "Click on 'Place Order' from your dashboard or navigation menu. Fill out the order form with your requirements, select your deadline and academic level, then proceed to payment."
+    question: 'How do I place an order?',
+    answer:
+      "Click on 'Place Order' from your dashboard or navigation menu. Fill out the order form with your requirements, select your deadline and academic level, then proceed to payment.",
   },
   {
-    question: "What payment methods do you accept?",
-    answer: "We accept all major credit cards, PayPal, and bank transfers. All payments are processed securely through our encrypted payment system."
+    question: 'What payment methods do you accept?',
+    answer:
+      'We accept all major credit cards, PayPal, and bank transfers. All payments are processed securely through our encrypted payment system.',
   },
   {
-    question: "How do I track my order progress?",
-    answer: "You can track your order status from your dashboard. You&apos;ll receive email notifications for important updates, and you can message your writer directly through our messaging system."
+    question: 'How do I track my order progress?',
+    answer:
+      'You can track your order status from your dashboard. You&apos;ll receive email notifications for important updates, and you can message your writer directly through our messaging system.',
   },
   {
     question: "What if I'm not satisfied with my order?",
-    answer: "We offer free revisions within 14 days of delivery. If you're still not satisfied, contact our support team and we&apos;ll work to resolve the issue or provide a refund according to our policy."
+    answer:
+      "We offer free revisions within 14 days of delivery. If you're still not satisfied, contact our support team and we&apos;ll work to resolve the issue or provide a refund according to our policy.",
   },
   {
-    question: "How do I download my completed work?",
-    answer: "Once your order is marked as complete, you&apos;ll receive an email notification. Login to your dashboard and click on your order to download the files."
+    question: 'How do I download my completed work?',
+    answer:
+      'Once your order is marked as complete, you&apos;ll receive an email notification. Login to your dashboard and click on your order to download the files.',
   },
   {
-    question: "Can I communicate with my writer?",
-    answer: "Yes! Use the messaging system in your order details page to communicate directly with your assigned writer throughout the writing process."
-  }
-]
+    question: 'Can I communicate with my writer?',
+    answer:
+      'Yes! Use the messaging system in your order details page to communicate directly with your assigned writer throughout the writing process.',
+  },
+];
 
 export default function SupportPage() {
   const [contactForm, setContactForm] = useState({
@@ -65,43 +77,49 @@ export default function SupportPage() {
     email: '',
     category: '',
     subject: '',
-    message: ''
-  })
-  const [submitting, setSubmitting] = useState(false)
-  const { toast } = useToast()
+    message: '',
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const { toast } = useToast();
 
   const handleSubmitContact = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (!contactForm.name || !contactForm.email || !contactForm.category || !contactForm.subject || !contactForm.message) {
+    e.preventDefault();
+
+    if (
+      !contactForm.name ||
+      !contactForm.email ||
+      !contactForm.category ||
+      !contactForm.subject ||
+      !contactForm.message
+    ) {
       toast({
         title: 'Missing Information',
         description: 'Please fill in all required fields',
-        variant: 'destructive'
-      })
-      return
+        variant: 'destructive',
+      });
+      return;
     }
 
-    setSubmitting(true)
-    
+    setSubmitting(true);
+
     // Simulate form submission
     setTimeout(() => {
       toast({
         title: 'Message Sent!',
-        description: 'Thank you for contacting us. We\'ll get back to you within 24 hours.',
-        variant: 'default'
-      })
-      
+        description: "Thank you for contacting us. We'll get back to you within 24 hours.",
+        variant: 'default',
+      });
+
       setContactForm({
         name: '',
         email: '',
         category: '',
         subject: '',
-        message: ''
-      })
-      setSubmitting(false)
-    }, 1000)
-  }
+        message: '',
+      });
+      setSubmitting(false);
+    }, 1000);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
@@ -131,9 +149,7 @@ export default function SupportPage() {
                     <MessageSquare className="h-5 w-5" />
                     Quick Contact
                   </CardTitle>
-                  <CardDescription>
-                    Multiple ways to reach our support team
-                  </CardDescription>
+                  <CardDescription>Multiple ways to reach our support team</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
@@ -143,7 +159,7 @@ export default function SupportPage() {
                       <p className="text-sm text-gray-600">support@einsteinessay.com</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
                     <Phone className="h-5 w-5 text-green-600" />
                     <div>
@@ -209,7 +225,9 @@ export default function SupportPage() {
                         <Input
                           id="name"
                           value={contactForm.name}
-                          onChange={(e) => setContactForm(prev => ({ ...prev, name: e.target.value }))}
+                          onChange={e =>
+                            setContactForm(prev => ({ ...prev, name: e.target.value }))
+                          }
                           placeholder="Enter your full name"
                           required
                         />
@@ -220,7 +238,9 @@ export default function SupportPage() {
                           id="email"
                           type="email"
                           value={contactForm.email}
-                          onChange={(e) => setContactForm(prev => ({ ...prev, email: e.target.value }))}
+                          onChange={e =>
+                            setContactForm(prev => ({ ...prev, email: e.target.value }))
+                          }
                           placeholder="Enter your email"
                           required
                         />
@@ -229,12 +249,17 @@ export default function SupportPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="category">Category *</Label>
-                      <Select value={contactForm.category} onValueChange={(value) => setContactForm(prev => ({ ...prev, category: value }))}>
+                      <Select
+                        value={contactForm.category}
+                        onValueChange={value =>
+                          setContactForm(prev => ({ ...prev, category: value }))
+                        }
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select a category" />
                         </SelectTrigger>
                         <SelectContent>
-                          {supportCategories.map((category) => (
+                          {supportCategories.map(category => (
                             <SelectItem key={category.value} value={category.value}>
                               {category.label}
                             </SelectItem>
@@ -248,7 +273,9 @@ export default function SupportPage() {
                       <Input
                         id="subject"
                         value={contactForm.subject}
-                        onChange={(e) => setContactForm(prev => ({ ...prev, subject: e.target.value }))}
+                        onChange={e =>
+                          setContactForm(prev => ({ ...prev, subject: e.target.value }))
+                        }
                         placeholder="Brief description of your issue"
                         required
                       />
@@ -259,7 +286,9 @@ export default function SupportPage() {
                       <Textarea
                         id="message"
                         value={contactForm.message}
-                        onChange={(e) => setContactForm(prev => ({ ...prev, message: e.target.value }))}
+                        onChange={e =>
+                          setContactForm(prev => ({ ...prev, message: e.target.value }))
+                        }
                         placeholder="Provide detailed information about your issue..."
                         rows={5}
                         required
@@ -287,20 +316,19 @@ export default function SupportPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Frequently Asked Questions</CardTitle>
-                  <CardDescription>
-                    Find quick answers to common questions
-                  </CardDescription>
+                  <CardDescription>Find quick answers to common questions</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {faqs.map((faq, index) => (
-                    <div key={index} className="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0">
+                    <div
+                      key={index}
+                      className="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0"
+                    >
                       <h4 className="font-medium text-gray-900 mb-2 flex items-start gap-2">
                         <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
                         {faq.question}
                       </h4>
-                      <p className="text-gray-600 text-sm leading-relaxed ml-7">
-                        {faq.answer}
-                      </p>
+                      <p className="text-gray-600 text-sm leading-relaxed ml-7">{faq.answer}</p>
                     </div>
                   ))}
                 </CardContent>
@@ -310,5 +338,5 @@ export default function SupportPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,88 +1,93 @@
-'use client'
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Calculator, Clock, FileText, TrendingUp } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Calculator, Clock, FileText, TrendingUp } from 'lucide-react';
 
 interface DeadlinePricing {
-  id: string
-  name: string
-  description: string
-  min_hours: number
-  max_hours: number | null
-  price_multiplier: number
+  id: string;
+  name: string;
+  description: string;
+  min_hours: number;
+  max_hours: number | null;
+  price_multiplier: number;
 }
 
 interface PriceData {
-  base_price: number
-  total_multiplier: number
-  total_addition: number
-  final_price: number
+  base_price: number;
+  total_multiplier: number;
+  total_addition: number;
+  final_price: number;
   pricing_breakdown: {
-    pages: number
-    price_per_page: number
-    deadline_multiplier: number
+    pages: number;
+    price_per_page: number;
+    deadline_multiplier: number;
     deadline_pricing: {
-      name: string | null
-      multiplier: number
-    }
-  }
+      name: string | null;
+      multiplier: number;
+    };
+  };
 }
 
 interface PriceCalculatorProps {
-  priceData: PriceData
-  deadlinePricing: DeadlinePricing[]
-  formData?: Record<string, any>
+  priceData: PriceData;
+  deadlinePricing: DeadlinePricing[];
+  formData?: Record<string, any>;
   fields?: Array<{
-    name: string
-    label: string
+    name: string;
+    label: string;
     options: Array<{
-      value: string
-      text: string
-    }>
-  }>
+      value: string;
+      text: string;
+    }>;
+  }>;
 }
 
-export default function PriceCalculator({ priceData, deadlinePricing, formData, fields }: PriceCalculatorProps) {
-  const breakdown = priceData.pricing_breakdown
+export default function PriceCalculator({
+  priceData,
+  deadlinePricing,
+  formData,
+  fields,
+}: PriceCalculatorProps) {
+  const breakdown = priceData.pricing_breakdown;
 
   // Get selected options with their display text
   const getSelectedOptions = () => {
-    if (!formData || !fields) return []
-    
-    const selectedOptions: Array<{ fieldLabel: string; optionText: string }> = []
-    
+    if (!formData || !fields) return [];
+
+    const selectedOptions: Array<{ fieldLabel: string; optionText: string }> = [];
+
     fields.forEach(field => {
-      const value = formData[field.name]
+      const value = formData[field.name];
       if (value) {
         if (Array.isArray(value)) {
           // Handle checkbox/multi-select
           value.forEach(val => {
-            const option = field.options.find(opt => opt.value === val)
+            const option = field.options.find(opt => opt.value === val);
             if (option) {
               selectedOptions.push({
                 fieldLabel: field.label,
-                optionText: option.text
-              })
+                optionText: option.text,
+              });
             }
-          })
+          });
         } else {
           // Handle single select/radio
-          const option = field.options.find(opt => opt.value === value)
+          const option = field.options.find(opt => opt.value === value);
           if (option) {
             selectedOptions.push({
               fieldLabel: field.label,
-              optionText: option.text
-            })
+              optionText: option.text,
+            });
           }
         }
       }
-    })
-    
-    return selectedOptions
-  }
+    });
 
-  const selectedOptions = getSelectedOptions()
+    return selectedOptions;
+  };
+
+  const selectedOptions = getSelectedOptions();
 
   return (
     <Card className="border-green-200 bg-green-50">
@@ -112,7 +117,10 @@ export default function PriceCalculator({ priceData, deadlinePricing, formData, 
               <Clock className="h-4 w-4 text-orange-600" />
               <span className="font-semibold text-gray-800">Deadline Urgency</span>
               {breakdown.deadline_pricing.name && (
-                <Badge variant="outline" className="bg-orange-100 text-orange-800 border-orange-300">
+                <Badge
+                  variant="outline"
+                  className="bg-orange-100 text-orange-800 border-orange-300"
+                >
                   {breakdown.deadline_pricing.name}
                 </Badge>
               )}
@@ -138,9 +146,9 @@ export default function PriceCalculator({ priceData, deadlinePricing, formData, 
             {selectedOptions.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {selectedOptions.map((option, index) => (
-                  <Badge 
-                    key={index} 
-                    variant="secondary" 
+                  <Badge
+                    key={index}
+                    variant="secondary"
                     className="bg-purple-100 text-purple-800 border-purple-300 text-xs"
                   >
                     {option.optionText}
@@ -157,18 +165,14 @@ export default function PriceCalculator({ priceData, deadlinePricing, formData, 
             <div className="flex items-center gap-2">
               <span className="font-semibold text-gray-800">Additional Services</span>
             </div>
-            <span className="text-emerald-700 font-bold text-lg">
-              +${priceData.total_addition}
-            </span>
+            <span className="text-emerald-700 font-bold text-lg">+${priceData.total_addition}</span>
           </div>
         )}
 
         {/* Final Price */}
         <div className="flex justify-between items-center p-5 bg-green-100 rounded-lg border-3 border-green-300 shadow-md">
           <span className="text-xl font-bold text-green-800">Total Price</span>
-          <span className="text-3xl font-bold text-green-800">
-            ${priceData.final_price}
-          </span>
+          <span className="text-3xl font-bold text-green-800">${priceData.final_price}</span>
         </div>
 
         {/* Price Explanation */}
@@ -180,5 +184,5 @@ export default function PriceCalculator({ priceData, deadlinePricing, formData, 
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -1,24 +1,24 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { useParams, useRouter, useSearchParams } from 'next/navigation'
-import { useAuth } from '@/context/AuthContext'
-import { getApiUrl } from '@/lib/config'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Textarea } from '@/components/ui/textarea'
-import { Input } from '@/components/ui/input'
-import { useToast } from '@/components/ui/use-toast'
-import OrderFileManager from '@/components/order/OrderFileManager'
-import OrderSolutionManager from '@/components/order/OrderSolutionManager'
-import OrderReviewForm from '@/components/order/OrderReviewForm'
-import { 
-  ArrowLeft, 
-  FileText, 
-  Clock, 
-  DollarSign, 
-  MessageSquare, 
+import { useState, useEffect } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
+import { getApiUrl } from '@/lib/config';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
+import OrderFileManager from '@/components/order/OrderFileManager';
+import OrderSolutionManager from '@/components/order/OrderSolutionManager';
+import OrderReviewForm from '@/components/order/OrderReviewForm';
+import {
+  ArrowLeft,
+  FileText,
+  Clock,
+  DollarSign,
+  MessageSquare,
   Send,
   Calendar,
   User,
@@ -27,152 +27,153 @@ import {
   CheckCircle,
   Loader2,
   ExternalLink,
-  Copy
-} from 'lucide-react'
-import Link from 'next/link'
+  Copy,
+} from 'lucide-react';
+import Link from 'next/link';
 
 interface OrderDetail {
-  order_id: string
-  order_number: string
-  final_price: number
+  order_id: string;
+  order_number: string;
+  final_price: number;
   payment_method: {
-    type: string
-    name: string
-    config: any
-  }
-  status: string
-  payment_status: string
-  created_at: string
-  deadline: string
-  customer_notes: string
-  form_data: Record<string, any>
+    type: string;
+    name: string;
+    config: any;
+  };
+  status: string;
+  payment_status: string;
+  created_at: string;
+  deadline: string;
+  customer_notes: string;
+  form_data: Record<string, any>;
   pricing_tier: {
-    id: string
-    name: string
-    description: string
-  }
+    id: string;
+    name: string;
+    description: string;
+  };
 }
 
 interface OrderMessage {
-  id: number
-  message: string
-  sender_type: string // 'customer', 'admin', 'writer'
-  sender_name: string
-  created_at: string
-  is_read: boolean
+  id: number;
+  message: string;
+  sender_type: string; // 'customer', 'admin', 'writer'
+  sender_name: string;
+  created_at: string;
+  is_read: boolean;
 }
 
 export default function OrderDetailPage() {
-  const params = useParams()
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const orderId = params.id as string
+  const params = useParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const orderId = params.id as string;
 
-  const [orderDetail, setOrderDetail] = useState<OrderDetail | null>(null)
-  const [messages, setMessages] = useState<OrderMessage[]>([])
-  const [newMessage, setNewMessage] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [sendingMessage, setSendingMessage] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  
+  const [orderDetail, setOrderDetail] = useState<OrderDetail | null>(null);
+  const [messages, setMessages] = useState<OrderMessage[]>([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [sendingMessage, setSendingMessage] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   // Payment states
-  const [initiatingPayment, setInitiatingPayment] = useState(false)
-  const [paymentInstructions, setPaymentInstructions] = useState<any>(null)
-  const [showPaymentModal, setShowPaymentModal] = useState(false)
-  const [paymentReference, setPaymentReference] = useState('')
-  const [confirmingPayment, setConfirmingPayment] = useState(false)
-  const [capturingPayment, setCapturingPayment] = useState(false)
+  const [initiatingPayment, setInitiatingPayment] = useState(false);
+  const [paymentInstructions, setPaymentInstructions] = useState<any>(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentReference, setPaymentReference] = useState('');
+  const [confirmingPayment, setConfirmingPayment] = useState(false);
+  const [capturingPayment, setCapturingPayment] = useState(false);
 
-  const { user, getAuthHeaders } = useAuth()
-  const { toast } = useToast()
+  const { user, getAuthHeaders } = useAuth();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (orderId) {
-      fetchOrderDetail()
-      fetchOrderMessages()
+      fetchOrderDetail();
+      fetchOrderMessages();
     }
-  }, [orderId])
+  }, [orderId]);
 
   // Handle payment return from PayPal
   useEffect(() => {
-    const paymentStatus = searchParams.get('payment')
-    const token = searchParams.get('token') // PayPal payment ID
-    const payerId = searchParams.get('PayerID') // PayPal payer ID
-    
+    const paymentStatus = searchParams.get('payment');
+    const token = searchParams.get('token'); // PayPal payment ID
+    const payerId = searchParams.get('PayerID'); // PayPal payer ID
+
     // Handle custom payment status (success/cancelled)
     if (paymentStatus === 'success') {
       toast({
         title: 'Payment Successful',
-        description: 'Your payment has been processed successfully. Order status will be updated shortly.',
-        variant: 'default'
-      })
+        description:
+          'Your payment has been processed successfully. Order status will be updated shortly.',
+        variant: 'default',
+      });
       // Clean URL
-      router.replace(`/order/${orderId}`)
+      router.replace(`/order/${orderId}`);
     } else if (paymentStatus === 'cancelled') {
       toast({
         title: 'Payment Cancelled',
         description: 'Payment was cancelled. You can try again anytime.',
-        variant: 'destructive'
-      })
+        variant: 'destructive',
+      });
       // Clean URL
-      router.replace(`/order/${orderId}`)
+      router.replace(`/order/${orderId}`);
     }
-    
+
     // Handle PayPal return (automatic capture)
     if (token && payerId && orderId) {
-      capturePayPalPayment(token)
+      capturePayPalPayment(token);
     }
-  }, [searchParams, router, orderId, toast])
+  }, [searchParams, router, orderId, toast]);
 
   const fetchOrderDetail = async () => {
     try {
       const response = await fetch(getApiUrl(`get_order_details/${orderId}/`), {
-        headers: getAuthHeaders()
-      })
+        headers: getAuthHeaders(),
+      });
 
       if (response.ok) {
-        const data = await response.json()
-        setOrderDetail(data)
+        const data = await response.json();
+        setOrderDetail(data);
       } else {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to load order details')
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to load order details');
       }
     } catch (error) {
-      console.error('Error fetching order details:', error)
-      setError(error instanceof Error ? error.message : 'Failed to load order')
+      console.error('Error fetching order details:', error);
+      setError(error instanceof Error ? error.message : 'Failed to load order');
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to load order details',
-        variant: 'destructive'
-      })
+        variant: 'destructive',
+      });
     }
-  }
+  };
 
   const fetchOrderMessages = async () => {
     try {
       const response = await fetch(getApiUrl(`get_order_messages/${orderId}/`), {
-        headers: getAuthHeaders()
-      })
+        headers: getAuthHeaders(),
+      });
 
       if (response.ok) {
-        const data = await response.json()
-        setMessages(data.messages || [])
+        const data = await response.json();
+        setMessages(data.messages || []);
       } else {
         // Messages might not exist yet, don't show error
-        setMessages([])
+        setMessages([]);
       }
     } catch (error) {
-      console.error('Error fetching messages:', error)
-      setMessages([])
+      console.error('Error fetching messages:', error);
+      setMessages([]);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const sendMessage = async () => {
-    if (!newMessage.trim()) return
+    if (!newMessage.trim()) return;
 
-    setSendingMessage(true)
+    setSendingMessage(true);
     try {
       const response = await fetch(getApiUrl('send_order_message/'), {
         method: 'POST',
@@ -182,68 +183,69 @@ export default function OrderDetailPage() {
         },
         body: JSON.stringify({
           order_id: orderId,
-          message: newMessage.trim()
-        })
-      })
+          message: newMessage.trim(),
+        }),
+      });
 
       if (response.ok) {
-        setNewMessage('')
-        fetchOrderMessages() // Refresh messages
+        setNewMessage('');
+        fetchOrderMessages(); // Refresh messages
         toast({
           title: 'Message Sent',
-          description: 'Your message has been sent successfully'
-        })
+          description: 'Your message has been sent successfully',
+        });
       } else {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to send message')
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to send message');
       }
     } catch (error) {
-      console.error('Error sending message:', error)
+      console.error('Error sending message:', error);
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to send message',
-        variant: 'destructive'
-      })
+        variant: 'destructive',
+      });
     } finally {
-      setSendingMessage(false)
+      setSendingMessage(false);
     }
-  }
+  };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'pending_payment':
-        return <Clock className="h-4 w-4 text-orange-500" />
+        return <Clock className="h-4 w-4 text-orange-500" />;
       case 'confirmed':
       case 'in_progress':
-        return <Clock className="h-4 w-4 text-blue-500" />
+        return <Clock className="h-4 w-4 text-blue-500" />;
       case 'completed':
       case 'delivered':
-        return <CheckCircle className="h-4 w-4 text-green-500" />
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
       default:
-        return <AlertCircle className="h-4 w-4 text-gray-500" />
+        return <AlertCircle className="h-4 w-4 text-gray-500" />;
     }
-  }
+  };
 
   const getStatusBadge = (status: string) => {
-    const sanitizedStatus = status.split('_').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-    ).join(' ')
+    const sanitizedStatus = status
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
 
     switch (status) {
       case 'pending_payment':
-        return <Badge variant="warning">{sanitizedStatus}</Badge>
+        return <Badge variant="warning">{sanitizedStatus}</Badge>;
       case 'confirmed':
-        return <Badge variant="info">{sanitizedStatus}</Badge>
+        return <Badge variant="info">{sanitizedStatus}</Badge>;
       case 'in_progress':
-        return <Badge variant="info">{sanitizedStatus}</Badge>
+        return <Badge variant="info">{sanitizedStatus}</Badge>;
       case 'completed':
-        return <Badge variant="success">{sanitizedStatus}</Badge>
+        return <Badge variant="success">{sanitizedStatus}</Badge>;
       case 'delivered':
-        return <Badge variant="success">{sanitizedStatus}</Badge>
+        return <Badge variant="success">{sanitizedStatus}</Badge>;
       default:
-        return <Badge variant="secondary">{sanitizedStatus}</Badge>
+        return <Badge variant="secondary">{sanitizedStatus}</Badge>;
     }
-  }
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -251,76 +253,94 @@ export default function OrderDetailPage() {
       month: 'long',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
+      minute: '2-digit',
+    });
+  };
 
   const formatShortDate = (dateString: string) => {
-    const date = new Date(dateString)
-    const now = new Date()
-    const diffTime = Math.abs(now.getTime() - date.getTime())
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - date.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
     if (diffDays === 1) {
-      return 'Today ' + date.toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
-        minute: '2-digit',
-        hour12: true 
-      })
+      return (
+        'Today ' +
+        date.toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true,
+        })
+      );
     } else if (diffDays === 2) {
-      return 'Yesterday ' + date.toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
-        minute: '2-digit',
-        hour12: true 
-      })
+      return (
+        'Yesterday ' +
+        date.toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true,
+        })
+      );
     } else if (diffDays <= 7) {
-      return date.toLocaleDateString('en-US', { 
+      return date.toLocaleDateString('en-US', {
         weekday: 'short',
         hour: 'numeric',
         minute: '2-digit',
-        hour12: true
-      })
+        hour12: true,
+      });
     } else {
-      return date.toLocaleDateString('en-US', { 
+      return date.toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
         hour: 'numeric',
         minute: '2-digit',
-        hour12: true
-      })
+        hour12: true,
+      });
     }
-  }
+  };
 
   const getSenderIcon = (senderType: string) => {
     switch (senderType) {
       case 'customer':
-        return <User className="h-4 w-4 text-blue-600" />
+        return <User className="h-4 w-4 text-blue-600" />;
       case 'admin':
-        return <User className="h-4 w-4 text-purple-600" />
+        return <User className="h-4 w-4 text-purple-600" />;
       case 'writer':
-        return <User className="h-4 w-4 text-green-600" />
+        return <User className="h-4 w-4 text-green-600" />;
       default:
-        return <User className="h-4 w-4 text-gray-600" />
+        return <User className="h-4 w-4 text-gray-600" />;
     }
-  }
+  };
 
   const getSenderBadge = (senderType: string) => {
     switch (senderType) {
       case 'customer':
-        return <Badge variant="default" className="bg-blue-100 text-blue-800">Student</Badge>
+        return (
+          <Badge variant="default" className="bg-blue-100 text-blue-800">
+            Student
+          </Badge>
+        );
       case 'admin':
-        return <Badge variant="default" className="bg-purple-100 text-purple-800">Admin</Badge>
+        return (
+          <Badge variant="default" className="bg-purple-100 text-purple-800">
+            Admin
+          </Badge>
+        );
       case 'writer':
-        return <Badge variant="default" className="bg-green-100 text-green-800">Writer</Badge>
+        return (
+          <Badge variant="default" className="bg-green-100 text-green-800">
+            Writer
+          </Badge>
+        );
       default:
-        return <Badge variant="secondary">{senderType}</Badge>
+        return <Badge variant="secondary">{senderType}</Badge>;
     }
-  }
+  };
 
   const initiatePayment = async () => {
-    if (!orderDetail) return
+    if (!orderDetail) return;
 
-    setInitiatingPayment(true)
+    setInitiatingPayment(true);
     try {
       const response = await fetch(getApiUrl('initiate_payment/'), {
         method: 'POST',
@@ -331,46 +351,46 @@ export default function OrderDetailPage() {
         body: JSON.stringify({
           order_id: orderDetail.order_id,
           return_url: `${window.location.origin}/order/${orderDetail.order_id}?payment=success`,
-          cancel_url: `${window.location.origin}/order/${orderDetail.order_id}?payment=cancelled`
-        })
-      })
+          cancel_url: `${window.location.origin}/order/${orderDetail.order_id}?payment=cancelled`,
+        }),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok && data.success) {
         if (data.payment_method === 'paypal_business' && data.approval_url) {
           // Redirect to PayPal for approval
-          window.location.href = data.approval_url
+          window.location.href = data.approval_url;
         } else if (data.payment_method === 'paypal_personal' || data.payment_method === 'manual') {
           // Show instructions modal
-          setPaymentInstructions(data)
-          setShowPaymentModal(true)
+          setPaymentInstructions(data);
+          setShowPaymentModal(true);
         }
       } else {
-        throw new Error(data.error || 'Failed to initiate payment')
+        throw new Error(data.error || 'Failed to initiate payment');
       }
     } catch (error) {
-      console.error('Error initiating payment:', error)
+      console.error('Error initiating payment:', error);
       toast({
         title: 'Payment Error',
         description: error instanceof Error ? error.message : 'Failed to initiate payment',
-        variant: 'destructive'
-      })
+        variant: 'destructive',
+      });
     } finally {
-      setInitiatingPayment(false)
+      setInitiatingPayment(false);
     }
-  }
+  };
 
   const copyToClipboard = (text: string, label: string) => {
-    navigator.clipboard.writeText(text)
+    navigator.clipboard.writeText(text);
     toast({
       title: 'Copied',
-      description: `${label} copied to clipboard`
-    })
-  }
+      description: `${label} copied to clipboard`,
+    });
+  };
 
   const capturePayPalPayment = async (paymentId: string) => {
-    setCapturingPayment(true)
+    setCapturingPayment(true);
     try {
       const response = await fetch(getApiUrl('capture_paypal_payment/'), {
         method: 'POST',
@@ -380,57 +400,57 @@ export default function OrderDetailPage() {
         },
         body: JSON.stringify({
           order_id: orderId,
-          payment_id: paymentId
-        })
-      })
+          payment_id: paymentId,
+        }),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok && data.success) {
         toast({
           title: 'Payment Captured Successfully',
           description: data.message || 'Your PayPal payment has been processed successfully.',
-          variant: 'default'
-        })
+          variant: 'default',
+        });
         // Refresh order details to show updated status
-        fetchOrderDetail()
+        fetchOrderDetail();
       } else {
         // Log error but don't show user error immediately - they might have already paid
-        console.error('PayPal capture error:', data.error)
+        console.error('PayPal capture error:', data.error);
         toast({
           title: 'Payment Processing',
           description: 'We are processing your payment. Please refresh the page in a few moments.',
-          variant: 'default'
-        })
+          variant: 'default',
+        });
       }
-      
+
       // Clean URL regardless of success/failure
-      router.replace(`/order/${orderId}`)
+      router.replace(`/order/${orderId}`);
     } catch (error) {
-      console.error('Error capturing PayPal payment:', error)
+      console.error('Error capturing PayPal payment:', error);
       toast({
         title: 'Payment Processing',
         description: 'We are processing your payment. Please refresh the page in a few moments.',
-        variant: 'default'
-      })
+        variant: 'default',
+      });
       // Clean URL
-      router.replace(`/order/${orderId}`)
+      router.replace(`/order/${orderId}`);
     } finally {
-      setCapturingPayment(false)
+      setCapturingPayment(false);
     }
-  }
+  };
 
   const confirmManualPayment = async (paymentRef: string) => {
     if (!paymentRef.trim()) {
       toast({
         title: 'Error',
         description: 'Please provide a payment reference',
-        variant: 'destructive'
-      })
-      return
+        variant: 'destructive',
+      });
+      return;
     }
 
-    setConfirmingPayment(true)
+    setConfirmingPayment(true);
     try {
       const response = await fetch(getApiUrl('confirm_manual_payment/'), {
         method: 'POST',
@@ -440,37 +460,37 @@ export default function OrderDetailPage() {
         },
         body: JSON.stringify({
           order_id: orderDetail?.order_id,
-          payment_reference: paymentRef.trim()
-        })
-      })
+          payment_reference: paymentRef.trim(),
+        }),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok && data.success) {
         toast({
           title: 'Payment Submitted',
           description: data.message || 'Payment confirmation submitted successfully',
-          variant: 'default'
-        })
-        setShowPaymentModal(false)
-        setPaymentInstructions(null)
-        setPaymentReference('')
+          variant: 'default',
+        });
+        setShowPaymentModal(false);
+        setPaymentInstructions(null);
+        setPaymentReference('');
         // Refresh order details
-        fetchOrderDetail()
+        fetchOrderDetail();
       } else {
-        throw new Error(data.error || 'Failed to confirm payment')
+        throw new Error(data.error || 'Failed to confirm payment');
       }
     } catch (error) {
-      console.error('Error confirming manual payment:', error)
+      console.error('Error confirming manual payment:', error);
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to confirm payment',
-        variant: 'destructive'
-      })
+        variant: 'destructive',
+      });
     } finally {
-      setConfirmingPayment(false)
+      setConfirmingPayment(false);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -480,7 +500,7 @@ export default function OrderDetailPage() {
           <p className="text-gray-600">Loading order details...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (capturingPayment) {
@@ -492,7 +512,7 @@ export default function OrderDetailPage() {
           <p className="text-sm text-gray-500 mt-2">Please wait, this may take a few moments.</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (error || !orderDetail) {
@@ -508,7 +528,7 @@ export default function OrderDetailPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -528,9 +548,7 @@ export default function OrderDetailPage() {
                 <h1 className="text-2xl font-bold text-gray-900">
                   Order #{orderDetail.order_number}
                 </h1>
-                <p className="text-gray-600">
-                  Created {formatDate(orderDetail.created_at)}
-                </p>
+                <p className="text-gray-600">Created {formatDate(orderDetail.created_at)}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -552,12 +570,13 @@ export default function OrderDetailPage() {
                         <div>
                           <h3 className="font-semibold text-orange-900">Payment Required</h3>
                           <p className="text-sm text-orange-700">
-                            Complete your payment of ${orderDetail.final_price} to proceed with your order.
+                            Complete your payment of ${orderDetail.final_price} to proceed with your
+                            order.
                           </p>
                         </div>
                       </div>
-                      <Button 
-                        onClick={initiatePayment} 
+                      <Button
+                        onClick={initiatePayment}
                         disabled={initiatingPayment}
                         className="bg-orange-600 hover:bg-orange-700"
                       >
@@ -620,7 +639,9 @@ export default function OrderDetailPage() {
                       </div>
                       <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
                         <span className="font-medium text-gray-800">Payment Status</span>
-                        <Badge variant={orderDetail.payment_status === 'paid' ? 'success' : 'warning'}>
+                        <Badge
+                          variant={orderDetail.payment_status === 'paid' ? 'success' : 'warning'}
+                        >
                           {orderDetail.payment_status === 'paid' ? 'Paid' : 'Pending'}
                         </Badge>
                       </div>
@@ -646,16 +667,18 @@ export default function OrderDetailPage() {
                       {Object.entries(orderDetail.form_data || {}).map(([key, value]) => {
                         const formatValue = (key: string, value: any) => {
                           if (typeof value !== 'string') {
-                            return JSON.stringify(value)
+                            return JSON.stringify(value);
                           }
-                          
+
                           // Format specific fields that need title case treatment
-                          if (['subject', 'paper_type', 'citation_style'].includes(key.toLowerCase())) {
-                            return value.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+                          if (
+                            ['subject', 'paper_type', 'citation_style'].includes(key.toLowerCase())
+                          ) {
+                            return value.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
                           }
-                          
-                          return value
-                        }
+
+                          return value;
+                        };
 
                         return (
                           <div key={key} className="p-3 bg-gray-50 rounded-lg border">
@@ -668,7 +691,7 @@ export default function OrderDetailPage() {
                               </span>
                             </div>
                           </div>
-                        )
+                        );
                       })}
                     </div>
                   ) : (
@@ -702,7 +725,7 @@ export default function OrderDetailPage() {
 
               {/* Solution Files */}
               <OrderSolutionManager orderId={orderId} />
-              
+
               {/* Order Review */}
               <OrderReviewForm orderId={orderId} onReviewSubmitted={fetchOrderDetail} />
             </div>
@@ -722,7 +745,7 @@ export default function OrderDetailPage() {
                     {/* Messages List */}
                     <div className="max-h-96 overflow-y-auto space-y-3">
                       {messages.length > 0 ? (
-                        messages.map((message) => (
+                        messages.map(message => (
                           <div
                             key={message.id}
                             className={`rounded-lg border ${
@@ -767,7 +790,7 @@ export default function OrderDetailPage() {
                         <Textarea
                           placeholder="Type your message here..."
                           value={newMessage}
-                          onChange={(e) => setNewMessage(e.target.value)}
+                          onChange={e => setNewMessage(e.target.value)}
                           rows={3}
                           className="resize-none"
                         />
@@ -805,7 +828,10 @@ export default function OrderDetailPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CreditCard className="h-5 w-5" />
-                Payment Instructions - {paymentInstructions.payment_method === 'paypal_personal' ? 'PayPal.me' : 'Manual Payment'}
+                Payment Instructions -{' '}
+                {paymentInstructions.payment_method === 'paypal_personal'
+                  ? 'PayPal.me'
+                  : 'Manual Payment'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -813,19 +839,23 @@ export default function OrderDetailPage() {
                 <>
                   <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
                     <h3 className="font-semibold text-blue-900 mb-2">PayPal.me Payment Link</h3>
-                    <p className="text-sm text-blue-700 mb-3">Click the link below to complete your payment:</p>
+                    <p className="text-sm text-blue-700 mb-3">
+                      Click the link below to complete your payment:
+                    </p>
                     <div className="flex items-center gap-2">
-                      <Button 
+                      <Button
                         onClick={() => window.open(paymentInstructions.payment_url, '_blank')}
                         className="bg-blue-600 hover:bg-blue-700"
                       >
                         <ExternalLink className="h-4 w-4 mr-2" />
                         Pay with PayPal
                       </Button>
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="sm"
-                        onClick={() => copyToClipboard(paymentInstructions.payment_url, 'Payment link')}
+                        onClick={() =>
+                          copyToClipboard(paymentInstructions.payment_url, 'Payment link')
+                        }
                       >
                         <Copy className="h-4 w-4" />
                       </Button>
@@ -833,7 +863,9 @@ export default function OrderDetailPage() {
                   </div>
                   {paymentInstructions.instructions && (
                     <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                      <h3 className="font-semibold text-yellow-900 mb-2">Additional Instructions</h3>
+                      <h3 className="font-semibold text-yellow-900 mb-2">
+                        Additional Instructions
+                      </h3>
                       <p className="text-sm text-yellow-800 whitespace-pre-wrap">
                         {paymentInstructions.instructions}
                       </p>
@@ -855,10 +887,12 @@ export default function OrderDetailPage() {
                             </span>
                             <div className="flex items-center gap-2">
                               <span className="text-green-700">{value as string}</span>
-                              <Button 
-                                variant="ghost" 
+                              <Button
+                                variant="ghost"
                                 size="sm"
-                                onClick={() => copyToClipboard(value as string, key.replace(/_/g, ' '))}
+                                onClick={() =>
+                                  copyToClipboard(value as string, key.replace(/_/g, ' '))
+                                }
                               >
                                 <Copy className="h-3 w-3" />
                               </Button>
@@ -868,7 +902,7 @@ export default function OrderDetailPage() {
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
                     <h3 className="font-semibold text-blue-900 mb-2">Payment Details</h3>
                     <div className="space-y-2 text-sm">
@@ -876,10 +910,12 @@ export default function OrderDetailPage() {
                         <span className="font-medium text-blue-800">Amount:</span>
                         <div className="flex items-center gap-2">
                           <span className="text-blue-700">${paymentInstructions.amount}</span>
-                          <Button 
-                            variant="ghost" 
+                          <Button
+                            variant="ghost"
                             size="sm"
-                            onClick={() => copyToClipboard(`$${paymentInstructions.amount}`, 'Amount')}
+                            onClick={() =>
+                              copyToClipboard(`$${paymentInstructions.amount}`, 'Amount')
+                            }
                           >
                             <Copy className="h-3 w-3" />
                           </Button>
@@ -891,10 +927,12 @@ export default function OrderDetailPage() {
                           <span className="text-blue-700 font-mono">
                             {paymentInstructions.order_reference}
                           </span>
-                          <Button 
-                            variant="ghost" 
+                          <Button
+                            variant="ghost"
                             size="sm"
-                            onClick={() => copyToClipboard(paymentInstructions.order_reference, 'Reference')}
+                            onClick={() =>
+                              copyToClipboard(paymentInstructions.order_reference, 'Reference')
+                            }
                           >
                             <Copy className="h-3 w-3" />
                           </Button>
@@ -926,23 +964,26 @@ export default function OrderDetailPage() {
               </div>
 
               {/* Payment Confirmation Form */}
-              {(paymentInstructions.payment_method === 'manual' || paymentInstructions.payment_method === 'paypal_personal') && (
+              {(paymentInstructions.payment_method === 'manual' ||
+                paymentInstructions.payment_method === 'paypal_personal') && (
                 <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
                   <h3 className="font-semibold text-indigo-900 mb-3">Confirm Your Payment</h3>
                   <p className="text-sm text-indigo-700 mb-4">
-                    Once you've completed the payment, provide your payment reference or transaction ID below to notify us.
+                    Once you've completed the payment, provide your payment reference or transaction
+                    ID below to notify us.
                   </p>
                   <div className="space-y-3">
                     <Input
-                      placeholder={paymentInstructions.payment_method === 'paypal_personal' 
-                        ? "PayPal transaction ID (e.g., 1234567890ABCDEF)" 
-                        : "Bank transfer reference or transaction ID"
+                      placeholder={
+                        paymentInstructions.payment_method === 'paypal_personal'
+                          ? 'PayPal transaction ID (e.g., 1234567890ABCDEF)'
+                          : 'Bank transfer reference or transaction ID'
                       }
                       value={paymentReference}
-                      onChange={(e) => setPaymentReference(e.target.value)}
+                      onChange={e => setPaymentReference(e.target.value)}
                       className="w-full"
                     />
-                    <Button 
+                    <Button
                       onClick={() => confirmManualPayment(paymentReference)}
                       disabled={!paymentReference.trim() || confirmingPayment}
                       className="w-full bg-indigo-600 hover:bg-indigo-700"
@@ -964,24 +1005,22 @@ export default function OrderDetailPage() {
               )}
 
               <div className="flex justify-end gap-3">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => {
-                    setShowPaymentModal(false)
-                    setPaymentInstructions(null)
-                    setPaymentReference('')
+                    setShowPaymentModal(false);
+                    setPaymentInstructions(null);
+                    setPaymentReference('');
                   }}
                 >
                   Close
                 </Button>
-                <Button onClick={() => window.location.reload()}>
-                  Refresh Order Status
-                </Button>
+                <Button onClick={() => window.location.reload()}>Refresh Order Status</Button>
               </div>
             </CardContent>
           </Card>
         </div>
       )}
     </div>
-  )
+  );
 }

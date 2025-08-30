@@ -1,22 +1,22 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { X, MessageCircle } from 'lucide-react'
-import { WHATSAPP_NUMBER, APP_NAME } from '@/lib/config'
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { X, MessageCircle } from 'lucide-react';
+import { WHATSAPP_NUMBER, APP_NAME } from '@/lib/config';
 
 export function WhatsAppFloat() {
-  const [isMinimized, setIsMinimized] = useState(true)
+  const [isMinimized, setIsMinimized] = useState(true);
 
   const handleWhatsAppClick = () => {
     // Remove any non-digits from the WhatsApp number for URL formatting
-    const phoneNumber = WHATSAPP_NUMBER.replace(/\D/g, '')
+    const phoneNumber = WHATSAPP_NUMBER.replace(/\D/g, '');
     const message = encodeURIComponent(
       `Hi! I found you through your website at ${APP_NAME}. I'd like to learn more about your academic writing services.`
-    )
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`
-    window.open(whatsappUrl, '_blank')
-  }
+    );
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
+    window.open(whatsappUrl, '_blank');
+  };
 
   if (isMinimized) {
     return (
@@ -28,14 +28,14 @@ export function WhatsAppFloat() {
         >
           <MessageCircle className="h-7 w-7" />
         </Button>
-        
+
         {/* Tooltip */}
         <div className="absolute bottom-16 right-0 bg-black text-white text-sm px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">
           Chat with us on WhatsApp
           <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -65,9 +65,7 @@ export function WhatsAppFloat() {
         {/* Content */}
         <div className="p-4 space-y-3">
           <div className="bg-gray-100 rounded-lg p-3">
-            <p className="text-sm text-gray-700">
-              👋 Hi there! Welcome to {APP_NAME}.
-            </p>
+            <p className="text-sm text-gray-700">👋 Hi there! Welcome to {APP_NAME}.</p>
             <p className="text-sm text-gray-700 mt-2">
               How can we help you with your academic writing needs today?
             </p>
@@ -76,25 +74,25 @@ export function WhatsAppFloat() {
           <div className="space-y-2">
             <p className="text-xs text-gray-500 font-medium">Quick questions:</p>
             <div className="space-y-1">
-              <button 
+              <button
                 onClick={handleWhatsAppClick}
                 className="w-full text-left bg-gray-50 hover:bg-gray-100 rounded-lg p-2 text-sm text-gray-700 transition-colors"
               >
                 📝 How do I place an order?
               </button>
-              <button 
+              <button
                 onClick={handleWhatsAppClick}
                 className="w-full text-left bg-gray-50 hover:bg-gray-100 rounded-lg p-2 text-sm text-gray-700 transition-colors"
               >
                 💰 What are your pricing options?
               </button>
-              <button 
+              <button
                 onClick={handleWhatsAppClick}
                 className="w-full text-left bg-gray-50 hover:bg-gray-100 rounded-lg p-2 text-sm text-gray-700 transition-colors"
               >
                 ⏰ How fast can you deliver?
               </button>
-              <button 
+              <button
                 onClick={handleWhatsAppClick}
                 className="w-full text-left bg-gray-50 hover:bg-gray-100 rounded-lg p-2 text-sm text-gray-700 transition-colors"
               >
@@ -103,8 +101,8 @@ export function WhatsAppFloat() {
             </div>
           </div>
 
-          <Button 
-            onClick={handleWhatsAppClick} 
+          <Button
+            onClick={handleWhatsAppClick}
             className="w-full bg-green-500 hover:bg-green-600 text-white"
           >
             <MessageCircle className="mr-2 h-4 w-4" />
@@ -117,5 +115,5 @@ export function WhatsAppFloat() {
         </div>
       </div>
     </div>
-  )
+  );
 }

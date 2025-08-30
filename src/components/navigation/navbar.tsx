@@ -1,15 +1,15 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { useAuth } from '@/context/AuthContext'
-import { cn } from '@/lib/utils'
+import Link from 'next/link';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/context/AuthContext';
+import { cn } from '@/lib/utils';
 
 interface NavItem {
-  name: string
-  href: string
+  name: string;
+  href: string;
 }
 
 const navItems: NavItem[] = [
@@ -17,21 +17,21 @@ const navItems: NavItem[] = [
   { name: 'Services', href: '/services' },
   { name: 'About', href: '/about' },
   { name: 'Blog', href: '/blog' },
-]
+];
 
 export function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { user, logout, loading } = useAuth()
-  const router = useRouter()
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, logout, loading } = useAuth();
+  const router = useRouter();
 
   const handleLogout = async () => {
     try {
-      await logout()
-      router.push('/')
+      await logout();
+      router.push('/');
     } catch (error) {
-      console.error('Logout failed:', error)
+      console.error('Logout failed:', error);
     }
-  }
+  };
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -47,7 +47,7 @@ export function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
-            {navItems.map((item) => (
+            {navItems.map(item => (
               <Link
                 key={item.name}
                 href={item.href}
@@ -60,8 +60,8 @@ export function Navbar() {
 
           {/* Auth Buttons - Desktop */}
           <div className="hidden lg:flex items-center space-x-3">
-            {!loading && (
-              user ? (
+            {!loading &&
+              (user ? (
                 <>
                   <span className="text-sm text-muted-foreground truncate max-w-24">
                     Welcome, {user.username}
@@ -78,12 +78,21 @@ export function Navbar() {
                   </Link>
                   {(user.is_staff || user.is_superuser) && (
                     <Link href="/admin">
-                      <Button variant="ghost" size="sm" className="text-purple-600 hover:text-purple-700 whitespace-nowrap">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-purple-600 hover:text-purple-700 whitespace-nowrap"
+                      >
                         Admin
                       </Button>
                     </Link>
                   )}
-                  <Button variant="outline" size="sm" onClick={handleLogout} className="whitespace-nowrap">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleLogout}
+                    className="whitespace-nowrap"
+                  >
                     Logout
                   </Button>
                 </>
@@ -100,8 +109,7 @@ export function Navbar() {
                     </Button>
                   </Link>
                 </>
-              )
-            )}
+              ))}
           </div>
 
           {/* Mobile Menu Button */}
@@ -111,12 +119,7 @@ export function Navbar() {
             className="lg:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {isMenuOpen ? (
                 <path
                   strokeLinecap="round"
@@ -140,7 +143,7 @@ export function Navbar() {
         {isMenuOpen && (
           <div className="lg:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 border-t">
-              {navItems.map((item) => (
+              {navItems.map(item => (
                 <Link
                   key={item.name}
                   href={item.href}
@@ -151,8 +154,8 @@ export function Navbar() {
                 </Link>
               ))}
               <div className="flex flex-col space-y-2 px-3 py-2">
-                {!loading && (
-                  user ? (
+                {!loading &&
+                  (user ? (
                     <>
                       <div className="px-3 py-2 text-sm text-muted-foreground">
                         Welcome, {user.username}
@@ -169,18 +172,22 @@ export function Navbar() {
                       </Link>
                       {(user.is_staff || user.is_superuser) && (
                         <Link href="/admin" onClick={() => setIsMenuOpen(false)}>
-                          <Button variant="ghost" size="sm" className="w-full justify-start text-purple-600 hover:text-purple-700">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="w-full justify-start text-purple-600 hover:text-purple-700"
+                          >
                             Admin Dashboard
                           </Button>
                         </Link>
                       )}
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
+                      <Button
+                        variant="outline"
+                        size="sm"
                         className="w-full"
                         onClick={() => {
-                          handleLogout()
-                          setIsMenuOpen(false)
+                          handleLogout();
+                          setIsMenuOpen(false);
                         }}
                       >
                         Logout
@@ -199,13 +206,12 @@ export function Navbar() {
                         </Button>
                       </Link>
                     </>
-                  )
-                )}
+                  ))}
               </div>
             </div>
           </div>
         )}
       </div>
     </nav>
-  )
+  );
 }

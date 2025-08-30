@@ -4,18 +4,18 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  BookOpen, 
-  GraduationCap, 
-  FileText, 
-  Edit, 
-  Clock, 
-  CheckCircle, 
+import {
+  BookOpen,
+  GraduationCap,
+  FileText,
+  Edit,
+  Clock,
+  CheckCircle,
   Star,
   ArrowRight,
   Users,
   Award,
-  Shield
+  Shield,
 } from 'lucide-react';
 
 const services = [
@@ -27,7 +27,7 @@ const services = [
     features: ['Original Content', 'Proper Citations', 'Any Topic', 'All Formats'],
     pricing: 'Starting at $12/page',
     turnaround: '3 hours - 14 days',
-    href: '/services/essay-writing'
+    href: '/services/essay-writing',
   },
   {
     id: 'research-papers',
@@ -37,7 +37,7 @@ const services = [
     features: ['Thorough Research', 'Data Analysis', 'Academic Sources', 'Methodology'],
     pricing: 'Starting at $15/page',
     turnaround: '6 hours - 21 days',
-    href: '/services/research-papers'
+    href: '/services/research-papers',
   },
   {
     id: 'dissertations',
@@ -47,7 +47,7 @@ const services = [
     features: ['Chapter-by-Chapter', 'Literature Review', 'Data Collection', 'Defense Prep'],
     pricing: 'Starting at $18/page',
     turnaround: '14 days - 60 days',
-    href: '/services/dissertations'
+    href: '/services/dissertations',
   },
   {
     id: 'editing',
@@ -57,48 +57,49 @@ const services = [
     features: ['Grammar Check', 'Style Enhancement', 'Structure Review', 'Plagiarism Check'],
     pricing: 'Starting at $8/page',
     turnaround: '1 hour - 7 days',
-    href: '/services/editing'
-  }
+    href: '/services/editing',
+  },
 ];
 
 const qualityFeatures = [
   {
     icon: CheckCircle,
     title: 'Quality Guarantee',
-    description: 'We guarantee high-quality work that meets your requirements or we revise it for free.'
+    description:
+      'We guarantee high-quality work that meets your requirements or we revise it for free.',
   },
   {
     icon: Clock,
     title: 'On-Time Delivery',
-    description: 'Your work will be delivered exactly when you need it, guaranteed.'
+    description: 'Your work will be delivered exactly when you need it, guaranteed.',
   },
   {
     icon: Shield,
     title: 'Plagiarism-Free',
-    description: 'All work is 100% original and comes with a plagiarism report.'
+    description: 'All work is 100% original and comes with a plagiarism report.',
   },
   {
     icon: Users,
     title: 'Expert Writers',
-    description: 'PhD holders and subject experts from top universities worldwide.'
+    description: 'PhD holders and subject experts from top universities worldwide.',
   },
   {
     icon: Award,
     title: 'Academic Excellence',
-    description: 'Proven track record of helping students achieve top grades.'
+    description: 'Proven track record of helping students achieve top grades.',
   },
   {
     icon: Star,
     title: '24/7 Support',
-    description: 'Round-the-clock customer support for all your questions and concerns.'
-  }
+    description: 'Round-the-clock customer support for all your questions and concerns.',
+  },
 ];
 
 const academicLevels = [
   { name: 'High School', description: 'Basic essays and assignments' },
-  { name: 'Undergraduate', description: 'Bachelor\'s degree coursework' },
-  { name: 'Master\'s', description: 'Graduate-level research and analysis' },
-  { name: 'PhD', description: 'Doctoral dissertations and advanced research' }
+  { name: 'Undergraduate', description: "Bachelor's degree coursework" },
+  { name: "Master's", description: 'Graduate-level research and analysis' },
+  { name: 'PhD', description: 'Doctoral dissertations and advanced research' },
 ];
 
 export default function ServicesPage() {
@@ -113,8 +114,8 @@ export default function ServicesPage() {
               <span className="text-primary"> Services</span>
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Professional academic writing help from expert tutors across all subjects and academic levels.
-              Quality work, on-time delivery, guaranteed.
+              Professional academic writing help from expert tutors across all subjects and academic
+              levels. Quality work, on-time delivery, guaranteed.
             </p>
             <Link href="/order">
               <Button size="lg" className="text-lg px-8 py-3">
@@ -134,13 +135,17 @@ export default function ServicesPage() {
               Our Writing Services
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Choose from our comprehensive range of academic writing services tailored to your needs.
+              Choose from our comprehensive range of academic writing services tailored to your
+              needs.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            {services.map((service) => (
-              <Card key={service.id} className="group hover:shadow-xl transition-all duration-300 cursor-pointer">
+            {services.map(service => (
+              <Card
+                key={service.id}
+                className="group hover:shadow-xl transition-all duration-300 cursor-pointer"
+              >
                 <CardHeader>
                   <div className="flex items-center gap-4 mb-4">
                     <div className="p-3 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
@@ -160,7 +165,7 @@ export default function ServicesPage() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <p className="text-gray-600 leading-relaxed">{service.description}</p>
-                  
+
                   <div>
                     <h4 className="font-semibold mb-3 text-gray-900">Key Features:</h4>
                     <div className="grid grid-cols-2 gap-2">
@@ -172,7 +177,7 @@ export default function ServicesPage() {
                       ))}
                     </div>
                   </div>
-                  
+
                   <div className="flex gap-3 pt-4">
                     <Link href={service.href} className="flex-1">
                       <Button variant="outline" className="w-full">
@@ -180,9 +185,7 @@ export default function ServicesPage() {
                       </Button>
                     </Link>
                     <Link href="/order" className="flex-1">
-                      <Button className="w-full">
-                        Order Now
-                      </Button>
+                      <Button className="w-full">Order Now</Button>
                     </Link>
                   </div>
                 </CardContent>
@@ -196,14 +199,12 @@ export default function ServicesPage() {
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              All Academic Levels
-            </h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">All Academic Levels</h2>
             <p className="text-lg text-gray-600">
               We provide writing assistance for students at every academic level.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {academicLevels.map((level, index) => (
               <Card key={index} className="text-center hover:shadow-lg transition-shadow">
@@ -246,9 +247,7 @@ export default function ServicesPage() {
       {/* CTA Section */}
       <section className="py-20 bg-primary text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-            Ready to Get Started?
-          </h2>
+          <h2 className="text-3xl lg:text-4xl font-bold mb-4">Ready to Get Started?</h2>
           <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
             Join thousands of students who trust Einstein Essay Tutors for their academic success.
             Place your order now and experience the difference.
@@ -261,7 +260,11 @@ export default function ServicesPage() {
               </Button>
             </Link>
             <Link href="/contact">
-              <Button size="lg" variant="outline" className="text-lg px-8 py-3 border-white text-white hover:bg-white hover:text-primary">
+              <Button
+                size="lg"
+                variant="outline"
+                className="text-lg px-8 py-3 border-white text-white hover:bg-white hover:text-primary"
+              >
                 Contact Us
               </Button>
             </Link>
