@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:staging": "cp .env.staging .env.local && next build",
-    "build:production": "cp .env.production .env.local && next build",
+    "build:staging": "NEXT_PUBLIC_API_BASE_URL=https://api.einsteinessaytutors.com next build",
+    "build:production": "NEXT_PUBLIC_API_BASE_URL=https://api.einsteinessaytutors.com NEXT_PUBLIC_APP_URL=https://einsteinessaytutors.com next build",
     "start": "next start",
     "start:production": "NODE_ENV=production next start",
     "lint": "next lint",

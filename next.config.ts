@@ -1,9 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Enable standalone output for Docker deployment
-  output: 'standalone',
-  
   eslint: {
     // Warning: This allows production builds to successfully complete even if
     // your project has ESLint errors.
@@ -17,7 +14,7 @@ const nextConfig: NextConfig = {
   
   // Image optimization configuration for production
   images: {
-    unoptimized: true, // Disable image optimization for static export if needed
+    unoptimized: false, // Enable image optimization for better performance
   },
   
   // Environment variables validation

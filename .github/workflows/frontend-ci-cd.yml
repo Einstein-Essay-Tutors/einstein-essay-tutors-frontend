@@ -1,0 +1,188 @@
+name: Frontend Production CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  FRONTEND_DIR: .
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22.18.0'
+        cache: 'npm'
+        cache-dependency-path: package-lock.json
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run TypeScript type checking
+      run: npm run type-check
+
+    - name: Run ESLint
+      run: npm run lint
+
+    - name: Run Prettier check
+      run: npm run prettier:check
+
+    - name: Run tests
+      run: npm run test -- --passWithNoTests
+
+    - name: Build application
+      env:
+        NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL_STAGING || 'http://localhost:8000' }}
+      run: npm run build:staging
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: frontend-build
+        path: .next
+        retention-days: 7
+
+  lighthouse:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22.18.0'
+        cache: 'npm'
+        cache-dependency-path: package-lock.json
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build and start application
+      env:
+        NEXT_PUBLIC_API_URL: http://localhost:8000
+      run: |
+        # Commands run from repository root
+        npm run build
+        npm start &
+        sleep 10
+
+    - name: Run Lighthouse CI
+      uses: treosh/lighthouse-ci-action@v10
+      with:
+        uploadArtifacts: true
+        temporaryPublicStorage: true
+        configPath: lighthouserc.json
+
+  build-production:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22.18.0'
+        cache: 'npm'
+        cache-dependency-path: package-lock.json
+
+    - name: Install dependencies
+      run: npm ci --only=production
+
+    - name: Build application on GitHub (saves server resources)
+      env:
+        NODE_ENV: production
+        NEXT_PUBLIC_API_BASE_URL: https://${{ secrets.API_DOMAIN }}
+        NEXT_PUBLIC_APP_URL: https://${{ secrets.PRODUCTION_DOMAIN }}
+        NEXT_PUBLIC_APP_NAME: ${{ secrets.APP_DISPLAY_NAME }}
+        NEXT_PUBLIC_SECURE_COOKIES: true
+        NEXT_PUBLIC_WHATSAPP_NUMBER: ${{ secrets.WHATSAPP_NUMBER }}
+        NEXT_PUBLIC_SUPPORT_EMAIL: ${{ secrets.SUPPORT_EMAIL }}
+      run: |
+        # Commands run from repository root
+        npm run build:production
+
+    - name: Create deployment archive
+      run: |
+        # Commands run from repository root
+        tar -czf ../frontend-build.tar.gz .next package.json ecosystem.config.js
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: frontend-build-production
+        path: frontend-build.tar.gz
+        retention-days: 1
+
+  deploy:
+    needs: build-production
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: frontend-build-production
+
+    - name: Transfer build files to server
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.DROPLET_HOST }}
+        username: ${{ secrets.DROPLET_USERNAME }}
+        key: ${{ secrets.DROPLET_SSH_KEY }}
+        source: frontend-build.tar.gz
+        target: /tmp/
+
+    - name: Extract build files and deploy
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.DROPLET_HOST }}
+        username: ${{ secrets.DROPLET_USERNAME }}
+        key: ${{ secrets.DROPLET_SSH_KEY }}
+        script: |
+          # Switch to newton user for deployment
+          sudo -u newton bash << 'NEWTON_SCRIPT'
+          
+          # Export environment variables for deployment script
+          export FRONTEND_DEPLOY_PATH="${{ secrets.FRONTEND_DEPLOY_PATH }}"
+          export FRONTEND_SERVICE_NAME="${{ secrets.FRONTEND_SERVICE_NAME }}"
+          export SKIP_BUILD="true"  # Build was done on GitHub
+          
+          cd $FRONTEND_DEPLOY_PATH
+          
+          # Backup current build if it exists
+          if [ -d ".next" ]; then
+            mv .next .next.backup.$(date +%Y%m%d_%H%M%S)
+          fi
+          
+          # Extract new build files BEFORE running deployment script
+          echo "📦 Extracting new build files..."
+          tar -xzf /tmp/frontend-build.tar.gz -C .
+          
+          # Cleanup uploaded archive
+          rm /tmp/frontend-build.tar.gz
+          
+          # Now run deployment script with NEW build files
+          chmod +x deploy-production.sh
+          ./deploy-production.sh
+          
+          # Cleanup old backup builds (keep last 7 days)
+          find . -name ".next.backup.*" -type d -mtime +7 -exec rm -rf {} \; 2>/dev/null || true
+          NEWTON_SCRIPT

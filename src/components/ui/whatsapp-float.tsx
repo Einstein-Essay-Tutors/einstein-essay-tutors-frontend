@@ -3,14 +3,16 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { X, MessageCircle } from 'lucide-react'
+import { WHATSAPP_NUMBER, APP_NAME } from '@/lib/config'
 
 export function WhatsAppFloat() {
   const [isMinimized, setIsMinimized] = useState(true)
 
   const handleWhatsAppClick = () => {
-    const phoneNumber = "1234567890" // Replace with actual WhatsApp business number
+    // Remove any non-digits from the WhatsApp number for URL formatting
+    const phoneNumber = WHATSAPP_NUMBER.replace(/\D/g, '')
     const message = encodeURIComponent(
-      "Hi! I found you through your website at Einstein Essay Tutors. I'd like to learn more about your academic writing services."
+      `Hi! I found you through your website at ${APP_NAME}. I'd like to learn more about your academic writing services.`
     )
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`
     window.open(whatsappUrl, '_blank')
@@ -46,7 +48,7 @@ export function WhatsAppFloat() {
               <MessageCircle className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="font-semibold text-sm">Einstein Essay Tutors</h3>
+              <h3 className="font-semibold text-sm">{APP_NAME}</h3>
               <p className="text-xs opacity-90">Typically replies instantly</p>
             </div>
           </div>
@@ -64,7 +66,7 @@ export function WhatsAppFloat() {
         <div className="p-4 space-y-3">
           <div className="bg-gray-100 rounded-lg p-3">
             <p className="text-sm text-gray-700">
-              👋 Hi there! Welcome to Einstein Essay Tutors.
+              👋 Hi there! Welcome to {APP_NAME}.
             </p>
             <p className="text-sm text-gray-700 mt-2">
               How can we help you with your academic writing needs today?
