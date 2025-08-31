@@ -148,7 +148,7 @@ jobs:
           username: ${{ secrets.DROPLET_USERNAME }}
           key: ${{ secrets.DROPLET_SSH_KEY }}
           source: frontend-build.tar.gz
-          target: /tmp/
+          target: ${{ secrets.FRONTEND_DEPLOY_PATH }}
 
       - name: Extract build files and deploy
         uses: appleboy/ssh-action@v1.0.3
@@ -170,7 +170,7 @@ jobs:
               cd "$FRONTEND_DEPLOY_PATH"
               
               # Install dependencies
-              npm ci --only=production
+              npm ci --omit=dev
             else
               cd "$FRONTEND_DEPLOY_PATH"
               
@@ -185,7 +185,7 @@ jobs:
                 git clone https://github.com/Einstein-Essay-Tutors/einstein-essay-tutors-frontend.git .
                 
                 # Install dependencies
-                npm ci --only=production
+                npm ci --omit=dev
               else
                 echo "📦 Pulling latest changes from repository..."
                 # Fix ownership issues if they exist
@@ -197,7 +197,7 @@ jobs:
                 fi
                 
                 # Update dependencies
-                npm ci --only=production
+                npm ci --omit=dev
               fi
             fi
 
@@ -208,10 +208,10 @@ jobs:
 
             # Extract new build files BEFORE running deployment script
             echo "📦 Extracting new build files..."
-            tar -xzf /tmp/frontend-build.tar.gz -C .
+            tar -xzf "$FRONTEND_DEPLOY_PATH"/frontend-build.tar.gz -C .
 
             # Cleanup uploaded archive
-            rm /tmp/frontend-build.tar.gz
+            rm "$FRONTEND_DEPLOY_PATH"/frontend-build.tar.gz
 
             # Now run deployment script with NEW build files
             chmod +x deploy-production.sh
