@@ -22,13 +22,25 @@ fi
 DEPLOY_DIR="${FRONTEND_DEPLOY_PATH:-/home/newton/apps/essay-writing-tutors/frontend}"
 APP_NAME="${FRONTEND_SERVICE_NAME:-einstein-essay-tutors-frontend}"
 
-# Check if deployment directory exists
+# Check if deployment directory exists, if not try to clone
 if [ ! -d "$DEPLOY_DIR" ]; then
-    echo -e "${RED}❌ Deployment directory $DEPLOY_DIR does not exist${NC}"
-    exit 1
+    echo -e "${YELLOW}📁 Deployment directory $DEPLOY_DIR does not exist, attempting to clone...${NC}"
+    PARENT_DIR=$(dirname "$DEPLOY_DIR")
+    mkdir -p "$PARENT_DIR"
+    cd "$PARENT_DIR"
+    
+    # Try to clone the repository (requires SSH key to be set up)
+    if ! git clone git@github.com:Einstein-Essay-Tutors/einstein-essay-tutors-frontend.git $(basename "$DEPLOY_DIR"); then
+        echo -e "${RED}❌ Failed to clone repository. Please ensure SSH keys are set up or create the directory manually${NC}"
+        exit 1
+    fi
 fi
 
 cd $DEPLOY_DIR
+
+# Fix ownership issues that can occur during deployment
+echo -e "${YELLOW}🔧 Ensuring proper ownership...${NC}"
+sudo chown -R newton:newton .
 
 echo -e "${YELLOW}📦 Pulling latest code...${NC}"
 git pull origin main
@@ -46,8 +58,60 @@ else
     npm run build:production
 fi
 
+echo -e "${YELLOW}🔧 Ensuring PM2 ecosystem.config.js is updated with correct paths...${NC}"
+# Update ecosystem.config.js with fixed configuration if it doesn't exist or is outdated
+if [ ! -f "ecosystem.config.js" ] || ! grep -q "/home/newton/apps/essay-writing-tutors/frontend" ecosystem.config.js; then
+    echo -e "${YELLOW}⚙️ Creating/updating PM2 ecosystem configuration...${NC}"
+    cat > ecosystem.config.js << 'EOF'
+module.exports = {
+  apps: [
+    {
+      name: "einstein-essay-tutors-frontend",
+      script: "server.js",
+      // FIXED: Use correct deployment path
+      cwd: "/home/newton/apps/essay-writing-tutors/frontend",
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      // Memory-optimized settings for 2GB droplet
+      max_memory_restart: "512M",
+      node_args: "--max-old-space-size=384",
+      env: {
+        NODE_ENV: "production",
+        PORT: 3000,
+        HOSTNAME: "0.0.0.0",
+        // Reduce memory usage
+        NODE_OPTIONS: "--max-old-space-size=384",
+      },
+      env_production: {
+        NODE_ENV: "production",
+        PORT: 3000,
+        HOSTNAME: "0.0.0.0",
+        NODE_OPTIONS: "--max-old-space-size=384",
+      },
+      // FIXED: Use correct logs directory path
+      log_date_format: "YYYY-MM-DD HH:mm:ss",
+      error_file: "/home/newton/apps/logs/frontend-error.log",
+      out_file: "/home/newton/apps/logs/frontend-out.log",
+      log_file: "/home/newton/apps/logs/frontend-combined.log",
+      time: true,
+
+      // Performance settings for limited resources
+      kill_timeout: 5000,
+      listen_timeout: 3000,
+
+      // Graceful shutdown
+      shutdown_with_message: true,
+    },
+  ],
+};
+EOF
+fi
+
 echo -e "${YELLOW}🔄 Restarting frontend service with PM2...${NC}"
-pm2 restart $APP_NAME || pm2 start ecosystem.config.js
+# Stop existing process if running, then start fresh
+pm2 delete $APP_NAME 2>/dev/null || true
+pm2 start ecosystem.config.js
 
 # Wait a moment for service to start
 sleep 3

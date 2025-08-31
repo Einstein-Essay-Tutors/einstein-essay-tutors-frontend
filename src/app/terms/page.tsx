@@ -1,7 +1,10 @@
-'use client';
-
+import type { Metadata } from 'next';
 import Link from 'next/link';
+import { generateSEO, seoConfigs } from '@/lib/seo';
+
+export const metadata: Metadata = generateSEO(seoConfigs.terms);
 import { Button } from '@/components/ui/button';
+import { LEGAL_EMAIL } from '@/lib/config';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, FileText, Calendar } from 'lucide-react';
 
@@ -155,7 +158,7 @@ export default function TermsPage() {
                     </p>
                     <div className="bg-gray-50 p-4 rounded-lg mt-4">
                       <p>
-                        <strong>Email:</strong> legal@einsteinessaytutors.com
+                        <strong>Email:</strong> {LEGAL_EMAIL}
                       </p>
                       <p>
                         <strong>Address:</strong> Einstein Essay Tutors Legal Department

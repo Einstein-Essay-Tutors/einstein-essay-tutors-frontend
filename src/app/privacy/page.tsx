@@ -1,7 +1,10 @@
-'use client';
-
+import type { Metadata } from 'next';
 import Link from 'next/link';
+import { generateSEO, seoConfigs } from '@/lib/seo';
+
+export const metadata: Metadata = generateSEO(seoConfigs.privacy);
 import { Button } from '@/components/ui/button';
+import { PRIVACY_EMAIL } from '@/lib/config';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, Shield, Calendar } from 'lucide-react';
 
@@ -191,7 +194,7 @@ export default function PrivacyPage() {
                     </p>
                     <div className="bg-gray-50 p-4 rounded-lg mt-4">
                       <p>
-                        <strong>Email:</strong> privacy@einsteinessaytutors.com
+                        <strong>Email:</strong> {PRIVACY_EMAIL}
                       </p>
                       <p>
                         <strong>Address:</strong> Einstein Essay Tutors Privacy Team

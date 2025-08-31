@@ -1,6 +1,8 @@
-'use client';
-
+import type { Metadata } from 'next';
 import Link from 'next/link';
+import { generateSEO, seoConfigs } from '@/lib/seo';
+
+export const metadata: Metadata = generateSEO(seoConfigs.services);
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +18,8 @@ import {
   Users,
   Award,
   Shield,
+  Brain,
+  Heart,
 } from 'lucide-react';
 
 const services = [
@@ -58,6 +62,26 @@ const services = [
     pricing: 'Starting at $8/page',
     turnaround: '1 hour - 7 days',
     href: '/services/editing',
+  },
+  {
+    id: 'gmat-prep',
+    title: 'GMAT Prep Tutoring',
+    description: 'Comprehensive GMAT preparation with expert tutors and personalized study plans.',
+    icon: Brain,
+    features: ['Practice Tests', 'Strategy Sessions', 'Score Improvement', 'Flexible Schedule'],
+    pricing: 'Starting at $45/hour',
+    turnaround: 'Flexible scheduling',
+    href: '/services/gmat-prep',
+  },
+  {
+    id: 'nclex-prep',
+    title: 'NCLEX Prep Tutoring',
+    description: 'Expert NCLEX-RN and NCLEX-PN preparation to help you pass your nursing boards.',
+    icon: Heart,
+    features: ['Practice Questions', 'Test Strategies', 'Content Review', 'Confidence Building'],
+    pricing: 'Starting at $40/hour',
+    turnaround: 'Flexible scheduling',
+    href: '/services/nclex-prep',
   },
 ];
 

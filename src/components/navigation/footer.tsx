@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { SUPPORT_EMAIL } from '@/lib/config';
 
 const footerLinks = {
   company: [
@@ -20,6 +21,8 @@ const footerLinks = {
     { name: 'Research Papers', href: '/services/research-papers' },
     { name: 'Dissertations', href: '/services/dissertations' },
     { name: 'Editing', href: '/services/editing' },
+    { name: 'GMAT Prep', href: '/services/gmat-prep' },
+    { name: 'NCLEX Prep', href: '/services/nclex-prep' },
   ],
 };
 
@@ -42,10 +45,10 @@ export function Footer() {
             </p>
             <div className="flex space-x-4">
               <Link
-                href="mailto:support@einsteinessaytutors.com"
+                href={`mailto:${SUPPORT_EMAIL}`}
                 className="text-sm text-muted-foreground hover:text-foreground"
               >
-                support@einsteinessaytutors.com
+                {SUPPORT_EMAIL}
               </Link>
             </div>
           </div>
@@ -99,6 +102,16 @@ export function Footer() {
                 </li>
               ))}
             </ul>
+          </div>
+        </div>
+
+        {/* Disclaimer Section */}
+        <div className="mt-8">
+          <div className="bg-muted/30 rounded-lg p-4">
+            <h4 className="font-semibold text-sm mb-2">Academic Integrity Disclaimer</h4>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Einstein Essay Tutors does not tolerate any form of plagiarism. All tutoring services, materials, and assistance provided are strictly for educational guidance and reference purposes only. Our services are designed to help students improve their academic skills and understanding of subject matter. The materials and guidance provided should not be submitted for grading or academic evaluation as original work. Students are responsible for using our services ethically and in accordance with their institution's academic integrity policies.
+            </p>
           </div>
         </div>
 

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { SUPPORT_EMAIL } from '@/lib/config';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -16,6 +17,7 @@ import {
   ArrowRight,
   CheckCircle,
 } from 'lucide-react';
+import { WHATSAPP_NUMBER } from '@/lib/config';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -102,10 +104,10 @@ export default function ContactPage() {
                     Send us an email and we&apos;ll respond within 24 hours
                   </p>
                   <a
-                    href="mailto:support@einsteinessaytutors.com"
+                    href={`mailto:${SUPPORT_EMAIL}`}
                     className="text-primary hover:underline font-medium"
                   >
-                    support@einsteinessaytutors.com
+                    {SUPPORT_EMAIL}
                   </a>
                 </CardContent>
               </Card>
@@ -124,7 +126,7 @@ export default function ContactPage() {
                   <Phone className="h-12 w-12 text-primary mx-auto mb-4" />
                   <h3 className="text-xl font-semibold mb-2">Phone Support</h3>
                   <p className="text-gray-600 mb-4">Call us for immediate assistance</p>
-                  <p className="font-medium text-lg">+1 (555) 123-4567</p>
+                  <p className="font-medium text-lg">{ WHATSAPP_NUMBER }</p>
                 </CardContent>
               </Card>
             </div>

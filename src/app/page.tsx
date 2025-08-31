@@ -1,6 +1,8 @@
-'use client';
-
+import type { Metadata } from 'next';
 import Link from 'next/link';
+import { generateSEO, seoConfigs } from '@/lib/seo';
+
+export const metadata: Metadata = generateSEO(seoConfigs.home);
 import { Button } from '@/components/ui/button';
 import TestimonialsSection from '@/components/testimonials/TestimonialsSection';
 

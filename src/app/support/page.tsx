@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { WHATSAPP_NUMBER, SUPPORT_EMAIL } from '@/lib/config';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -156,7 +157,7 @@ export default function SupportPage() {
                     <Mail className="h-5 w-5 text-blue-600" />
                     <div>
                       <p className="font-medium text-gray-900">Email Support</p>
-                      <p className="text-sm text-gray-600">support@einsteinessay.com</p>
+                      <p className="text-sm text-gray-600">{SUPPORT_EMAIL}</p>
                     </div>
                   </div>
 
@@ -164,7 +165,7 @@ export default function SupportPage() {
                     <Phone className="h-5 w-5 text-green-600" />
                     <div>
                       <p className="font-medium text-gray-900">Phone Support</p>
-                      <p className="text-sm text-gray-600">+1 (555) 123-4567</p>
+                      <p className="text-sm text-gray-600">{WHATSAPP_NUMBER}</p>
                     </div>
                   </div>
 

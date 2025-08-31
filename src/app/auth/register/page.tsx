@@ -191,7 +191,7 @@ export default function RegisterPage() {
             value={formData.email}
             onChange={e => handleInputChange('email', e.target.value)}
             required
-            placeholder="your.email@university.edu"
+            placeholder="your.email@example.com"
           />
           {fieldErrors.email && (
             <ul className="mt-1 text-sm text-red-600">

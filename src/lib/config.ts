@@ -32,6 +32,10 @@ export const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000
 export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '+1 (206) 468-7859';
 export const SUPPORT_EMAIL =
   process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'support@einsteinessaytutors.com';
+export const LEGAL_EMAIL =
+  process.env.NEXT_PUBLIC_LEGAL_EMAIL || 'legal@einsteinessaytutors.com';
+export const PRIVACY_EMAIL =
+  process.env.NEXT_PUBLIC_PRIVACY_EMAIL || 'privacy@einsteinessaytutors.com';
 
 // Security Configuration
 export const SECURE_COOKIES = process.env.NEXT_PUBLIC_SECURE_COOKIES === 'true';
@@ -61,6 +65,8 @@ const config = {
   // Support
   WHATSAPP_NUMBER,
   SUPPORT_EMAIL,
+  LEGAL_EMAIL,
+  PRIVACY_EMAIL,
 
   // Security
   SECURE_COOKIES,
