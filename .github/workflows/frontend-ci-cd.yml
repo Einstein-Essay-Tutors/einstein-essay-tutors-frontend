@@ -157,9 +157,6 @@ jobs:
           username: ${{ secrets.DROPLET_USERNAME }}
           key: ${{ secrets.DROPLET_SSH_KEY }}
           script: |
-            # Switch to newton user for deployment
-            sudo -u newton bash << 'NEWTON_SCRIPT'
-
             # Export environment variables for deployment script
             export FRONTEND_DEPLOY_PATH="${{ secrets.FRONTEND_DEPLOY_PATH }}"
             export FRONTEND_SERVICE_NAME="${{ secrets.FRONTEND_SERVICE_NAME }}"
@@ -222,4 +219,3 @@ jobs:
 
             # Cleanup old backup builds (keep last 7 days)
             find . -name ".next.backup.*" -type d -mtime +7 -exec rm -rf {} \; 2>/dev/null || true
-            NEWTON_SCRIPT
