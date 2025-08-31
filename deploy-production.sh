@@ -167,10 +167,16 @@ if ! check_pm2_service "$APP_NAME"; then
 fi
 
 echo -e "${YELLOW}💾 Saving PM2 process list...${NC}"
-pm2 save
+if ! pm2 save; then
+    echo -e "${RED}❌ Failed to save PM2 process list${NC}"
+    exit 1
+fi
 
 echo -e "${YELLOW}🌐 Reloading nginx...${NC}"
-sudo systemctl reload nginx
+if ! sudo systemctl reload nginx; then
+    echo -e "${RED}❌ Failed to reload nginx${NC}"
+    exit 1
+fi
 
 echo -e "${GREEN}✅ Frontend deployment completed successfully!${NC}"
 echo -e "${YELLOW}📊 PM2 logs: pm2 logs $APP_NAME${NC}"
