@@ -165,7 +165,38 @@ jobs:
             export FRONTEND_SERVICE_NAME="${{ secrets.FRONTEND_SERVICE_NAME }}"
             export SKIP_BUILD="true"  # Build was done on GitHub
 
-            cd $FRONTEND_DEPLOY_PATH
+            # Ensure deployment directory and repository exist
+            if [ ! -d "$FRONTEND_DEPLOY_PATH" ]; then
+              echo "📁 Creating deployment directory and cloning repository..."
+              mkdir -p "$FRONTEND_DEPLOY_PATH"
+              git clone https://github.com/Einstein-Essay-Tutors/einstein-essay-tutors-frontend.git "$FRONTEND_DEPLOY_PATH"
+              cd "$FRONTEND_DEPLOY_PATH"
+              
+              # Install dependencies
+              npm ci --only=production
+            else
+              cd "$FRONTEND_DEPLOY_PATH"
+              
+              # Check if it's a git repository, clone if not
+              if [ ! -d ".git" ]; then
+                echo "📁 Directory exists but no git repository found, cloning..."
+                # Backup any existing files
+                if [ "$(ls -A .)" ]; then
+                  mkdir -p backup_$(date +%Y%m%d_%H%M%S)
+                  mv * backup_$(date +%Y%m%d_%H%M%S)/ 2>/dev/null || true
+                fi
+                git clone https://github.com/Einstein-Essay-Tutors/einstein-essay-tutors-frontend.git .
+                
+                # Install dependencies
+                npm ci --only=production
+              else
+                echo "📦 Pulling latest changes from repository..."
+                git pull origin main
+                
+                # Update dependencies
+                npm ci --only=production
+              fi
+            fi
 
             # Backup current build if it exists
             if [ -d ".next" ]; then
