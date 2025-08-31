@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
               backgroundImage: `radial-gradient(circle at 25% 25%, ${primaryColor}20 0%, transparent 50%), radial-gradient(circle at 75% 75%, ${secondaryColor}15 0%, transparent 50%)`,
             }}
           />
-          
+
           {/* Main Content Container */}
           <div
             style={{

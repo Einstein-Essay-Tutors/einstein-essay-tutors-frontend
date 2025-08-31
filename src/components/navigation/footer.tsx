@@ -110,7 +110,13 @@ export function Footer() {
           <div className="bg-muted/30 rounded-lg p-4">
             <h4 className="font-semibold text-sm mb-2">Academic Integrity Disclaimer</h4>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Einstein Essay Tutors does not tolerate any form of plagiarism. All tutoring services, materials, and assistance provided are strictly for educational guidance and reference purposes only. Our services are designed to help students improve their academic skills and understanding of subject matter. The materials and guidance provided should not be submitted for grading or academic evaluation as original work. Students are responsible for using our services ethically and in accordance with their institution's academic integrity policies.
+              Einstein Essay Tutors does not tolerate any form of plagiarism. All tutoring services,
+              materials, and assistance provided are strictly for educational guidance and reference
+              purposes only. Our services are designed to help students improve their academic
+              skills and understanding of subject matter. The materials and guidance provided should
+              not be submitted for grading or academic evaluation as original work. Students are
+              responsible for using our services ethically and in accordance with their
+              institution's academic integrity policies.
             </p>
           </div>
         </div>

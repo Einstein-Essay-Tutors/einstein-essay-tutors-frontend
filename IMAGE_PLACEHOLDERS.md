@@ -32,16 +32,19 @@ This document lists all image placeholders that need to be created and added to 
 ## 🎨 Design Guidelines for 404 Images
 
 ### Brand Colors
+
 - **Primary**: #3b82f6 (Blue)
 - **Secondary**: #1e40af (Dark Blue)
 - **Accent**: #6366f1 (Indigo)
 - **Background**: Gradient from blue-50 to indigo-50
 
 ### Typography
+
 - **Font**: Use brand-consistent fonts
 - **Hierarchy**: Logo > "404" > "Page Not Found" > Description
 
 ### Visual Elements
+
 - Einstein Essay Tutors logo (prominent)
 - Academic symbols (books, graduation cap, pen, etc.)
 - Clean, modern design
@@ -51,11 +54,12 @@ This document lists all image placeholders that need to be created and added to 
 ## 🔄 Future Image Expansions
 
 ### General Site Images (for future reference)
+
 When expanding the image library, consider creating:
 
 1. **General OG Images**
    - Homepage OG image
-   - Services page OG image  
+   - Services page OG image
    - About page OG image
    - Contact page OG image
 
@@ -80,17 +84,20 @@ When expanding the image library, consider creating:
 ## 📝 Image Optimization Notes
 
 ### Technical Requirements
+
 - **Format**: Use WebP for modern browsers, JPEG/PNG fallbacks
 - **Compression**: Optimize for web (70-80% quality)
 - **Responsive**: Consider multiple sizes for different devices
 - **Alt Text**: Always include descriptive alt text for accessibility
 
 ### File Naming Convention
+
 - Use descriptive, SEO-friendly names
 - Include dimensions in filename if helpful
 - Example: `404-page-not-found-1200x630.jpg`
 
 ### Directory Structure
+
 ```
 public/
   images/
@@ -112,6 +119,7 @@ public/
 ## 🔍 SEO Considerations
 
 ### Image SEO Best Practices
+
 1. **File Names**: Use descriptive, keyword-rich filenames
 2. **Alt Text**: Include relevant keywords naturally
 3. **File Size**: Keep under 100KB when possible
@@ -119,6 +127,7 @@ public/
 5. **Format**: Use appropriate format for content type
 
 ### Social Media Optimization
+
 1. **Open Graph**: 1200×630 is the standard
 2. **Twitter Cards**: Support both summary and large image cards
 3. **LinkedIn**: Same as Open Graph (1200×630)
@@ -142,18 +151,21 @@ When images are ready:
 ## 📚 Resources
 
 ### Design Tools
+
 - Canva (templates available)
 - Figma (professional design)
 - Adobe Photoshop/Illustrator
 - GIMP (free alternative)
 
 ### Testing Tools
+
 - Facebook Sharing Debugger: https://developers.facebook.com/tools/debug/
 - Twitter Card Validator: https://cards-dev.twitter.com/validator
 - LinkedIn Post Inspector: https://www.linkedin.com/post-inspector/
 - Google Rich Results Test: https://search.google.com/test/rich-results
 
 ### Image Optimization
+
 - TinyPNG/TinyJPG for compression
 - ImageOptim for batch optimization
 - WebP conversion tools

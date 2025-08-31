@@ -38,30 +38,31 @@ const baseTwitter = {
 
 // Common structured data for organization
 export const baseOrganizationData = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": APP_NAME,
-  "url": APP_URL,
-  "logo": `${APP_URL}/images/logo.png`,
-  "description": "Professional academic writing services with expert tutors, delivering quality work on time",
-  "contactPoint": {
-    "@type": "ContactPoint",
-    "telephone": WHATSAPP_NUMBER,
-    "email": SUPPORT_EMAIL,
-    "contactType": "customer support",
-    "availableLanguage": "English",
-    "hoursAvailable": "Mo-Su 00:00-23:59"
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: APP_NAME,
+  url: APP_URL,
+  logo: `${APP_URL}/images/logo.png`,
+  description:
+    'Professional academic writing services with expert tutors, delivering quality work on time',
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: WHATSAPP_NUMBER,
+    email: SUPPORT_EMAIL,
+    contactType: 'customer support',
+    availableLanguage: 'English',
+    hoursAvailable: 'Mo-Su 00:00-23:59',
   },
-  "sameAs": [
-    "https://twitter.com/EinsteinEssayTutors",
-    "https://facebook.com/EinsteinEssayTutors",
-    "https://linkedin.com/company/einstein-essay-tutors"
+  sameAs: [
+    'https://twitter.com/EinsteinEssayTutors',
+    'https://facebook.com/EinsteinEssayTutors',
+    'https://linkedin.com/company/einstein-essay-tutors',
   ],
-  "address": {
-    "@type": "PostalAddress",
-    "addressCountry": "US",
-    "addressRegion": "WA"
-  }
+  address: {
+    '@type': 'PostalAddress',
+    addressCountry: 'US',
+    addressRegion: 'WA',
+  },
 };
 
 // Common academic writing keywords
@@ -110,7 +111,7 @@ export function generateSEO(config: SEOPageConfig): Metadata {
     ogImage,
     twitterImage,
     noIndex = false,
-    canonical
+    canonical,
   } = config;
 
   const fullTitle = title.includes(APP_NAME) ? title : `${title} | ${APP_NAME}`;
@@ -157,7 +158,7 @@ export function generateSEO(config: SEOPageConfig): Metadata {
           height: 630,
           alt: fullTitle,
           type: 'image/jpeg',
-        }
+        },
       ],
     },
     twitter: {
@@ -176,7 +177,8 @@ export function generateSEO(config: SEOPageConfig): Metadata {
 export const seoConfigs = {
   home: {
     title: 'Professional Academic Writing Services & Expert Essay Help',
-    description: 'Get expert academic writing help from professional tutors. Quality essays, research papers, dissertations, and more. Available 24/7 with guaranteed on-time delivery.',
+    description:
+      'Get expert academic writing help from professional tutors. Quality essays, research papers, dissertations, and more. Available 24/7 with guaranteed on-time delivery.',
     keywords: [
       'academic writing services',
       'essay writing help',
@@ -185,28 +187,30 @@ export const seoConfigs = {
       'dissertations',
       '24/7 support',
       'quality writing',
-      'on-time delivery'
+      'on-time delivery',
     ],
     path: '/',
   },
-  
+
   about: {
     title: 'About Einstein Essay Tutors - Professional Academic Writing Team',
-    description: 'Learn about our team of expert academic writers and tutors. Discover our mission to provide high-quality writing services and academic support to students worldwide.',
+    description:
+      'Learn about our team of expert academic writers and tutors. Discover our mission to provide high-quality writing services and academic support to students worldwide.',
     keywords: [
       'about us',
       'expert writers',
       'academic tutors',
       'professional team',
       'writing expertise',
-      'academic credentials'
+      'academic credentials',
     ],
     path: '/about',
   },
-  
+
   services: {
     title: 'Academic Writing Services - Essays, Research Papers & More',
-    description: 'Comprehensive academic writing services including essay writing, research papers, dissertations, editing, and proofreading. Expert help for all academic levels.',
+    description:
+      'Comprehensive academic writing services including essay writing, research papers, dissertations, editing, and proofreading. Expert help for all academic levels.',
     keywords: [
       'writing services',
       'academic services',
@@ -214,14 +218,15 @@ export const seoConfigs = {
       'research papers',
       'dissertations',
       'editing services',
-      'proofreading'
+      'proofreading',
     ],
     path: '/services',
   },
-  
+
   contact: {
     title: 'Contact Einstein Essay Tutors - 24/7 Academic Writing Support',
-    description: 'Get in touch with our academic writing experts. Available 24/7 via phone, email, or live chat. Fast response times and friendly customer support.',
+    description:
+      'Get in touch with our academic writing experts. Available 24/7 via phone, email, or live chat. Fast response times and friendly customer support.',
     keywords: [
       'contact us',
       'customer support',
@@ -229,200 +234,214 @@ export const seoConfigs = {
       'academic help',
       'writing assistance',
       'live chat',
-      'phone support'
+      'phone support',
     ],
     path: '/contact',
   },
-  
+
   faq: {
     title: 'Frequently Asked Questions - Academic Writing Help',
-    description: 'Find answers to common questions about our academic writing services, ordering process, pricing, revisions, and more. Get the help you need.',
+    description:
+      'Find answers to common questions about our academic writing services, ordering process, pricing, revisions, and more. Get the help you need.',
     keywords: [
       'FAQ',
       'frequently asked questions',
       'academic writing help',
       'service questions',
       'ordering process',
-      'pricing information'
+      'pricing information',
     ],
     path: '/faq',
     ogImage: '/images/faq-og-image.jpg',
     twitterImage: '/images/faq-twitter-card.jpg',
   },
-  
+
   terms: {
     title: 'Terms of Service - Einstein Essay Tutors',
-    description: 'Read our terms of service and conditions for using Einstein Essay Tutors academic writing services. Important information about our policies and procedures.',
+    description:
+      'Read our terms of service and conditions for using Einstein Essay Tutors academic writing services. Important information about our policies and procedures.',
     keywords: [
       'terms of service',
       'terms and conditions',
       'service agreement',
       'policies',
-      'legal information'
+      'legal information',
     ],
     path: '/terms',
     ogImage: '/images/legal-og-image.jpg',
     twitterImage: '/images/legal-twitter-card.jpg',
     noIndex: true,
   },
-  
+
   privacy: {
     title: 'Privacy Policy - Einstein Essay Tutors',
-    description: 'Our privacy policy explains how we collect, use, and protect your personal information when using our academic writing services. Your privacy matters to us.',
+    description:
+      'Our privacy policy explains how we collect, use, and protect your personal information when using our academic writing services. Your privacy matters to us.',
     keywords: [
       'privacy policy',
       'data protection',
       'personal information',
       'privacy rights',
-      'data security'
+      'data security',
     ],
     path: '/privacy',
     ogImage: '/images/legal-og-image.jpg',
     twitterImage: '/images/legal-twitter-card.jpg',
     noIndex: true,
   },
-  
+
   blog: {
     title: 'Academic Writing Blog - Tips, Guides & Resources',
-    description: 'Expert tips and guides for academic writing success. Learn about essay structure, research methods, citation styles, and improve your writing skills.',
+    description:
+      'Expert tips and guides for academic writing success. Learn about essay structure, research methods, citation styles, and improve your writing skills.',
     keywords: [
       'academic writing blog',
       'writing tips',
       'essay guides',
       'research methods',
       'citation styles',
-      'writing resources'
+      'writing resources',
     ],
     path: '/blog',
     ogImage: '/images/blog-og-image.jpg',
     twitterImage: '/images/blog-twitter-card.jpg',
   },
-  
+
   // Service-specific pages
   essayWriting: {
     title: 'Professional Essay Writing Services - Custom Essays by Experts',
-    description: 'Expert essay writing help for all academic levels. Custom essays written by professional tutors. Original content, proper citations, and on-time delivery guaranteed.',
+    description:
+      'Expert essay writing help for all academic levels. Custom essays written by professional tutors. Original content, proper citations, and on-time delivery guaranteed.',
     keywords: [
       'essay writing service',
       'custom essays',
       'professional essay writers',
       'academic essays',
       'college essays',
-      'university essays'
+      'university essays',
     ],
     path: '/services/essay-writing',
     ogImage: '/images/essay-writing-og-image.jpg',
     twitterImage: '/images/essay-writing-twitter-card.jpg',
   },
-  
+
   researchPapers: {
     title: 'Research Paper Writing Services - Expert Academic Research',
-    description: 'Professional research paper writing assistance. Expert researchers and writers help with topic selection, research, analysis, and writing. All academic fields covered.',
+    description:
+      'Professional research paper writing assistance. Expert researchers and writers help with topic selection, research, analysis, and writing. All academic fields covered.',
     keywords: [
       'research paper writing',
       'academic research',
       'research assistance',
       'scholarly papers',
       'research methodology',
-      'data analysis'
+      'data analysis',
     ],
     path: '/services/research-papers',
     ogImage: '/images/research-papers-og-image.jpg',
     twitterImage: '/images/research-papers-twitter-card.jpg',
   },
-  
+
   dissertations: {
     title: 'Dissertation Writing Services - PhD & Masters Thesis Help',
-    description: 'Comprehensive dissertation and thesis writing support. Expert help with proposal writing, research, methodology, analysis, and final writing. PhD and Masters level.',
+    description:
+      'Comprehensive dissertation and thesis writing support. Expert help with proposal writing, research, methodology, analysis, and final writing. PhD and Masters level.',
     keywords: [
       'dissertation writing',
       'thesis writing',
       'PhD dissertation',
       'masters thesis',
       'dissertation help',
-      'academic research'
+      'academic research',
     ],
     path: '/services/dissertations',
     ogImage: '/images/dissertations-og-image.jpg',
     twitterImage: '/images/dissertations-twitter-card.jpg',
   },
-  
+
   editing: {
     title: 'Academic Editing & Proofreading Services - Professional Review',
-    description: 'Professional editing and proofreading for academic papers. Grammar correction, style improvement, structure enhancement, and formatting. Fast turnaround times.',
+    description:
+      'Professional editing and proofreading for academic papers. Grammar correction, style improvement, structure enhancement, and formatting. Fast turnaround times.',
     keywords: [
       'academic editing',
       'proofreading services',
       'grammar correction',
       'style editing',
       'academic proofreading',
-      'paper review'
+      'paper review',
     ],
     path: '/services/editing',
     ogImage: '/images/editing-og-image.jpg',
     twitterImage: '/images/editing-twitter-card.jpg',
   },
-  
+
   gmatPrep: {
     title: 'GMAT Prep Tutoring - Expert Test Preparation & Strategy',
-    description: 'Comprehensive GMAT preparation with expert tutors. Personalized study plans, practice tests, and proven strategies to boost your GMAT score.',
+    description:
+      'Comprehensive GMAT preparation with expert tutors. Personalized study plans, practice tests, and proven strategies to boost your GMAT score.',
     keywords: [
       'GMAT prep',
       'GMAT tutoring',
       'GMAT test preparation',
       'GMAT strategy',
       'MBA admissions',
-      'GMAT score improvement'
+      'GMAT score improvement',
     ],
     path: '/services/gmat-prep',
   },
-  
+
   nclexPrep: {
     title: 'NCLEX Prep Tutoring - Nursing Board Exam Preparation',
-    description: 'Expert NCLEX-RN and NCLEX-PN preparation. Practice questions, test strategies, and comprehensive content review to help you pass your nursing boards.',
+    description:
+      'Expert NCLEX-RN and NCLEX-PN preparation. Practice questions, test strategies, and comprehensive content review to help you pass your nursing boards.',
     keywords: [
       'NCLEX prep',
       'NCLEX tutoring',
       'nursing board exam',
       'NCLEX-RN preparation',
       'NCLEX-PN prep',
-      'nursing test prep'
+      'nursing test prep',
     ],
     path: '/services/nclex-prep',
   },
-  
+
   // Order and auth pages (noindex)
   newOrder: {
     title: 'Place New Order - Einstein Essay Tutors',
-    description: 'Start your academic writing project with our expert tutors. Easy ordering process with instant quotes and 24/7 support.',
+    description:
+      'Start your academic writing project with our expert tutors. Easy ordering process with instant quotes and 24/7 support.',
     path: '/orders/new',
     noIndex: true,
   },
-  
+
   login: {
     title: 'Login - Einstein Essay Tutors',
-    description: 'Login to your Einstein Essay Tutors account to access your orders, communicate with writers, and manage your academic projects.',
+    description:
+      'Login to your Einstein Essay Tutors account to access your orders, communicate with writers, and manage your academic projects.',
     path: '/auth/login',
     noIndex: true,
   },
-  
+
   register: {
     title: 'Register - Einstein Essay Tutors',
-    description: 'Create your Einstein Essay Tutors account to start ordering professional academic writing services and get expert help with your projects.',
+    description:
+      'Create your Einstein Essay Tutors account to start ordering professional academic writing services and get expert help with your projects.',
     path: '/auth/register',
     noIndex: true,
   },
-  
+
   support: {
     title: 'Customer Support - Einstein Essay Tutors Help Center',
-    description: 'Get help with your academic writing projects. Contact our support team via live chat, email, or phone. Available 24/7 to assist with all your needs.',
+    description:
+      'Get help with your academic writing projects. Contact our support team via live chat, email, or phone. Available 24/7 to assist with all your needs.',
     keywords: [
       'customer support',
       'help center',
       'academic support',
       'technical support',
       'order assistance',
-      '24/7 help'
+      '24/7 help',
     ],
     path: '/support',
     ogImage: '/images/support-og-image.jpg',
@@ -433,14 +452,14 @@ export const seoConfigs = {
 // Utility function to create breadcrumb structured data
 export function createBreadcrumbData(items: Array<{ name: string; url?: string }>) {
   return {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": items.map((item, index) => ({
-      "@type": "ListItem",
-      "position": index + 1,
-      "name": item.name,
-      ...(item.url && { "item": item.url })
-    }))
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      ...(item.url && { item: item.url }),
+    })),
   };
 }
 
@@ -453,33 +472,33 @@ export function createServiceData(service: {
   offers?: Array<{ name: string; price?: string; description: string }>;
 }) {
   return {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "name": service.name,
-    "description": service.description,
-    "url": service.url,
-    "category": service.category,
-    "provider": baseOrganizationData,
-    "areaServed": "Worldwide",
-    "availableChannel": {
-      "@type": "ServiceChannel",
-      "serviceUrl": service.url,
-      "availableLanguage": "English"
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: service.name,
+    description: service.description,
+    url: service.url,
+    category: service.category,
+    provider: baseOrganizationData,
+    areaServed: 'Worldwide',
+    availableChannel: {
+      '@type': 'ServiceChannel',
+      serviceUrl: service.url,
+      availableLanguage: 'English',
     },
     ...(service.offers && {
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": `${service.name} Options`,
-        "itemListElement": service.offers.map((offer, index) => ({
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": offer.name,
-            "description": offer.description
+      hasOfferCatalog: {
+        '@type': 'OfferCatalog',
+        name: `${service.name} Options`,
+        itemListElement: service.offers.map((offer, index) => ({
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Service',
+            name: offer.name,
+            description: offer.description,
           },
-          ...(offer.price && { "price": offer.price })
-        }))
-      }
-    })
+          ...(offer.price && { price: offer.price }),
+        })),
+      },
+    }),
   };
 }

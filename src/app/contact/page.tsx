@@ -126,7 +126,7 @@ export default function ContactPage() {
                   <Phone className="h-12 w-12 text-primary mx-auto mb-4" />
                   <h3 className="text-xl font-semibold mb-2">Phone Support</h3>
                   <p className="text-gray-600 mb-4">Call us for immediate assistance</p>
-                  <p className="font-medium text-lg">{ WHATSAPP_NUMBER }</p>
+                  <p className="font-medium text-lg">{WHATSAPP_NUMBER}</p>
                 </CardContent>
               </Card>
             </div>
