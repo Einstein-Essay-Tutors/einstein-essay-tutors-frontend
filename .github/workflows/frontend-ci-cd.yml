@@ -191,7 +191,13 @@ jobs:
                 npm ci --only=production
               else
                 echo "📦 Pulling latest changes from repository..."
-                git pull origin main
+                # Fix ownership issues if they exist
+                if ! git pull origin main 2>/dev/null; then
+                  echo "🔧 Fixing repository ownership and permissions..."
+                  sudo chown -R newton:newton .
+                  git config --global --add safe.directory $(pwd)
+                  git pull origin main
+                fi
                 
                 # Update dependencies
                 npm ci --only=production
