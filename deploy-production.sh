@@ -35,7 +35,7 @@ git pull origin main
 
 # Install dependencies
 echo -e "${YELLOW}📚 Installing dependencies...${NC}"
-npm ci --only=production --ignore-scripts
+npm ci --omit=dev --ignore-scripts
 
 # Handle build process based on SKIP_BUILD environment variable
 if [ "$SKIP_BUILD" = "true" ]; then
