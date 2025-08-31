@@ -38,9 +38,10 @@ fi
 
 cd $DEPLOY_DIR
 
-# Fix ownership issues that can occur during deployment
-echo -e "${YELLOW}🔧 Ensuring proper ownership...${NC}"
-sudo chown -R newton:newton .
+# Ensure we're running as newton user (ownership should already be correct)
+echo -e "${YELLOW}🔧 Verifying user and permissions...${NC}"
+echo "Running as user: $(whoami)"
+echo "Current directory: $(pwd)"
 
 echo -e "${YELLOW}📦 Pulling latest code...${NC}"
 git pull origin main
