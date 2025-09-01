@@ -204,16 +204,39 @@ jobs:
             # Backup current build if it exists
             if [ -d ".next" ]; then
               mv .next .next.backup.$(date +%Y%m%d_%H%M%S)
+              echo "✅ Backed up existing .next directory"
             fi
 
-            # Extract new build files BEFORE running deployment script
+            # Extract new build files BEFORE running deployment script with error handling
             echo "📦 Extracting new build files..."
-            tar -xzf "$FRONTEND_DEPLOY_PATH"/frontend-build.tar.gz -C .
+            if tar -xzf "$FRONTEND_DEPLOY_PATH"/frontend-build.tar.gz -C . -v; then
+              echo "✅ Build files extracted successfully"
+              
+              # Verify extraction worked
+              if [ -d ".next" ] && [ -f ".next/BUILD_ID" ]; then
+                echo "✅ .next directory verified with BUILD_ID: $(cat .next/BUILD_ID)"
+                ls -la .next/ | head -5  # Show first 5 items for verification
+                export SKIP_BUILD="true"  # Confirm we should skip build
+              else
+                echo "❌ .next directory missing or invalid after extraction"
+                export SKIP_BUILD="false"  # Force rebuild on server
+              fi
+            else
+              echo "❌ Failed to extract build files, will build on server instead"
+              export SKIP_BUILD="false"  # Force rebuild on server
+            fi
 
             # Cleanup uploaded archive
             rm "$FRONTEND_DEPLOY_PATH"/frontend-build.tar.gz
 
-            # Now run deployment script with NEW build files
+            # Final verification before deployment
+            if [ "$SKIP_BUILD" = "false" ]; then
+              echo "⚠️ Will build on server due to extraction issues"
+            else
+              echo "✅ Using pre-built files from GitHub Actions"
+            fi
+
+            # Now run deployment script with proper SKIP_BUILD setting
             chmod +x deploy-production.sh
             ./deploy-production.sh
 

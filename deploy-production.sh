@@ -51,12 +51,31 @@ echo -e "${YELLOW}📚 Installing dependencies...${NC}"
 npm ci --omit=dev --ignore-scripts
 
 # Handle build process based on SKIP_BUILD environment variable
+echo -e "${YELLOW}🔍 Checking build status...${NC}"
 if [ "$SKIP_BUILD" = "true" ]; then
-    echo -e "${YELLOW}ℹ️  Build was completed on GitHub to save server resources${NC}"
-    echo -e "${YELLOW}📦 Build files should be extracted from uploaded archive${NC}"
+    # Verify that .next directory exists and is valid
+    if [ -d ".next" ] && [ -f ".next/BUILD_ID" ]; then
+        echo -e "${GREEN}✅ Using pre-built files from GitHub Actions${NC}"
+        echo -e "${BLUE}Build ID: $(cat .next/BUILD_ID)${NC}"
+        echo -e "${BLUE}Build size: $(du -sh .next 2>/dev/null | cut -f1)${NC}"
+    else
+        echo -e "${RED}❌ SKIP_BUILD=true but no valid .next directory found!${NC}"
+        echo -e "${YELLOW}🔨 Falling back to server build...${NC}"
+        export SKIP_BUILD="false"
+        npm run build:production
+    fi
 else
     echo -e "${YELLOW}🔨 Building application on server...${NC}"
     npm run build:production
+    
+    # Verify server build succeeded
+    if [ -d ".next" ] && [ -f ".next/BUILD_ID" ]; then
+        echo -e "${GREEN}✅ Server build completed successfully${NC}"
+        echo -e "${BLUE}Build ID: $(cat .next/BUILD_ID)${NC}"
+    else
+        echo -e "${RED}❌ Server build failed - no .next directory created${NC}"
+        exit 1
+    fi
 fi
 
 echo -e "${YELLOW}🔧 Ensuring PM2 ecosystem.config.js is updated with correct paths...${NC}"
