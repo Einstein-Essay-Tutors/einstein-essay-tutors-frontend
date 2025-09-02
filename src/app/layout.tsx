@@ -6,6 +6,7 @@ import { Footer } from '@/components/navigation/footer';
 import { AuthProvider } from '@/context/AuthContext';
 import { Toaster } from '@/components/ui/toaster';
 import { WhatsAppFloat } from '@/components/ui/whatsapp-float';
+import GoogleOAuthProvider from '@/components/auth/GoogleOAuthProvider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -27,13 +28,15 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className={`${inter.variable} font-sans antialiased min-h-screen flex flex-col`}>
-        <AuthProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <Toaster />
-          <WhatsAppFloat />
-        </AuthProvider>
+        <GoogleOAuthProvider>
+          <AuthProvider>
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <Toaster />
+            <WhatsAppFloat />
+          </AuthProvider>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );

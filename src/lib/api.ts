@@ -109,6 +109,17 @@ export const authAPI = {
     const response = await api.get('users/me/');
     return response.data;
   },
+
+  getGoogleConfig: async () => {
+    return api.get('auth/google/config/');
+  },
+
+  googleLogin: async (googleToken: string) => {
+    const response = await api.post('auth/google/login/', { google_token: googleToken });
+    localStorage.setItem('access_token', response.data.tokens.access);
+    localStorage.setItem('refresh_token', response.data.tokens.refresh);
+    return response;
+  },
 };
 
 // Orders API

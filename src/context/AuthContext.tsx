@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '@/types';
 import { authAPI } from '@/lib/api';
+import { useGoogleAuth } from '@/hooks/useGoogleAuth';
 
 interface AuthContextType {
   user: User | null;
@@ -14,6 +15,7 @@ interface AuthContextType {
   resendOTP: (email: string) => Promise<void>;
   setUser: (user: User | null) => void;
   getAuthHeaders: () => Record<string, string>;
+  loginWithGoogle: (googleToken: string) => Promise<{ success: boolean; user?: any; message?: string; is_new_user?: boolean; }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -21,6 +23,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const { loginWithGoogle: googleAuthLogin, logoutFromGoogle } = useGoogleAuth();
 
   useEffect(() => {
     // Check if user is logged in on app start
@@ -62,6 +65,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null);
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
+      logoutFromGoogle();
+    }
+  };
+
+  const loginWithGoogle = async (googleToken: string) => {
+    try {
+      const result = await googleAuthLogin(googleToken);
+      if (result.success && result.user) {
+        setUser(result.user);
+      }
+      return result;
+    } catch (error) {
+      throw error;
     }
   };
 
@@ -110,6 +126,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     resendOTP,
     setUser,
     getAuthHeaders,
+    loginWithGoogle,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
