@@ -158,7 +158,7 @@ export default async function ServicesPage() {
                     </div>
                   </CardHeader>
                 <CardContent className="space-y-6">
-                  <p className="text-gray-600 leading-relaxed">{service.description}</p>
+                  <p className="text-gray-800 leading-relaxed font-medium">{service.description}</p>
 
                   <div>
                     <h4 className="font-semibold mb-3 text-gray-900">Key Features:</h4>
@@ -166,7 +166,7 @@ export default async function ServicesPage() {
                       {service.features.map((feature, index) => (
                         <div key={index} className="flex items-center gap-2">
                           <CheckCircle className="h-4 w-4 text-green-500" />
-                          <span className="text-sm text-gray-700">{feature}</span>
+                          <span className="text-sm text-gray-800 font-medium">{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -204,8 +204,8 @@ export default async function ServicesPage() {
             {academicLevels.map((level, index) => (
               <Card key={index} className="text-center hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
-                  <h3 className="text-xl font-semibold mb-2">{level.name}</h3>
-                  <p className="text-gray-600 text-sm">{level.description}</p>
+                  <h3 className="text-xl font-semibold mb-2 text-gray-900">{level.name}</h3>
+                  <p className="text-gray-800 text-sm font-medium">{level.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -231,8 +231,8 @@ export default async function ServicesPage() {
                 <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <feature.icon className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
+                <h3 className="text-xl font-semibold mb-2 text-gray-900">{feature.title}</h3>
+                <p className="text-gray-800 font-medium">{feature.description}</p>
               </div>
             ))}
           </div>

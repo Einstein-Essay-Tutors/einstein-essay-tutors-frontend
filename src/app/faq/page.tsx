@@ -180,7 +180,7 @@ export default function FAQPage() {
                         <div>
                           <h2 className="text-2xl font-bold">{category.name}</h2>
                           {category.description && (
-                            <p className="text-gray-600 font-normal text-base mt-1">
+                            <p className="text-gray-800 font-medium text-base mt-1">
                               {category.description}
                             </p>
                           )}
@@ -207,7 +207,7 @@ export default function FAQPage() {
                               <div className="px-6 pb-4 border-t bg-gray-50/50">
                                 <div className="prose prose-gray max-w-none pt-4">
                                   <div
-                                    className="text-gray-700 leading-relaxed"
+                                    className="text-gray-900 leading-relaxed font-medium"
                                     dangerouslySetInnerHTML={{
                                       __html: faq.answer.replace(/\n/g, '<br />'),
                                     }}
@@ -240,8 +240,8 @@ export default function FAQPage() {
               <Card className="hover:shadow-lg transition-shadow">
                 <CardContent className="p-6 text-center">
                   <MessageCircle className="h-12 w-12 text-primary mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">Live Chat</h3>
-                  <p className="text-sm text-gray-600 mb-4">
+                  <h3 className="font-semibold mb-2 text-gray-900">Live Chat</h3>
+                  <p className="text-sm text-gray-800 mb-4 font-medium">
                     Chat with our support team in real-time
                   </p>
                   <Button size="sm" className="w-full">
@@ -253,8 +253,8 @@ export default function FAQPage() {
               <Card className="hover:shadow-lg transition-shadow">
                 <CardContent className="p-6 text-center">
                   <Mail className="h-12 w-12 text-primary mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">Email Support</h3>
-                  <p className="text-sm text-gray-600 mb-4">
+                  <h3 className="font-semibold mb-2 text-gray-900">Email Support</h3>
+                  <p className="text-sm text-gray-800 mb-4 font-medium">
                     Send us an email and we&apos;ll respond within 24 hours
                   </p>
                   <Link href="/contact">
@@ -268,8 +268,8 @@ export default function FAQPage() {
               <Card className="hover:shadow-lg transition-shadow">
                 <CardContent className="p-6 text-center">
                   <Phone className="h-12 w-12 text-primary mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">Phone Support</h3>
-                  <p className="text-sm text-gray-600 mb-4">Call us for immediate assistance</p>
+                  <h3 className="font-semibold mb-2 text-gray-900">Phone Support</h3>
+                  <p className="text-sm text-gray-800 mb-4 font-medium">Call us for immediate assistance</p>
                   <Button variant="outline" size="sm" className="w-full">
                     Call Now
                   </Button>

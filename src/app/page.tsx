@@ -59,7 +59,7 @@ export default function HomePage() {
                   <feature.icon className="w-6 h-6 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
+                <p className="text-gray-800 font-medium">{feature.description}</p>
               </div>
             ))}
           </div>
