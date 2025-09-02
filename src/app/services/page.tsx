@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { generateSEO, seoConfigs } from '@/lib/seo';
+import { fetchServices } from '@/lib/api/services';
 
 export const metadata: Metadata = generateSEO(seoConfigs.services);
 import { Button } from '@/components/ui/button';
@@ -22,68 +23,7 @@ import {
   Heart,
 } from 'lucide-react';
 
-const services = [
-  {
-    id: 'essay-writing',
-    title: 'Essay Writing',
-    description: 'Professional essay writing services for all academic levels and subjects.',
-    icon: BookOpen,
-    features: ['Original Content', 'Proper Citations', 'Any Topic', 'All Formats'],
-    pricing: 'Starting at $12/page',
-    turnaround: '3 hours - 14 days',
-    href: '/services/essay-writing',
-  },
-  {
-    id: 'research-papers',
-    title: 'Research Papers',
-    description: 'In-depth research papers with comprehensive analysis and proper methodology.',
-    icon: FileText,
-    features: ['Thorough Research', 'Data Analysis', 'Academic Sources', 'Methodology'],
-    pricing: 'Starting at $15/page',
-    turnaround: '6 hours - 21 days',
-    href: '/services/research-papers',
-  },
-  {
-    id: 'dissertations',
-    title: 'Dissertations & Theses',
-    description: 'Comprehensive dissertation and thesis writing support from proposal to defense.',
-    icon: GraduationCap,
-    features: ['Chapter-by-Chapter', 'Literature Review', 'Data Collection', 'Defense Prep'],
-    pricing: 'Starting at $18/page',
-    turnaround: '14 days - 60 days',
-    href: '/services/dissertations',
-  },
-  {
-    id: 'editing',
-    title: 'Editing & Proofreading',
-    description: 'Professional editing and proofreading services to polish your work.',
-    icon: Edit,
-    features: ['Grammar Check', 'Style Enhancement', 'Structure Review', 'Plagiarism Check'],
-    pricing: 'Starting at $8/page',
-    turnaround: '1 hour - 7 days',
-    href: '/services/editing',
-  },
-  {
-    id: 'gmat-prep',
-    title: 'GMAT Prep Tutoring',
-    description: 'Comprehensive GMAT preparation with expert tutors and personalized study plans.',
-    icon: Brain,
-    features: ['Practice Tests', 'Strategy Sessions', 'Score Improvement', 'Flexible Schedule'],
-    pricing: 'Starting at $45/hour',
-    turnaround: 'Flexible scheduling',
-    href: '/services/gmat-prep',
-  },
-  {
-    id: 'nclex-prep',
-    title: 'NCLEX Prep Tutoring',
-    description: 'Expert NCLEX-RN and NCLEX-PN preparation to help you pass your nursing boards.',
-    icon: Heart,
-    features: ['Practice Questions', 'Test Strategies', 'Content Review', 'Confidence Building'],
-    pricing: 'Starting at $40/hour',
-    turnaround: 'Flexible scheduling',
-    href: '/services/nclex-prep',
-  },
-];
+// Services are now fetched dynamically from the API
 
 const qualityFeatures = [
   {
@@ -126,7 +66,35 @@ const academicLevels = [
   { name: 'PhD', description: 'Doctoral dissertations and advanced research' },
 ];
 
-export default function ServicesPage() {
+// Helper function to get icon component from icon name
+const getIconComponent = (iconName: string) => {
+  const icons: { [key: string]: any } = {
+    BookOpen,
+    FileText,
+    GraduationCap,
+    Edit,
+    Brain,
+    Heart,
+    Users,
+    Clock,
+    CheckCircle,
+    Star,
+    Award,
+    Shield,
+  };
+  return icons[iconName] || FileText;
+};
+
+export default async function ServicesPage() {
+  // Fetch services from API
+  let services = [];
+  try {
+    const response = await fetchServices();
+    services = response.results;
+  } catch (error) {
+    console.error('Failed to fetch services:', error);
+    // Fallback to empty array - could show error message in UI
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Hero Section */}
@@ -165,28 +133,30 @@ export default function ServicesPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            {services.map(service => (
-              <Card
-                key={service.id}
-                className="group hover:shadow-xl transition-all duration-300 cursor-pointer"
-              >
-                <CardHeader>
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="p-3 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
-                      <service.icon className="h-8 w-8 text-primary" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-2xl text-gray-900">{service.title}</CardTitle>
-                      <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
-                        <Badge variant="outline">{service.pricing}</Badge>
-                        <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {service.turnaround}
-                        </span>
+            {services.map(service => {
+              const IconComponent = getIconComponent(service.icon);
+              return (
+                <Card
+                  key={service.id}
+                  className="group hover:shadow-xl transition-all duration-300 cursor-pointer"
+                >
+                  <CardHeader>
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="p-3 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
+                        <IconComponent className="h-8 w-8 text-primary" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-2xl text-gray-900">{service.title}</CardTitle>
+                        <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+                          <Badge variant="outline">{service.pricing}</Badge>
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {service.turnaround}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </CardHeader>
+                  </CardHeader>
                 <CardContent className="space-y-6">
                   <p className="text-gray-600 leading-relaxed">{service.description}</p>
 
@@ -214,7 +184,8 @@ export default function ServicesPage() {
                   </div>
                 </CardContent>
               </Card>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
