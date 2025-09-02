@@ -180,7 +180,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
                     <feature.icon className="h-8 w-8 text-primary" />
                   </div>
                   <h3 className="text-xl font-semibold mb-2 text-gray-900">{feature.title}</h3>
-                  <p className="text-gray-800 font-medium">{feature.description}</p>
+                  <p className="text-gray-400">{feature.description}</p>
                 </div>
               ))}
             </div>
@@ -200,7 +200,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
                 {service.features.map((feature, index) => (
                   <div key={index} className="flex items-center gap-3 p-4 bg-white rounded-lg shadow-sm">
                     <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                    <span className="text-gray-800 font-medium">{feature}</span>
+                    <span className="text-gray-400">{feature}</span>
                   </div>
                 ))}
               </div>
@@ -221,7 +221,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
                 {service.service_types.map((type, index) => (
                   <div key={index} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
                     <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
-                    <span className="text-sm text-gray-800 font-medium">{type}</span>
+                    <span className="text-sm text-gray-400">{type}</span>
                   </div>
                 ))}
               </div>
@@ -242,7 +242,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
                 {service.subjects.map((subject, index) => (
                   <div key={index} className="flex items-center gap-2 p-3 bg-white rounded-lg shadow-sm">
                     <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
-                    <span className="text-sm text-gray-800 font-medium">{subject}</span>
+                    <span className="text-sm text-gray-400">{subject}</span>
                   </div>
                 ))}
               </div>
@@ -271,7 +271,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
                     </div>
                     <div>
                       <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
-                      <p className="text-gray-800 font-medium">{step.description}</p>
+                      <p className="text-gray-400">{step.description}</p>
                     </div>
                   </div>
                 ))}

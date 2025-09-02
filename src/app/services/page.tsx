@@ -158,7 +158,7 @@ export default async function ServicesPage() {
                     </div>
                   </CardHeader>
                 <CardContent className="space-y-6">
-                  <p className="text-gray-800 leading-relaxed font-medium">{service.description}</p>
+                  <p className="text-gray-400 leading-relaxed">{service.description}</p>
 
                   <div>
                     <h4 className="font-semibold mb-3 text-gray-900">Key Features:</h4>
@@ -166,7 +166,7 @@ export default async function ServicesPage() {
                       {service.features.map((feature, index) => (
                         <div key={index} className="flex items-center gap-2">
                           <CheckCircle className="h-4 w-4 text-green-500" />
-                          <span className="text-sm text-gray-800 font-medium">{feature}</span>
+                          <span className="text-sm text-gray-400">{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -205,7 +205,7 @@ export default async function ServicesPage() {
               <Card key={index} className="text-center hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
                   <h3 className="text-xl font-semibold mb-2 text-gray-900">{level.name}</h3>
-                  <p className="text-gray-800 text-sm font-medium">{level.description}</p>
+                  <p className="text-gray-400 text-sm">{level.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -232,7 +232,7 @@ export default async function ServicesPage() {
                   <feature.icon className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2 text-gray-900">{feature.title}</h3>
-                <p className="text-gray-800 font-medium">{feature.description}</p>
+                <p className="text-gray-400">{feature.description}</p>
               </div>
             ))}
           </div>
