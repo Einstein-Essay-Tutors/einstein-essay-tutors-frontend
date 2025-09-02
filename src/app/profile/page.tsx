@@ -103,8 +103,16 @@ export default function ProfilePage() {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+  const formatDate = (dateString: string | null | undefined) => {
+    if (!dateString) return 'Unknown';
+    
+    const date = new Date(dateString);
+    // Check if date is valid
+    if (isNaN(date.getTime())) {
+      return 'Unknown';
+    }
+    
+    return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -165,7 +173,7 @@ export default function ProfilePage() {
                 <CardContent className="space-y-4">
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Calendar className="h-4 w-4" />
-                    <span>Joined {formatDate(profile.date_joined || '')}</span>
+                    <span>Joined {formatDate(profile.date_joined)}</span>
                   </div>
                   {(profile.is_staff || profile.is_superuser) && (
                     <div className="flex items-center gap-2 text-sm text-purple-600">
