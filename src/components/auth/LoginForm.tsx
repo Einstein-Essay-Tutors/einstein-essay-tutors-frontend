@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { GoogleLogin } from '@react-oauth/google';
+import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -50,7 +50,7 @@ export default function LoginForm({ onSuccess, redirectTo = '/dashboard' }: Logi
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse: any) => {
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
     setLoading(true);
     setError('');
 
@@ -112,7 +112,7 @@ export default function LoginForm({ onSuccess, redirectTo = '/dashboard' }: Logi
           shape="rectangular"
           theme="outline"
           size="large"
-          width="100%"
+          width="384"
           disabled={loading}
         />
 

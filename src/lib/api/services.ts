@@ -39,7 +39,7 @@ export async function fetchServices(): Promise<ServiceResponse> {
     headers: {
       'Content-Type': 'application/json',
     },
-    cache: 'no-store', // Ensure fresh data for SSR
+    next: { revalidate: 3600 }, // Revalidate every hour
   });
 
   if (!response.ok) {
@@ -58,7 +58,7 @@ export async function fetchFeaturedServices(): Promise<ServiceResponse> {
     headers: {
       'Content-Type': 'application/json',
     },
-    cache: 'no-store',
+    next: { revalidate: 3600 },
   });
 
   if (!response.ok) {
@@ -77,7 +77,7 @@ export async function fetchServiceBySlug(slug: string): Promise<Service> {
     headers: {
       'Content-Type': 'application/json',
     },
-    cache: 'no-store',
+    next: { revalidate: 3600 },
   });
 
   if (!response.ok) {

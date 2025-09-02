@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { generateSEO, seoConfigs } from '@/lib/seo';
-import { fetchServices } from '@/lib/api/services';
+import { fetchServices, Service } from '@/lib/api/services';
 
 export const metadata: Metadata = generateSEO(seoConfigs.services);
 import { Button } from '@/components/ui/button';
@@ -67,8 +67,8 @@ const academicLevels = [
 ];
 
 // Helper function to get icon component from icon name
-const getIconComponent = (iconName: string) => {
-  const icons: { [key: string]: any } = {
+const getIconComponent = (iconName: string): React.ComponentType<{ className?: string }> => {
+  const icons: { [key: string]: React.ComponentType<{ className?: string }> } = {
     BookOpen,
     FileText,
     GraduationCap,
@@ -87,7 +87,7 @@ const getIconComponent = (iconName: string) => {
 
 export default async function ServicesPage() {
   // Fetch services from API
-  let services = [];
+  let services: Service[] = [];
   try {
     const response = await fetchServices();
     services = response.results;
@@ -226,7 +226,7 @@ export default async function ServicesPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {qualityFeatures.map((feature, index) => (
+            {qualityFeatures.map((feature: { icon: React.ComponentType<{ className?: string }>; title: string; description: string }, index: number) => (
               <div key={index} className="text-center">
                 <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <feature.icon className="h-8 w-8 text-primary" />
