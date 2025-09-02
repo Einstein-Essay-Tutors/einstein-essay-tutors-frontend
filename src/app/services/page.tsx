@@ -146,7 +146,7 @@ export default async function ServicesPage() {
                         <IconComponent className="h-8 w-8 text-primary" />
                       </div>
                       <div>
-                        <CardTitle className="text-2xl text-gray-900">{service.title}</CardTitle>
+                        <CardTitle className="text-2xl text-white font-bold">{service.title}</CardTitle>
                         <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
                           <Badge variant="outline">{service.pricing}</Badge>
                           <span className="flex items-center gap-1">
@@ -204,7 +204,7 @@ export default async function ServicesPage() {
             {academicLevels.map((level, index) => (
               <Card key={index} className="text-center hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
-                  <h3 className="text-xl font-semibold mb-2 text-gray-900">{level.name}</h3>
+                  <h3 className="text-xl font-semibold mb-2 text-white">{level.name}</h3>
                   <p className="text-gray-400 text-sm">{level.description}</p>
                 </CardContent>
               </Card>
@@ -231,7 +231,7 @@ export default async function ServicesPage() {
                 <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <feature.icon className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2 text-gray-900">{feature.title}</h3>
+                <h3 className="text-xl font-semibold mb-2 text-white">{feature.title}</h3>
                 <p className="text-gray-400">{feature.description}</p>
               </div>
             ))}
