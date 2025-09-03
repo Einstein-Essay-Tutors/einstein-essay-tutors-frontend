@@ -24,7 +24,7 @@ export default function GoogleOAuthProvider({ children }: GoogleOAuthProviderPro
   const fetchGoogleConfig = async () => {
     try {
       const response = await fetch(getApiUrl('auth/google/config/'));
-      
+
       if (response.ok) {
         const config: GoogleConfig = await response.json();
         setClientId(config.google_client_id);
@@ -52,9 +52,5 @@ export default function GoogleOAuthProvider({ children }: GoogleOAuthProviderPro
     return <>{children}</>;
   }
 
-  return (
-    <GoogleProvider clientId={clientId}>
-      {children}
-    </GoogleProvider>
-  );
+  return <GoogleProvider clientId={clientId}>{children}</GoogleProvider>;
 }

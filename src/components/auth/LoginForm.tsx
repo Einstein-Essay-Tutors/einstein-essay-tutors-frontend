@@ -59,22 +59,25 @@ export default function LoginForm({ onSuccess, redirectTo = '/dashboard' }: Logi
     setLoading(true);
     setError('');
 
-    loginWithGoogle(credentialResponse.credential).then((result) => {
-      if (result.success) {
-        setSuccess(result.message || 'Login successful!');
-        if (onSuccess) {
-          onSuccess();
+    loginWithGoogle(credentialResponse.credential)
+      .then(result => {
+        if (result.success) {
+          setSuccess(result.message || 'Login successful!');
+          if (onSuccess) {
+            onSuccess();
+          } else {
+            router.push(redirectTo);
+          }
         } else {
-          router.push(redirectTo);
+          setError(result.message || 'Google authentication failed');
         }
-      } else {
-        setError(result.message || 'Google authentication failed');
-      }
-    }).catch((error: any) => {
-      setError('Google authentication failed. Please try again.');
-    }).finally(() => {
-      setLoading(false);
-    });
+      })
+      .catch((error: any) => {
+        setError('Google authentication failed. Please try again.');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const handleGoogleError = () => {
@@ -90,9 +93,7 @@ export default function LoginForm({ onSuccess, redirectTo = '/dashboard' }: Logi
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
         <CardTitle className="text-2xl text-center">Sign In</CardTitle>
-        <p className="text-gray-600 text-center">
-          Welcome back! Please sign in to your account.
-        </p>
+        <p className="text-gray-600 text-center">Welcome back! Please sign in to your account.</p>
       </CardHeader>
       <CardContent className="space-y-6">
         {error && (

@@ -3,7 +3,8 @@ import RegisterForm from '@/components/auth/RegisterForm';
 
 export const metadata: Metadata = {
   title: 'Create Account - Einstein Essay Tutors',
-  description: 'Create your Einstein Essay Tutors account to get started with professional academic writing services.',
+  description:
+    'Create your Einstein Essay Tutors account to get started with professional academic writing services.',
 };
 
 export default function RegisterPage() {

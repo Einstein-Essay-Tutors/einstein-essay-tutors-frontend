@@ -15,7 +15,9 @@ interface AuthContextType {
   resendOTP: (email: string) => Promise<void>;
   setUser: (user: User | null) => void;
   getAuthHeaders: () => Record<string, string>;
-  loginWithGoogle: (googleToken: string) => Promise<{ success: boolean; user?: any; message?: string; is_new_user?: boolean; }>;
+  loginWithGoogle: (
+    googleToken: string
+  ) => Promise<{ success: boolean; user?: any; message?: string; is_new_user?: boolean }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

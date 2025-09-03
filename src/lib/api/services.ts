@@ -95,18 +95,18 @@ export async function fetchServiceBySlug(slug: string): Promise<Service> {
  * This helps maintain compatibility with the existing frontend
  */
 export const iconMap: { [key: string]: string } = {
-  'BookOpen': 'BookOpen',
-  'FileText': 'FileText',
-  'GraduationCap': 'GraduationCap',
-  'Edit': 'Edit',
-  'Brain': 'Brain',
-  'Heart': 'Heart',
-  'Users': 'Users',
-  'Clock': 'Clock',
-  'CheckCircle': 'CheckCircle',
-  'Star': 'Star',
-  'Award': 'Award',
-  'Shield': 'Shield',
+  BookOpen: 'BookOpen',
+  FileText: 'FileText',
+  GraduationCap: 'GraduationCap',
+  Edit: 'Edit',
+  Brain: 'Brain',
+  Heart: 'Heart',
+  Users: 'Users',
+  Clock: 'Clock',
+  CheckCircle: 'CheckCircle',
+  Star: 'Star',
+  Award: 'Award',
+  Shield: 'Shield',
 };
 
 /**

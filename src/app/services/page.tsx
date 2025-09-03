@@ -146,7 +146,9 @@ export default async function ServicesPage() {
                         <IconComponent className="h-8 w-8 text-primary" />
                       </div>
                       <div>
-                        <CardTitle className="text-2xl text-white font-bold">{service.title}</CardTitle>
+                        <CardTitle className="text-2xl text-white font-bold">
+                          {service.title}
+                        </CardTitle>
                         <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
                           <Badge variant="outline">{service.pricing}</Badge>
                           <span className="flex items-center gap-1">
@@ -157,33 +159,33 @@ export default async function ServicesPage() {
                       </div>
                     </div>
                   </CardHeader>
-                <CardContent className="space-y-6">
-                  <p className="text-gray-400 leading-relaxed">{service.description}</p>
+                  <CardContent className="space-y-6">
+                    <p className="text-gray-400 leading-relaxed">{service.description}</p>
 
-                  <div>
-                    <h4 className="font-semibold mb-3 text-gray-900">Key Features:</h4>
-                    <div className="grid grid-cols-2 gap-2">
-                      {service.features.map((feature, index) => (
-                        <div key={index} className="flex items-center gap-2">
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                          <span className="text-sm text-gray-400">{feature}</span>
-                        </div>
-                      ))}
+                    <div>
+                      <h4 className="font-semibold mb-3 text-gray-900">Key Features:</h4>
+                      <div className="grid grid-cols-2 gap-2">
+                        {service.features.map((feature, index) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                            <span className="text-sm text-gray-400">{feature}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="flex gap-3 pt-4">
-                    <Link href={service.href} className="flex-1">
-                      <Button variant="outline" className="w-full">
-                        Learn More
-                      </Button>
-                    </Link>
-                    <Link href="/order" className="flex-1">
-                      <Button className="w-full">Order Now</Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
+                    <div className="flex gap-3 pt-4">
+                      <Link href={service.href} className="flex-1">
+                        <Button variant="outline" className="w-full">
+                          Learn More
+                        </Button>
+                      </Link>
+                      <Link href="/order" className="flex-1">
+                        <Button className="w-full">Order Now</Button>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
               );
             })}
           </div>
@@ -226,15 +228,24 @@ export default async function ServicesPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {qualityFeatures.map((feature: { icon: React.ComponentType<{ className?: string }>; title: string; description: string }, index: number) => (
-              <div key={index} className="text-center">
-                <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                  <feature.icon className="h-8 w-8 text-primary" />
+            {qualityFeatures.map(
+              (
+                feature: {
+                  icon: React.ComponentType<{ className?: string }>;
+                  title: string;
+                  description: string;
+                },
+                index: number
+              ) => (
+                <div key={index} className="text-center">
+                  <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                    <feature.icon className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2 text-white">{feature.title}</h3>
+                  <p className="text-gray-400">{feature.description}</p>
                 </div>
-                <h3 className="text-xl font-semibold mb-2 text-white">{feature.title}</h3>
-                <p className="text-gray-400">{feature.description}</p>
-              </div>
-            ))}
+              )
+            )}
           </div>
         </div>
       </section>

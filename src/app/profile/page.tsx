@@ -105,13 +105,13 @@ export default function ProfilePage() {
 
   const formatDate = (dateString: string | null | undefined) => {
     if (!dateString) return 'Unknown';
-    
+
     const date = new Date(dateString);
     // Check if date is valid
     if (isNaN(date.getTime())) {
       return 'Unknown';
     }
-    
+
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',

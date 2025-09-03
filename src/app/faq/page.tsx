@@ -180,9 +180,7 @@ export default function FAQPage() {
                         <div>
                           <h2 className="text-2xl font-bold">{category.name}</h2>
                           {category.description && (
-                            <p className="text-gray-400 text-base mt-1">
-                              {category.description}
-                            </p>
+                            <p className="text-gray-400 text-base mt-1">{category.description}</p>
                           )}
                         </div>
                       </CardTitle>

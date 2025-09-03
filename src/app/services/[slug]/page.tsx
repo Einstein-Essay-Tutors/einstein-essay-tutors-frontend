@@ -47,7 +47,7 @@ interface ServicePageProps {
 export async function generateStaticParams() {
   try {
     const response = await fetchServices();
-    return response.results.map((service) => ({
+    return response.results.map(service => ({
       slug: service.slug,
     }));
   } catch (error) {
@@ -75,7 +75,7 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
 
 export default async function ServicePage({ params }: ServicePageProps) {
   let service;
-  
+
   try {
     service = await fetchServiceBySlug(params.slug);
   } catch (error) {
@@ -138,9 +138,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
                 <IconComponent className="h-12 w-12 text-primary" />
               </div>
               <div className="text-left">
-                <h1 className="text-4xl lg:text-5xl font-bold text-gray-900">
-                  {service.title}
-                </h1>
+                <h1 className="text-4xl lg:text-5xl font-bold text-gray-900">{service.title}</h1>
                 <div className="flex items-center gap-4 mt-2">
                   <Badge variant="secondary">{service.pricing}</Badge>
                   <span className="flex items-center gap-1 text-gray-600">
@@ -198,7 +196,10 @@ export default async function ServicePage({ params }: ServicePageProps) {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
                 {service.features.map((feature, index) => (
-                  <div key={index} className="flex items-center gap-3 p-4 bg-white rounded-lg shadow-sm">
+                  <div
+                    key={index}
+                    className="flex items-center gap-3 p-4 bg-white rounded-lg shadow-sm"
+                  >
                     <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
                     <span className="text-gray-400">{feature}</span>
                   </div>
@@ -240,7 +241,10 @@ export default async function ServicePage({ params }: ServicePageProps) {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {service.subjects.map((subject, index) => (
-                  <div key={index} className="flex items-center gap-2 p-3 bg-white rounded-lg shadow-sm">
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 p-3 bg-white rounded-lg shadow-sm"
+                  >
                     <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
                     <span className="text-sm text-gray-400">{subject}</span>
                   </div>
@@ -288,8 +292,8 @@ export default async function ServicePage({ params }: ServicePageProps) {
             Ready to Order Your {service.title}?
           </h2>
           <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-            Get professional {service.title.toLowerCase()} help from our expert writers. 
-            Quality guaranteed, delivered on time.
+            Get professional {service.title.toLowerCase()} help from our expert writers. Quality
+            guaranteed, delivered on time.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/order">

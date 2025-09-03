@@ -30,10 +30,13 @@ jobs:
       - name: Run TypeScript type checking
         run: npm run type-check
 
-      - name: Run ESLint
-        run: npm run lint
+      - name: Auto-fix ESLint issues
+        run: npm run lint:fix
 
-      - name: Run Prettier check
+      - name: Auto-format with Prettier
+        run: npx prettier --write .
+
+      - name: Verify formatting
         run: npm run prettier:check
 
       - name: Run tests

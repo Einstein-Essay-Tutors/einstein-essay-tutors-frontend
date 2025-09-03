@@ -18,7 +18,10 @@ interface RegisterFormProps {
   redirectTo?: string;
 }
 
-export default function RegisterForm({ onSuccess, redirectTo = '/auth/verify-email' }: RegisterFormProps) {
+export default function RegisterForm({
+  onSuccess,
+  redirectTo = '/auth/verify-email',
+}: RegisterFormProps) {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -56,7 +59,7 @@ export default function RegisterForm({ onSuccess, redirectTo = '/auth/verify-ema
     try {
       await register(formData.username, formData.email, formData.password);
       setSuccess('Account created successfully! Please check your email to verify your account.');
-      
+
       // Redirect after a delay to show success message
       setTimeout(() => {
         if (onSuccess) {
@@ -66,10 +69,11 @@ export default function RegisterForm({ onSuccess, redirectTo = '/auth/verify-ema
         }
       }, 2000);
     } catch (error: any) {
-      const errorMessage = error.response?.data?.error || 
-                          error.response?.data?.username?.[0] || 
-                          error.response?.data?.email?.[0] || 
-                          'Registration failed. Please try again.';
+      const errorMessage =
+        error.response?.data?.error ||
+        error.response?.data?.username?.[0] ||
+        error.response?.data?.email?.[0] ||
+        'Registration failed. Please try again.';
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -85,30 +89,33 @@ export default function RegisterForm({ onSuccess, redirectTo = '/auth/verify-ema
     setLoading(true);
     setError('');
 
-    loginWithGoogle(credentialResponse.credential).then((result) => {
-      if (result.success) {
-        if (result.is_new_user) {
-          setSuccess('Account created and logged in successfully!');
-        } else {
-          setSuccess('Logged in successfully!');
-        }
-        
-        // Redirect after a delay
-        setTimeout(() => {
-          if (onSuccess) {
-            onSuccess();
+    loginWithGoogle(credentialResponse.credential)
+      .then(result => {
+        if (result.success) {
+          if (result.is_new_user) {
+            setSuccess('Account created and logged in successfully!');
           } else {
-            router.push('/dashboard');
+            setSuccess('Logged in successfully!');
           }
-        }, 1500);
-      } else {
-        setError(result.message || 'Google authentication failed');
-      }
-    }).catch((error: any) => {
-      setError('Google authentication failed. Please try again.');
-    }).finally(() => {
-      setLoading(false);
-    });
+
+          // Redirect after a delay
+          setTimeout(() => {
+            if (onSuccess) {
+              onSuccess();
+            } else {
+              router.push('/dashboard');
+            }
+          }, 1500);
+        } else {
+          setError(result.message || 'Google authentication failed');
+        }
+      })
+      .catch((error: any) => {
+        setError('Google authentication failed. Please try again.');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const handleGoogleError = () => {
@@ -161,7 +168,9 @@ export default function RegisterForm({ onSuccess, redirectTo = '/auth/verify-ema
         <div className="relative">
           <Separator />
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="bg-white px-2 text-sm text-gray-500">Or create account with email</span>
+            <span className="bg-white px-2 text-sm text-gray-500">
+              Or create account with email
+            </span>
           </div>
         </div>
 
