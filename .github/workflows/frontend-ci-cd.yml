@@ -144,6 +144,19 @@ jobs:
         with:
           name: frontend-build-production
 
+      - name: Verify build artifacts
+        run: |
+          echo "📋 Listing downloaded files:"
+          ls -la
+          echo "📦 Checking frontend-build.tar.gz:"
+          if [ -f "frontend-build.tar.gz" ]; then
+            echo "✅ Build artifact found"
+            echo "📊 Size: $(du -sh frontend-build.tar.gz)"
+          else
+            echo "❌ Build artifact not found!"
+            exit 1
+          fi
+
       - name: Transfer build files to server
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -152,6 +165,25 @@ jobs:
           key: ${{ secrets.DROPLET_SSH_KEY }}
           source: frontend-build.tar.gz
           target: ${{ secrets.FRONTEND_DEPLOY_PATH }}
+          timeout: 60s
+          
+      - name: Verify file transfer
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USERNAME }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          script: |
+            echo "🔍 Verifying file transfer to ${{ secrets.FRONTEND_DEPLOY_PATH }}"
+            if [ -f "${{ secrets.FRONTEND_DEPLOY_PATH }}/frontend-build.tar.gz" ]; then
+              echo "✅ File transferred successfully"
+              echo "📊 File size: $(du -sh "${{ secrets.FRONTEND_DEPLOY_PATH }}/frontend-build.tar.gz")"
+            else
+              echo "❌ File transfer failed - file not found"
+              echo "📋 Directory contents:"
+              ls -la "${{ secrets.FRONTEND_DEPLOY_PATH }}/"
+              exit 1
+            fi
 
       - name: Extract build files and deploy
         uses: appleboy/ssh-action@v1.0.3
@@ -220,9 +252,20 @@ jobs:
               echo "✅ Backed up existing .next directory"
             fi
 
-            # Extract new build files BEFORE running deployment script with error handling
-            echo "📦 Extracting new build files..."
-            if tar -xzf "$FRONTEND_DEPLOY_PATH"/frontend-build.tar.gz -C . -v; then
+            # Verify build artifact was transferred
+            echo "🔍 Verifying build artifact transfer..."
+            if [ ! -f "$FRONTEND_DEPLOY_PATH/frontend-build.tar.gz" ]; then
+              echo "❌ Build artifact not found at $FRONTEND_DEPLOY_PATH/frontend-build.tar.gz"
+              echo "📋 Listing files in deployment directory:"
+              ls -la "$FRONTEND_DEPLOY_PATH/"
+              echo "❌ Build artifact transfer failed - will build on server"
+              export SKIP_BUILD="false"
+            else
+              echo "✅ Build artifact found: $(du -sh "$FRONTEND_DEPLOY_PATH/frontend-build.tar.gz")"
+              
+              # Extract new build files BEFORE running deployment script with error handling
+              echo "📦 Extracting new build files..."
+              if tar -xzf "$FRONTEND_DEPLOY_PATH"/frontend-build.tar.gz -C . -v; then
               echo "✅ Build files extracted successfully"
               
               # Verify extraction worked
@@ -234,13 +277,17 @@ jobs:
                 echo "❌ .next directory missing or invalid after extraction"
                 export SKIP_BUILD="false"  # Force rebuild on server
               fi
-            else
-              echo "❌ Failed to extract build files, will build on server instead"
-              export SKIP_BUILD="false"  # Force rebuild on server
+              else
+                echo "❌ Failed to extract build files, will build on server instead"
+                export SKIP_BUILD="false"  # Force rebuild on server
+              fi
             fi
 
-            # Cleanup uploaded archive
-            rm "$FRONTEND_DEPLOY_PATH"/frontend-build.tar.gz
+            # Cleanup uploaded archive (only if file exists)
+            if [ -f "$FRONTEND_DEPLOY_PATH/frontend-build.tar.gz" ]; then
+              rm "$FRONTEND_DEPLOY_PATH"/frontend-build.tar.gz
+              echo "🗑️ Cleaned up uploaded archive"
+            fi
 
             # Final verification before deployment
             if [ "$SKIP_BUILD" = "false" ]; then
