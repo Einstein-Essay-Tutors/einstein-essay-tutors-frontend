@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import { useAuth } from '@/context/AuthContext';
+import { useGoogleOAuth } from '@/components/auth/GoogleOAuthProvider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,6 +29,7 @@ export default function LoginForm({ onSuccess, redirectTo = '/dashboard' }: Logi
   const [success, setSuccess] = useState('');
 
   const { login, loginWithGoogle } = useAuth();
+  const { isConfigured, isLoading: googleLoading } = useGoogleOAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -110,15 +112,26 @@ export default function LoginForm({ onSuccess, redirectTo = '/dashboard' }: Logi
 
         {/* Google Login Button */}
         <div className={loading ? 'pointer-events-none opacity-50' : ''}>
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={handleGoogleError}
-            text="continue_with"
-            shape="rectangular"
-            theme="outline"
-            size="large"
-            width="384"
-          />
+          {isConfigured ? (
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              text="continue_with"
+              shape="rectangular"
+              theme="outline"
+              size="large"
+              width="384"
+            />
+          ) : googleLoading ? (
+            <div className="flex items-center justify-center py-4">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+              <span className="ml-2 text-sm text-muted-foreground">Loading Google Sign-In...</span>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center py-4">
+              <span className="text-sm text-muted-foreground">Google Sign-In not available</span>
+            </div>
+          )}
         </div>
 
         <div className="relative">
