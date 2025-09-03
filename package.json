@@ -15,7 +15,7 @@
     "prettier": "prettier --write .",
     "prettier:check": "prettier --check .",
     "test": "echo 'Add your test command here' && exit 0",
-    "prepare": "husky"
+    "prepare": "is-ci || husky"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.3.3",
@@ -45,6 +45,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.5.0",
     "husky": "^9.1.7",
+    "is-ci": "^4.1.0",
     "lint-staged": "^16.1.6",
     "prettier": "^3.2.4",
     "tailwindcss": "^4",
