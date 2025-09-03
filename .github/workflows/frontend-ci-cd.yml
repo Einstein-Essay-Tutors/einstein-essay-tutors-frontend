@@ -160,6 +160,9 @@ jobs:
           username: ${{ secrets.DROPLET_USERNAME }}
           key: ${{ secrets.DROPLET_SSH_KEY }}
           script: |
+            # Exit on any error to ensure deployment failures are caught
+            set -e
+            
             # Export environment variables for deployment script
             export FRONTEND_DEPLOY_PATH="${{ secrets.FRONTEND_DEPLOY_PATH }}"
             export FRONTEND_SERVICE_NAME="${{ secrets.FRONTEND_SERVICE_NAME }}"
@@ -191,13 +194,20 @@ jobs:
                 npm ci
               else
                 echo "📦 Pulling latest changes from repository..."
-                # Fix ownership issues if they exist
-                if ! git pull origin main 2>/dev/null; then
-                  echo "🔧 Fixing repository ownership and permissions..."
-                  sudo chown -R newton:newton .
-                  git config --global --add safe.directory $(pwd)
-                  git pull origin main
+                # Fix ownership issues if they exist  
+                sudo chown -R newton:newton . || true
+                git config --global --add safe.directory $(pwd) || true
+                
+                # Stash any local changes to prevent conflicts
+                if ! git diff --quiet || ! git diff --cached --quiet; then
+                  echo "💾 Stashing local changes to prevent conflicts..."
+                  git stash --include-untracked
                 fi
+                
+                # Fetch and reset to ensure clean state
+                git fetch origin main
+                git reset --hard origin/main
+                echo "✅ Repository updated to latest version"
                 
                 # Update dependencies
                 npm ci
@@ -239,9 +249,18 @@ jobs:
               echo "✅ Using pre-built files from GitHub Actions"
             fi
 
-            # Now run deployment script with proper SKIP_BUILD setting
+            # Now run deployment script with proper SKIP_BUILD setting and error checking
             chmod +x deploy-production.sh
-            ./deploy-production.sh
+            
+            echo "🚀 Starting frontend deployment script..."
+            if ! ./deploy-production.sh; then
+              echo "❌ Frontend deployment script failed"
+              echo "📋 Last 50 lines of deployment script output:"
+              tail -50 /tmp/deployment.log 2>/dev/null || echo "No deployment log found"
+              exit 1
+            fi
+            
+            echo "✅ Frontend deployment script completed successfully"
 
             # Cleanup old backup builds (keep last 7 days)
             find . -name ".next.backup.*" -type d -mtime +7 -exec rm -rf {} \; 2>/dev/null || true

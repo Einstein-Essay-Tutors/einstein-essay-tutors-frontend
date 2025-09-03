@@ -44,7 +44,24 @@ echo "Running as user: $(whoami)"
 echo "Current directory: $(pwd)"
 
 echo -e "${YELLOW}📦 Pulling latest code...${NC}"
-git pull origin main
+# Stash any local changes first to prevent conflicts
+if ! git diff --quiet || ! git diff --cached --quiet; then
+    echo -e "${YELLOW}💾 Stashing local changes...${NC}"
+    git stash --include-untracked
+fi
+
+# Fetch and reset to ensure clean state
+if ! git fetch origin main; then
+    echo -e "${RED}❌ Failed to fetch latest changes from repository${NC}"
+    exit 1
+fi
+
+if ! git reset --hard origin/main; then
+    echo -e "${RED}❌ Failed to reset repository to latest version${NC}"
+    exit 1
+fi
+
+echo -e "${YELLOW}✅ Repository updated to latest version${NC}"
 
 # Install dependencies
 echo -e "${YELLOW}📚 Installing dependencies...${NC}"
