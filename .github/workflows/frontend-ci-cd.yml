@@ -106,7 +106,7 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: npm ci --omit=dev
+        run: npm ci
 
       - name: Build application on GitHub (saves server resources)
         env:
@@ -173,7 +173,7 @@ jobs:
               cd "$FRONTEND_DEPLOY_PATH"
               
               # Install dependencies
-              npm ci --omit=dev
+              npm ci
             else
               cd "$FRONTEND_DEPLOY_PATH"
               
@@ -188,7 +188,7 @@ jobs:
                 git clone https://github.com/Einstein-Essay-Tutors/einstein-essay-tutors-frontend.git .
                 
                 # Install dependencies
-                npm ci --omit=dev
+                npm ci
               else
                 echo "📦 Pulling latest changes from repository..."
                 # Fix ownership issues if they exist
@@ -200,7 +200,7 @@ jobs:
                 fi
                 
                 # Update dependencies
-                npm ci --omit=dev
+                npm ci
               fi
             fi
 
