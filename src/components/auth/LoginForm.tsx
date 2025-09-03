@@ -50,13 +50,16 @@ export default function LoginForm({ onSuccess, redirectTo = '/dashboard' }: Logi
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+  const handleGoogleSuccess = (credentialResponse: CredentialResponse) => {
+    if (!credentialResponse.credential) {
+      setError('Google authentication failed. Please try again.');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
-    try {
-      // credentialResponse.credential contains the ID token (JWT)
-      const result = await loginWithGoogle(credentialResponse.credential);
+    loginWithGoogle(credentialResponse.credential).then((result) => {
       if (result.success) {
         setSuccess(result.message || 'Login successful!');
         if (onSuccess) {
@@ -67,11 +70,11 @@ export default function LoginForm({ onSuccess, redirectTo = '/dashboard' }: Logi
       } else {
         setError(result.message || 'Google authentication failed');
       }
-    } catch (error: any) {
+    }).catch((error: any) => {
       setError('Google authentication failed. Please try again.');
-    } finally {
+    }).finally(() => {
       setLoading(false);
-    }
+    });
   };
 
   const handleGoogleError = () => {
@@ -105,16 +108,17 @@ export default function LoginForm({ onSuccess, redirectTo = '/dashboard' }: Logi
         )}
 
         {/* Google Login Button */}
-        <GoogleLogin
-          onSuccess={handleGoogleSuccess}
-          onError={handleGoogleError}
-          text="continue_with"
-          shape="rectangular"
-          theme="outline"
-          size="large"
-          width="384"
-          disabled={loading}
-        />
+        <div className={loading ? 'pointer-events-none opacity-50' : ''}>
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+            text="continue_with"
+            shape="rectangular"
+            theme="outline"
+            size="large"
+            width="384"
+          />
+        </div>
 
         <div className="relative">
           <Separator />

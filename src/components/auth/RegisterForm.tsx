@@ -76,13 +76,16 @@ export default function RegisterForm({ onSuccess, redirectTo = '/auth/verify-ema
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+  const handleGoogleSuccess = (credentialResponse: CredentialResponse) => {
+    if (!credentialResponse.credential) {
+      setError('Google authentication failed. Please try again.');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
-    try {
-      // credentialResponse.credential contains the ID token (JWT)
-      const result = await loginWithGoogle(credentialResponse.credential);
+    loginWithGoogle(credentialResponse.credential).then((result) => {
       if (result.success) {
         if (result.is_new_user) {
           setSuccess('Account created and logged in successfully!');
@@ -101,11 +104,11 @@ export default function RegisterForm({ onSuccess, redirectTo = '/auth/verify-ema
       } else {
         setError(result.message || 'Google authentication failed');
       }
-    } catch (error: any) {
+    }).catch((error: any) => {
       setError('Google authentication failed. Please try again.');
-    } finally {
+    }).finally(() => {
       setLoading(false);
-    }
+    });
   };
 
   const handleGoogleError = () => {
@@ -143,16 +146,17 @@ export default function RegisterForm({ onSuccess, redirectTo = '/auth/verify-ema
         )}
 
         {/* Google Login Button */}
-        <GoogleLogin
-          onSuccess={handleGoogleSuccess}
-          onError={handleGoogleError}
-          text="signup_with"
-          shape="rectangular"
-          theme="outline"
-          size="large"
-          width="384"
-          disabled={loading}
-        />
+        <div className={loading ? 'pointer-events-none opacity-50' : ''}>
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+            text="signup_with"
+            shape="rectangular"
+            theme="outline"
+            size="large"
+            width="384"
+          />
+        </div>
 
         <div className="relative">
           <Separator />
