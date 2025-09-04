@@ -173,7 +173,9 @@ export default function RegisterForm({
             </div>
           ) : (
             <div className="flex items-center justify-center py-4">
-              <span className="text-sm text-muted-foreground">Google Sign-In not available</span>
+              <span className="text-sm text-muted-foreground">
+                Google Sign-In temporarily disabled
+              </span>
             </div>
           )}
         </div>
