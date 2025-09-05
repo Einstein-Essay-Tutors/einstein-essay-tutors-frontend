@@ -564,12 +564,12 @@ export default function OrderDetailPage() {
               {orderDetail.payment_status !== 'paid' && (
                 <Card className="border-orange-200 bg-orange-50">
                   <CardContent className="pt-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <AlertCircle className="h-5 w-5 text-orange-600" />
-                        <div>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <div className="flex items-start gap-3">
+                        <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5 flex-shrink-0" />
+                        <div className="min-w-0">
                           <h3 className="font-semibold text-orange-900">Payment Required</h3>
-                          <p className="text-sm text-orange-700">
+                          <p className="text-sm text-orange-700 break-words">
                             Complete your payment of ${orderDetail.final_price} to proceed with your
                             order.
                           </p>
@@ -578,7 +578,7 @@ export default function OrderDetailPage() {
                       <Button
                         onClick={initiatePayment}
                         disabled={initiatingPayment}
-                        className="bg-orange-600 hover:bg-orange-700"
+                        className="bg-orange-600 hover:bg-orange-700 w-full sm:w-auto flex-shrink-0"
                       >
                         {initiatingPayment ? (
                           <>
@@ -608,9 +608,9 @@ export default function OrderDetailPage() {
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                      <div className="flex flex-col gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
                         <span className="font-medium text-gray-800">Order ID</span>
-                        <code className="bg-blue-100 px-2 py-1 rounded text-xs sm:text-sm font-mono break-all">
+                        <code className="bg-blue-100 px-2 py-1 rounded text-xs font-mono break-all w-full overflow-hidden">
                           {orderDetail.order_id}
                         </code>
                       </div>
@@ -826,40 +826,89 @@ export default function OrderDetailPage() {
       {showPaymentModal && paymentInstructions && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex flex-col sm:flex-row sm:items-center gap-2">
                 <CreditCard className="h-5 w-5" />
-                Payment Instructions -{' '}
-                {paymentInstructions.payment_method === 'paypal_personal'
-                  ? 'PayPal.me'
-                  : 'Manual Payment'}
+                <span className="break-words">
+                  Payment Instructions -{' '}
+                  {paymentInstructions.payment_method === 'paypal_personal'
+                    ? 'PayPal.me'
+                    : 'Manual Payment'}
+                </span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4 sm:space-y-6">
               {paymentInstructions.payment_method === 'paypal_personal' && (
                 <>
-                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                    <h3 className="font-semibold text-blue-900 mb-2">PayPal.me Payment Link</h3>
-                    <p className="text-sm text-blue-700 mb-3">
-                      Click the link below to complete your payment:
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        onClick={() => window.open(paymentInstructions.payment_url, '_blank')}
-                        className="bg-blue-600 hover:bg-blue-700"
-                      >
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        Pay with PayPal
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          copyToClipboard(paymentInstructions.payment_url, 'Payment link')
-                        }
-                      >
-                        <Copy className="h-4 w-4" />
-                      </Button>
+                  {/* Order Summary */}
+                  <div className="bg-green-50 p-3 sm:p-4 rounded-lg border border-green-200">
+                    <h3 className="font-semibold text-green-900 mb-3">Payment Summary</h3>
+                    <div className="space-y-2">
+                      <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
+                        <span className="font-medium text-green-800">Order Number:</span>
+                        <code className="bg-green-100 px-2 py-1 rounded text-sm font-mono break-all">
+                          {orderDetail.order_number}
+                        </code>
+                      </div>
+                      <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
+                        <span className="font-medium text-green-800">Amount Due:</span>
+                        <span className="text-lg font-bold text-green-700">
+                          ${paymentInstructions.amount}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-blue-50 p-3 sm:p-4 rounded-lg border border-blue-200">
+                    <h3 className="font-semibold text-blue-900 mb-3">PayPal.me Payment</h3>
+                    <div className="space-y-3">
+                      <p className="text-sm text-blue-700">
+                        Click the button below to complete your payment via PayPal:
+                      </p>
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <Button
+                          onClick={() => window.open(paymentInstructions.payment_url, '_blank')}
+                          className="bg-blue-600 hover:bg-blue-700 flex-1 sm:flex-none"
+                        >
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          Pay ${paymentInstructions.amount} with PayPal
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() =>
+                            copyToClipboard(paymentInstructions.payment_url, 'Payment link')
+                          }
+                          className="w-full sm:w-auto"
+                        >
+                          <Copy className="h-4 w-4 mr-2" />
+                          Copy Link
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Important Instructions */}
+                  <div className="bg-amber-50 p-3 sm:p-4 rounded-lg border border-amber-200">
+                    <h3 className="font-semibold text-amber-900 mb-3">
+                      🔔 Important: Add Your Order ID
+                    </h3>
+                    <div className="space-y-2 text-sm text-amber-800">
+                      <p>
+                        <strong>When making the PayPal payment, please:</strong>
+                      </p>
+                      <ol className="list-decimal list-inside space-y-1 ml-2">
+                        <li>Click "Add a note" or "What's this for?" in PayPal</li>
+                        <li>
+                          Enter your order number:{' '}
+                          <code className="bg-amber-100 px-2 py-1 rounded font-mono">
+                            {orderDetail.order_number}
+                          </code>
+                        </li>
+                        <li>This helps us identify and process your payment quickly</li>
+                      </ol>
+                      <p className="mt-3 font-medium">
+                        ⚡ Payments are typically processed within 1-2 hours during business hours.
+                      </p>
                     </div>
                   </div>
                   {paymentInstructions.instructions && (
@@ -877,23 +926,27 @@ export default function OrderDetailPage() {
 
               {paymentInstructions.payment_method === 'manual' && (
                 <>
-                  <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                    <h3 className="font-semibold text-green-900 mb-2">Bank Transfer Details</h3>
+                  <div className="bg-green-50 p-3 sm:p-4 rounded-lg border border-green-200">
+                    <h3 className="font-semibold text-green-900 mb-3">Bank Transfer Details</h3>
                     {paymentInstructions.bank_details && (
-                      <div className="space-y-2 text-sm">
+                      <div className="space-y-3 text-sm">
                         {Object.entries(paymentInstructions.bank_details).map(([key, value]) => (
-                          <div key={key} className="flex justify-between items-center">
+                          <div
+                            key={key}
+                            className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2"
+                          >
                             <span className="font-medium capitalize text-green-800">
                               {key.replace(/_/g, ' ')}:
                             </span>
                             <div className="flex items-center gap-2">
-                              <span className="text-green-700">{value as string}</span>
+                              <span className="text-green-700 break-all">{value as string}</span>
                               <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={() =>
                                   copyToClipboard(value as string, key.replace(/_/g, ' '))
                                 }
+                                className="flex-shrink-0"
                               >
                                 <Copy className="h-3 w-3" />
                               </Button>
@@ -904,19 +957,22 @@ export default function OrderDetailPage() {
                     )}
                   </div>
 
-                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                    <h3 className="font-semibold text-blue-900 mb-2">Payment Details</h3>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between items-center">
+                  <div className="bg-blue-50 p-3 sm:p-4 rounded-lg border border-blue-200">
+                    <h3 className="font-semibold text-blue-900 mb-3">Payment Details</h3>
+                    <div className="space-y-3 text-sm">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2">
                         <span className="font-medium text-blue-800">Amount:</span>
                         <div className="flex items-center gap-2">
-                          <span className="text-blue-700">${paymentInstructions.amount}</span>
+                          <span className="text-blue-700 font-semibold">
+                            ${paymentInstructions.amount}
+                          </span>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() =>
                               copyToClipboard(`$${paymentInstructions.amount}`, 'Amount')
                             }
+                            className="flex-shrink-0"
                           >
                             <Copy className="h-3 w-3" />
                           </Button>

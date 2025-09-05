@@ -222,6 +222,7 @@ export default function DynamicOrderForm() {
           deadline: deadline,
           payment_method_id: selectedPaymentMethod,
           customer_notes: customerNotes,
+          expected_price: priceData?.final_price, // Pass expected price for validation
         }),
       });
 

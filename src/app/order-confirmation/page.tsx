@@ -343,23 +343,76 @@ function OrderConfirmationContent() {
               )}
 
               {orderDetails.payment_method.type === 'paypal_personal' && (
-                <div>
-                  <p className="text-gray-600 mb-4">
-                    Click the button below to open PayPal.me and complete your payment.
-                  </p>
-                  <Button
-                    onClick={handlePayment}
-                    disabled={paymentProcessing}
-                    className="w-full"
-                    size="lg"
-                  >
-                    Pay via PayPal.me
-                    <ExternalLink className="ml-2 h-4 w-4" />
-                  </Button>
-                  <p className="text-xs text-gray-600 mt-2">
-                    After payment, it may take 1-2 hours for verification. You&apos;ll receive an
-                    email confirmation.
-                  </p>
+                <div className="space-y-4">
+                  {/* Order Summary */}
+                  <div className="bg-green-50 p-3 sm:p-4 rounded-lg border border-green-200">
+                    <h3 className="font-semibold text-green-900 mb-3">Payment Summary</h3>
+                    <div className="space-y-2">
+                      <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
+                        <span className="font-medium text-green-800">Order Number:</span>
+                        <code className="bg-green-100 px-2 py-1 rounded text-sm font-mono break-all">
+                          {orderDetails.order_number}
+                        </code>
+                      </div>
+                      <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
+                        <span className="font-medium text-green-800">Amount Due:</span>
+                        <span className="text-lg font-bold text-green-700">
+                          ${orderDetails.final_price}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* PayPal Payment Button */}
+                  <div className="bg-blue-50 p-3 sm:p-4 rounded-lg border border-blue-200">
+                    <h3 className="font-semibold text-blue-900 mb-3">PayPal.me Payment</h3>
+                    <p className="text-sm text-blue-700 mb-3">
+                      Click the button below to complete your payment via PayPal:
+                    </p>
+                    <Button
+                      onClick={handlePayment}
+                      disabled={paymentProcessing}
+                      className="w-full bg-blue-600 hover:bg-blue-700"
+                      size="lg"
+                    >
+                      {paymentProcessing ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Processing...
+                        </>
+                      ) : (
+                        <>
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          Pay ${orderDetails.final_price} with PayPal
+                        </>
+                      )}
+                    </Button>
+                  </div>
+
+                  {/* Important Instructions */}
+                  <div className="bg-amber-50 p-3 sm:p-4 rounded-lg border border-amber-200">
+                    <h3 className="font-semibold text-amber-900 mb-3">
+                      🔔 Important: Add Your Order ID
+                    </h3>
+                    <div className="space-y-2 text-sm text-amber-800">
+                      <p>
+                        <strong>When making the PayPal payment, please:</strong>
+                      </p>
+                      <ol className="list-decimal list-inside space-y-1 ml-2">
+                        <li>Click "Add a note" or "What's this for?" in PayPal</li>
+                        <li>
+                          Enter your order number:{' '}
+                          <code className="bg-amber-100 px-2 py-1 rounded font-mono">
+                            {orderDetails.order_number}
+                          </code>
+                        </li>
+                        <li>This helps us identify and process your payment quickly</li>
+                      </ol>
+                      <p className="mt-3 font-medium">
+                        ⚡ Payments are typically processed within 1-2 hours during business hours.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )}
             </CardContent>
