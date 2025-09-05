@@ -81,19 +81,21 @@ export default function PaymentMethodSelector({
           {paymentMethods.map(method => (
             <div
               key={method.id}
-              className="flex items-start space-x-2 p-4 border-2 border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 shadow-sm group"
+              className="flex items-start space-x-2 p-3 sm:p-4 border-2 border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 shadow-sm group"
             >
-              <RadioGroupItem value={method.id} id={`payment-${method.id}`} />
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  {getPaymentIcon(method.type)}
-                  <Label
-                    htmlFor={`payment-${method.id}`}
-                    className="font-medium cursor-pointer flex-1 text-gray-500 group-hover:text-gray-900"
-                  >
-                    {method.name}
-                  </Label>
-                  <div className="flex gap-2">
+              <RadioGroupItem value={method.id} id={`payment-${method.id}`} className="mt-1" />
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                  <div className="flex items-center gap-2">
+                    {getPaymentIcon(method.type)}
+                    <Label
+                      htmlFor={`payment-${method.id}`}
+                      className="font-medium cursor-pointer text-gray-500 group-hover:text-gray-900"
+                    >
+                      {method.name}
+                    </Label>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
                     <Badge variant={getPaymentBadgeVariant(method.type)}>
                       {method.type.replace('_', ' ').toUpperCase()}
                     </Badge>
@@ -107,7 +109,7 @@ export default function PaymentMethodSelector({
 
                 {/* Payment Method Specific Information */}
                 {method.type === 'paypal_business' && (
-                  <div className="text-xs text-blue-700 bg-blue-100 p-3 rounded-lg border border-blue-300 font-medium">
+                  <div className="text-xs text-blue-700 bg-blue-100 p-2 sm:p-3 rounded-lg border border-blue-300 font-medium">
                     <p>✓ Secure PayPal checkout</p>
                     <p>✓ Instant payment confirmation</p>
                     <p>✓ Buyer protection included</p>
@@ -115,7 +117,7 @@ export default function PaymentMethodSelector({
                 )}
 
                 {method.type === 'paypal_personal' && (
-                  <div className="text-xs text-gray-700 bg-gray-100 p-3 rounded-lg border border-gray-300 font-medium">
+                  <div className="text-xs text-gray-700 bg-gray-100 p-2 sm:p-3 rounded-lg border border-gray-300 font-medium">
                     <p>• Pay via PayPal.me link</p>
                     <p>• Manual payment verification</p>
                     <p>• Processing may take 1-2 hours</p>
@@ -123,7 +125,7 @@ export default function PaymentMethodSelector({
                 )}
 
                 {method.type === 'stripe' && (
-                  <div className="text-xs text-purple-700 bg-purple-100 p-3 rounded-lg border border-purple-300 font-medium">
+                  <div className="text-xs text-purple-700 bg-purple-100 p-2 sm:p-3 rounded-lg border border-purple-300 font-medium">
                     <p>✓ Credit/Debit cards accepted</p>
                     <p>✓ Secure SSL encryption</p>
                     <p>✓ Instant processing</p>
@@ -131,7 +133,7 @@ export default function PaymentMethodSelector({
                 )}
 
                 {method.type === 'manual' && (
-                  <div className="text-xs text-orange-700 bg-orange-100 p-3 rounded-lg border border-orange-300 font-medium">
+                  <div className="text-xs text-orange-700 bg-orange-100 p-2 sm:p-3 rounded-lg border border-orange-300 font-medium">
                     <p>• Manual payment processing</p>
                     <p>• Contact support for payment instructions</p>
                     <p>• Verification may take additional time</p>

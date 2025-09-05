@@ -608,46 +608,47 @@ export default function OrderDetailPage() {
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
-                      <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg border border-blue-200">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 bg-blue-50 rounded-lg border border-blue-200">
                         <span className="font-medium text-gray-800">Order ID</span>
-                        <code className="bg-blue-100 px-2 py-1 rounded text-sm font-mono">
+                        <code className="bg-blue-100 px-2 py-1 rounded text-xs sm:text-sm font-mono break-all">
                           {orderDetail.order_id}
                         </code>
                       </div>
-                      <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg border border-green-200">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 bg-green-50 rounded-lg border border-green-200">
                         <span className="font-medium text-gray-800">Total Price</span>
-                        <span className="text-2xl font-bold text-green-700">
+                        <span className="text-xl sm:text-2xl font-bold text-green-700">
                           ${orderDetail.final_price}
                         </span>
                       </div>
-                      <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg border border-purple-200">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 bg-purple-50 rounded-lg border border-purple-200">
                         <span className="font-medium text-gray-800">Payment Method</span>
-                        <Badge variant="outline" className="bg-purple-100 text-purple-800">
+                        <Badge variant="outline" className="bg-purple-100 text-purple-800 w-fit">
                           {orderDetail.payment_method.name}
                         </Badge>
                       </div>
                     </div>
                     <div className="space-y-3">
-                      <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg border border-orange-200">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 bg-orange-50 rounded-lg border border-orange-200">
                         <span className="font-medium text-gray-800 flex items-center gap-2">
                           <Calendar className="h-4 w-4" />
                           Deadline
                         </span>
-                        <span className="font-medium text-orange-800">
+                        <span className="font-medium text-orange-800 text-sm sm:text-base">
                           {formatDate(orderDetail.deadline)}
                         </span>
                       </div>
-                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 bg-gray-50 rounded-lg border border-gray-200">
                         <span className="font-medium text-gray-800">Payment Status</span>
                         <Badge
                           variant={orderDetail.payment_status === 'paid' ? 'success' : 'warning'}
+                          className="w-fit"
                         >
                           {orderDetail.payment_status === 'paid' ? 'Paid' : 'Pending'}
                         </Badge>
                       </div>
-                      <div className="flex justify-between items-center p-3 bg-indigo-50 rounded-lg border border-indigo-200">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 bg-indigo-50 rounded-lg border border-indigo-200">
                         <span className="font-medium text-gray-800">Service Tier</span>
-                        <Badge variant="outline" className="bg-indigo-100 text-indigo-800">
+                        <Badge variant="outline" className="bg-indigo-100 text-indigo-800 w-fit">
                           {orderDetail.pricing_tier?.name || 'Standard'}
                         </Badge>
                       </div>
@@ -682,11 +683,11 @@ export default function OrderDetailPage() {
 
                         return (
                           <div key={key} className="p-3 bg-gray-50 rounded-lg border">
-                            <div className="flex justify-between items-start">
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-0">
                               <span className="font-medium text-gray-700 capitalize">
                                 {key.replace(/_/g, ' ')}
                               </span>
-                              <span className="text-gray-900 text-right max-w-[60%] break-words">
+                              <span className="text-gray-900 sm:text-right sm:max-w-[60%] break-words">
                                 {formatValue(key, value)}
                               </span>
                             </div>

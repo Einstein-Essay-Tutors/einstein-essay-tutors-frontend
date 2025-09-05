@@ -99,11 +99,13 @@ export default function PriceCalculator({
       </CardHeader>
       <CardContent className="space-y-3">
         {/* Base Price */}
-        <div className="flex justify-between items-center p-4 bg-blue-50 rounded-lg border-2 border-blue-200 shadow-sm">
-          <div className="flex items-center gap-2">
-            <FileText className="h-4 w-4 text-blue-600" />
-            <span className="font-semibold text-gray-800">Base Price</span>
-            <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-300">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 sm:p-4 bg-blue-50 rounded-lg border-2 border-blue-200 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <div className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-blue-600" />
+              <span className="font-semibold text-gray-800">Base Price</span>
+            </div>
+            <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-300 w-fit">
               {breakdown.pages} page{breakdown.pages !== 1 ? 's' : ''} × ${breakdown.price_per_page}
             </Badge>
           </div>
@@ -112,14 +114,16 @@ export default function PriceCalculator({
 
         {/* Deadline Multiplier */}
         {breakdown.deadline_multiplier !== 1 && (
-          <div className="flex justify-between items-center p-4 bg-orange-50 rounded-lg border-2 border-orange-200 shadow-sm">
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-orange-600" />
-              <span className="font-semibold text-gray-800">Deadline Urgency</span>
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 sm:p-4 bg-orange-50 rounded-lg border-2 border-orange-200 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4 text-orange-600" />
+                <span className="font-semibold text-gray-800">Deadline Urgency</span>
+              </div>
               {breakdown.deadline_pricing.name && (
                 <Badge
                   variant="outline"
-                  className="bg-orange-100 text-orange-800 border-orange-300"
+                  className="bg-orange-100 text-orange-800 border-orange-300 w-fit"
                 >
                   {breakdown.deadline_pricing.name}
                 </Badge>
@@ -133,8 +137,8 @@ export default function PriceCalculator({
 
         {/* Additional Options */}
         {priceData.total_multiplier !== breakdown.deadline_multiplier && (
-          <div className="p-4 bg-purple-50 rounded-lg border-2 border-purple-200 shadow-sm">
-            <div className="flex justify-between items-start mb-3">
+          <div className="p-3 sm:p-4 bg-purple-50 rounded-lg border-2 border-purple-200 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-0 mb-3">
               <div className="flex items-center gap-2">
                 <TrendingUp className="h-4 w-4 text-purple-600" />
                 <span className="font-semibold text-gray-800">Selected Options</span>
@@ -161,7 +165,7 @@ export default function PriceCalculator({
 
         {/* Additional Costs */}
         {priceData.total_addition > 0 && (
-          <div className="flex justify-between items-center p-4 bg-emerald-50 rounded-lg border-2 border-emerald-200 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 sm:p-4 bg-emerald-50 rounded-lg border-2 border-emerald-200 shadow-sm">
             <div className="flex items-center gap-2">
               <span className="font-semibold text-gray-800">Additional Services</span>
             </div>
@@ -170,9 +174,11 @@ export default function PriceCalculator({
         )}
 
         {/* Final Price */}
-        <div className="flex justify-between items-center p-5 bg-green-100 rounded-lg border-3 border-green-300 shadow-md">
-          <span className="text-xl font-bold text-green-800">Total Price</span>
-          <span className="text-3xl font-bold text-green-800">${priceData.final_price}</span>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-4 sm:p-5 bg-green-100 rounded-lg border-2 sm:border-3 border-green-300 shadow-md">
+          <span className="text-lg sm:text-xl font-bold text-green-800">Total Price</span>
+          <span className="text-2xl sm:text-3xl font-bold text-green-800">
+            ${priceData.final_price}
+          </span>
         </div>
 
         {/* Price Explanation */}

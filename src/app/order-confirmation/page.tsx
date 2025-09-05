@@ -260,45 +260,45 @@ function OrderConfirmationContent() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="flex justify-between items-center p-4 bg-blue-50 rounded-lg border-2 border-blue-200 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-2 p-3 sm:p-4 bg-blue-50 rounded-lg border-2 border-blue-200 shadow-sm">
                 <span className="font-semibold text-gray-800">Order Number</span>
                 <div className="flex items-center gap-2">
-                  <code className="bg-blue-100 px-3 py-2 rounded-lg border-2 border-blue-300 font-mono text-sm font-bold text-blue-800 shadow-sm">
+                  <code className="bg-blue-100 px-2 sm:px-3 py-1 sm:py-2 rounded-lg border-2 border-blue-300 font-mono text-xs sm:text-sm font-bold text-blue-800 shadow-sm break-all">
                     {orderDetails.order_number}
                   </code>
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={copyOrderNumber}
-                    className="h-8 w-8 hover:bg-blue-200"
+                    className="h-8 w-8 hover:bg-blue-200 flex-shrink-0"
                   >
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
 
-              <div className="flex justify-between items-center p-4 bg-green-50 rounded-lg border-2 border-green-200 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 sm:p-4 bg-green-50 rounded-lg border-2 border-green-200 shadow-sm">
                 <span className="font-semibold text-gray-800">Total Amount</span>
-                <span className="text-3xl font-bold text-green-700">
+                <span className="text-2xl sm:text-3xl font-bold text-green-700">
                   ${orderDetails.final_price}
                 </span>
               </div>
 
-              <div className="flex justify-between items-center p-4 bg-purple-50 rounded-lg border-2 border-purple-200 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 sm:p-4 bg-purple-50 rounded-lg border-2 border-purple-200 shadow-sm">
                 <span className="font-semibold text-gray-800">Payment Method</span>
                 <Badge
                   variant="outline"
-                  className="bg-purple-100 text-purple-800 border-purple-300 font-medium"
+                  className="bg-purple-100 text-purple-800 border-purple-300 font-medium w-fit"
                 >
                   {orderDetails.payment_method.name}
                 </Badge>
               </div>
 
-              <div className="flex justify-between items-center p-4 bg-orange-50 rounded-lg border-2 border-orange-200 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 sm:p-4 bg-orange-50 rounded-lg border-2 border-orange-200 shadow-sm">
                 <span className="font-semibold text-gray-800">Status</span>
                 <Badge
                   variant="secondary"
-                  className="bg-orange-100 text-orange-800 border-orange-300 font-medium"
+                  className="bg-orange-100 text-orange-800 border-orange-300 font-medium w-fit"
                 >
                   <Clock className="h-3 w-3 mr-1" />
                   Awaiting Payment
