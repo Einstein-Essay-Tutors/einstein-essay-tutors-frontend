@@ -36,7 +36,7 @@ function VerifyEmailForm() {
     try {
       const result = await authAPI.verifyEmail(email, otpCode);
       setIsSuccess(true);
-      setMessage(result.message || 'Email verified successfully!');
+      setMessage(result.data.message || 'Email verified successfully!');
 
       // Redirect to login after successful verification
       setTimeout(() => {
