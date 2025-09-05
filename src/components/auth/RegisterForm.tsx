@@ -21,7 +21,7 @@ interface RegisterFormProps {
 
 export default function RegisterForm({
   onSuccess,
-  redirectTo = '/auth/verify-email',
+  redirectTo = '/verify-email',
 }: RegisterFormProps) {
   const [formData, setFormData] = useState({
     username: '',
