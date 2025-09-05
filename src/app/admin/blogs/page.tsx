@@ -102,7 +102,7 @@ export default function AdminBlogsPage() {
 
   const fetchSubjects = useCallback(async () => {
     try {
-      const response = await fetch(getApiUrl('admin/blog_subjects/'), {
+      const response = await fetch(getApiUrl('api/admin/blog_subjects/'), {
         headers: getAuthHeaders(),
       });
 
@@ -126,7 +126,7 @@ export default function AdminBlogsPage() {
       if (statusFilter && statusFilter !== 'all') params.append('status', statusFilter);
       if (searchQuery) params.append('search', searchQuery);
 
-      const response = await fetch(getApiUrl(`admin/blogs/?${params}`), {
+      const response = await fetch(getApiUrl(`api/admin/blogs/?${params}`), {
         headers: getAuthHeaders(),
       });
 
@@ -200,7 +200,7 @@ export default function AdminBlogsPage() {
     }
 
     try {
-      const response = await fetch(getApiUrl('admin/blogs/create/'), {
+      const response = await fetch(getApiUrl('api/admin/blogs/create/'), {
         method: 'POST',
         headers: {
           ...getAuthHeaders(),
@@ -247,7 +247,7 @@ export default function AdminBlogsPage() {
     }
 
     try {
-      const response = await fetch(getApiUrl(`admin/blogs/${selectedBlog.id}/update/`), {
+      const response = await fetch(getApiUrl(`api/admin/blogs/${selectedBlog.id}/update/`), {
         method: 'PUT',
         headers: {
           ...getAuthHeaders(),
@@ -288,7 +288,7 @@ export default function AdminBlogsPage() {
     if (!selectedBlog) return;
 
     try {
-      const response = await fetch(getApiUrl(`admin/blogs/${selectedBlog.id}/delete/`), {
+      const response = await fetch(getApiUrl(`api/admin/blogs/${selectedBlog.id}/delete/`), {
         method: 'DELETE',
         headers: getAuthHeaders(),
       });
@@ -319,7 +319,7 @@ export default function AdminBlogsPage() {
 
   const handleStatusChange = async (blog: Blog, newStatus: 'draft' | 'published' | 'archived') => {
     try {
-      const response = await fetch(getApiUrl(`admin/blogs/${blog.id}/status/`), {
+      const response = await fetch(getApiUrl(`api/admin/blogs/${blog.id}/status/`), {
         method: 'PUT',
         headers: {
           ...getAuthHeaders(),
@@ -397,7 +397,7 @@ export default function AdminBlogsPage() {
   const fetchBlogDetails = async (blogId: string) => {
     setLoadingBlogDetails(true);
     try {
-      const response = await fetch(getApiUrl(`admin/blogs/${blogId}/`), {
+      const response = await fetch(getApiUrl(`api/admin/blogs/${blogId}/`), {
         headers: getAuthHeaders(),
       });
 

@@ -143,7 +143,7 @@ export default function AdminSolutionUpload({
       const headers = getAuthHeaders();
       delete headers['Content-Type'];
 
-      const response = await fetch(getApiUrl('admin/upload_solution/'), {
+      const response = await fetch(getApiUrl('api/admin/upload_solution/'), {
         method: 'POST',
         headers: headers,
         body: formData,

@@ -82,7 +82,7 @@ export default function AdminReviewsPage() {
         params.append('status', statusFilter);
       }
 
-      const response = await fetch(getApiUrl(`admin/reviews_list/?${params.toString()}`), {
+      const response = await fetch(getApiUrl(`api/admin/reviews_list/?${params.toString()}`), {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -121,7 +121,7 @@ export default function AdminReviewsPage() {
     setModeratingReview(reviewId);
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch(getApiUrl('admin/moderate_review/'), {
+      const response = await fetch(getApiUrl('api/admin/moderate_review/'), {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

@@ -121,8 +121,8 @@ export default function AdminDashboard() {
   const fetchDashboardData = useCallback(async () => {
     try {
       const [statsRes, writersRes] = await Promise.all([
-        fetch(getApiUrl('admin/dashboard_stats/'), { headers: getAuthHeaders() }),
-        fetch(getApiUrl('admin/writers_list/'), { headers: getAuthHeaders() }),
+        fetch(getApiUrl('api/admin/dashboard_stats/'), { headers: getAuthHeaders() }),
+        fetch(getApiUrl('api/admin/writers_list/'), { headers: getAuthHeaders() }),
       ]);
 
       if (statsRes.ok) {
@@ -158,7 +158,7 @@ export default function AdminDashboard() {
       if (paymentFilter && paymentFilter !== 'all') params.append('payment_status', paymentFilter);
       if (searchQuery) params.append('search', searchQuery);
 
-      const response = await fetch(getApiUrl(`admin/orders_list/?${params}`), {
+      const response = await fetch(getApiUrl(`api/admin/orders_list/?${params}`), {
         headers: getAuthHeaders(),
       });
 
@@ -207,7 +207,7 @@ export default function AdminDashboard() {
     if (!selectedOrder) return;
 
     try {
-      const response = await fetch(getApiUrl('admin/update_order/'), {
+      const response = await fetch(getApiUrl('api/admin/update_order/'), {
         method: 'POST',
         headers: {
           ...getAuthHeaders(),
@@ -247,7 +247,7 @@ export default function AdminDashboard() {
     if (!selectedOrder || !assignWriterId) return;
 
     try {
-      const response = await fetch(getApiUrl('admin/update_order/'), {
+      const response = await fetch(getApiUrl('api/admin/update_order/'), {
         method: 'POST',
         headers: {
           ...getAuthHeaders(),
@@ -287,7 +287,7 @@ export default function AdminDashboard() {
     if (!selectedOrder || !messageText.trim()) return;
 
     try {
-      const response = await fetch(getApiUrl('admin/send_message/'), {
+      const response = await fetch(getApiUrl('api/admin/send_message/'), {
         method: 'POST',
         headers: {
           ...getAuthHeaders(),
@@ -339,7 +339,7 @@ export default function AdminDashboard() {
       const headers = getAuthHeaders();
       delete headers['Content-Type'];
 
-      const response = await fetch(getApiUrl('admin/upload_solution/'), {
+      const response = await fetch(getApiUrl('api/admin/upload_solution/'), {
         method: 'POST',
         headers: headers,
         body: formData,
