@@ -2,6 +2,8 @@
 
 Next.js 15.5.0 frontend application for the Einstein Essay Tutors platform.
 
+**Latest Update**: Fixed admin dashboard API connectivity and removed legacy Review model in favor of OrderReview system.
+
 ## Features
 
 - Next.js 15.5.0 with App Router
