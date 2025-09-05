@@ -17,6 +17,8 @@ import {
   ArrowRight,
   Copy,
   ExternalLink,
+  Loader2,
+  AlertCircle,
 } from 'lucide-react';
 
 interface OrderDetails {
@@ -34,6 +36,7 @@ function OrderConfirmationContent() {
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [paymentProcessing, setPaymentProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const { user, getAuthHeaders } = useAuth();
   const { toast } = useToast();
@@ -49,6 +52,7 @@ function OrderConfirmationContent() {
 
     const fetchOrderDetails = async () => {
       try {
+        setError(null);
         const response = await fetch(getApiUrl(`get_order_details/${orderId}/`), {
           headers: getAuthHeaders(),
         });
@@ -71,15 +75,22 @@ function OrderConfirmationContent() {
         }
       } catch (error) {
         console.error('Error fetching order details:', error);
+        const errorMessage =
+          error instanceof Error ? error.message : 'Failed to load order details';
+        setError(errorMessage);
         toast({
           title: 'Error',
-          description: error instanceof Error ? error.message : 'Failed to load order details',
+          description: errorMessage,
           variant: 'destructive',
         });
-        router.push('/dashboard');
       } finally {
         setLoading(false);
       }
+    };
+
+    const retryLoadOrder = () => {
+      setLoading(true);
+      fetchOrderDetails();
     };
 
     fetchOrderDetails();
@@ -132,13 +143,21 @@ function OrderConfirmationContent() {
         throw new Error(data.error || 'Payment initiation failed');
       }
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Payment processing failed';
+
       toast({
         title: 'Payment Error',
-        description:
-          error instanceof Error
-            ? error.message
-            : 'There was an error processing your payment. Please try again.',
+        description: `${errorMessage}. Please try again or contact support if the problem persists.`,
         variant: 'destructive',
+        duration: 7000, // Show error longer
+      });
+
+      // Log error for debugging
+      console.error('Payment initiation error:', {
+        error,
+        orderId: orderDetails?.order_id,
+        paymentMethod: orderDetails?.payment_method?.type,
+        timestamp: new Date().toISOString(),
       });
     } finally {
       setPaymentProcessing(false);
@@ -213,6 +232,41 @@ function OrderConfirmationContent() {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-gray-600">Loading order details...</p>
         </div>
+      </div>
+    );
+  }
+
+  if (error && !orderDetails) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardContent className="text-center py-12">
+            <div className="mb-4">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+                <AlertCircle className="h-8 w-8 text-red-600" />
+              </div>
+              <p className="text-destructive mb-2">Failed to Load Order</p>
+              <p className="text-sm text-gray-600 mb-4">{error}</p>
+            </div>
+            <div className="space-y-3">
+              <Button onClick={retryLoadOrder} disabled={loading} className="w-full">
+                {loading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Retrying...
+                  </>
+                ) : (
+                  'Try Again'
+                )}
+              </Button>
+              <Link href="/dashboard">
+                <Button variant="outline" className="w-full">
+                  Go to Dashboard
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -372,13 +426,13 @@ function OrderConfirmationContent() {
                     <Button
                       onClick={handlePayment}
                       disabled={paymentProcessing}
-                      className="w-full bg-blue-600 hover:bg-blue-700"
+                      className="w-full bg-blue-600 hover:bg-blue-700 transition-all duration-200"
                       size="lg"
                     >
                       {paymentProcessing ? (
                         <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                          Processing...
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Opening PayPal...
                         </>
                       ) : (
                         <>
@@ -387,6 +441,19 @@ function OrderConfirmationContent() {
                         </>
                       )}
                     </Button>
+                  </div>
+
+                  {/* Payment Troubleshooting */}
+                  <div className="bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200">
+                    <h4 className="font-semibold text-gray-900 mb-2 text-sm">
+                      Having trouble with payment?
+                    </h4>
+                    <div className="space-y-1 text-xs text-gray-700">
+                      <p>• Ensure pop-ups are enabled for this site</p>
+                      <p>• Check your PayPal account for sufficient funds</p>
+                      <p>• Try refreshing the page and clicking the button again</p>
+                      <p>• Contact our support team if issues persist</p>
+                    </div>
                   </div>
 
                   {/* Important Instructions */}

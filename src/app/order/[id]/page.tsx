@@ -30,6 +30,7 @@ import {
   Copy,
 } from 'lucide-react';
 import Link from 'next/link';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
 interface OrderDetail {
   order_id: string;
@@ -83,7 +84,7 @@ export default function OrderDetailPage() {
   const [confirmingPayment, setConfirmingPayment] = useState(false);
   const [capturingPayment, setCapturingPayment] = useState(false);
 
-  const { user, getAuthHeaders } = useAuth();
+  const { user, getAuthHeaders, refreshSession, hasValidTokens } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -125,8 +126,9 @@ export default function OrderDetailPage() {
     }
   }, [searchParams, router, orderId, toast]);
 
-  const fetchOrderDetail = async () => {
+  const fetchOrderDetail = async (retryCount = 0) => {
     try {
+      setError(null);
       const response = await fetch(getApiUrl(`get_order_details/${orderId}/`), {
         headers: getAuthHeaders(),
       });
@@ -134,22 +136,35 @@ export default function OrderDetailPage() {
       if (response.ok) {
         const data = await response.json();
         setOrderDetail(data);
+      } else if (response.status === 401 && retryCount === 0 && hasValidTokens()) {
+        // Try to refresh session and retry once
+        const sessionRefreshed = await refreshSession();
+        if (sessionRefreshed) {
+          return fetchOrderDetail(1); // Retry with count
+        } else {
+          throw new Error('Session expired. Please log in again.');
+        }
       } else {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to load order details');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching order details:', error);
-      setError(error instanceof Error ? error.message : 'Failed to load order');
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to load order details',
-        variant: 'destructive',
-      });
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load order';
+      setError(errorMessage);
+
+      // Only show toast error if this wasn't an auth issue that could be resolved
+      if (!error.message?.includes('Session expired')) {
+        toast({
+          title: 'Error',
+          description: errorMessage,
+          variant: 'destructive',
+        });
+      }
     }
   };
 
-  const fetchOrderMessages = async () => {
+  const fetchOrderMessages = async (retryCount = 0) => {
     try {
       const response = await fetch(getApiUrl(`get_order_messages/${orderId}/`), {
         headers: getAuthHeaders(),
@@ -158,6 +173,15 @@ export default function OrderDetailPage() {
       if (response.ok) {
         const data = await response.json();
         setMessages(data.messages || []);
+      } else if (response.status === 401 && retryCount === 0 && hasValidTokens()) {
+        // Try to refresh session and retry once
+        const sessionRefreshed = await refreshSession();
+        if (sessionRefreshed) {
+          return fetchOrderMessages(1); // Retry with count
+        } else {
+          // Silent fail for messages if session can't be refreshed
+          setMessages([]);
+        }
       } else {
         // Messages might not exist yet, don't show error
         setMessages([]);
@@ -381,6 +405,13 @@ export default function OrderDetailPage() {
     }
   };
 
+  const retryLoadOrder = async () => {
+    setLoading(true);
+    setError(null);
+    await fetchOrderDetail();
+    await fetchOrderMessages();
+  };
+
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     toast({
@@ -520,11 +551,32 @@ export default function OrderDetailPage() {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardContent className="text-center py-12">
-            <AlertCircle className="h-12 w-12 mx-auto mb-4 text-red-500" />
-            <p className="text-destructive mb-4">{error || 'Order not found'}</p>
-            <Link href="/dashboard">
-              <Button>Back to Dashboard</Button>
-            </Link>
+            <div className="mb-4">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+                <AlertCircle className="h-8 w-8 text-red-600" />
+              </div>
+              <p className="text-destructive mb-2">Failed to Load Order</p>
+              <p className="text-sm text-gray-600 mb-4">{error || 'Order not found'}</p>
+            </div>
+            <div className="space-y-3">
+              {error && (
+                <Button onClick={retryLoadOrder} disabled={loading} className="w-full">
+                  {loading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Retrying...
+                    </>
+                  ) : (
+                    'Try Again'
+                  )}
+                </Button>
+              )}
+              <Link href="/dashboard">
+                <Button variant="outline" className="w-full">
+                  Back to Dashboard
+                </Button>
+              </Link>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -532,552 +584,561 @@ export default function OrderDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
-      <div className="container mx-auto px-4">
-        <div className="max-w-6xl mx-auto space-y-6">
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/dashboard">
-                <Button variant="outline" size="sm">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Dashboard
-                </Button>
-              </Link>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Order #{orderDetail.order_number}
-                </h1>
-                <p className="text-gray-600">Created {formatDate(orderDetail.created_at)}</p>
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto space-y-6">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Link href="/dashboard">
+                  <Button variant="outline" size="sm">
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Back to Dashboard
+                  </Button>
+                </Link>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    Order #{orderDetail.order_number}
+                  </h1>
+                  <p className="text-gray-600">Created {formatDate(orderDetail.created_at)}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {getStatusIcon(orderDetail.status)}
+                {getStatusBadge(orderDetail.status)}
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              {getStatusIcon(orderDetail.status)}
-              {getStatusBadge(orderDetail.status)}
-            </div>
-          </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Column - Order Details */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Payment Status Alert */}
-              {orderDetail.payment_status !== 'paid' && (
-                <Card className="border-orange-200 bg-orange-50">
-                  <CardContent className="pt-6">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                      <div className="flex items-start gap-3">
-                        <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5 flex-shrink-0" />
-                        <div className="min-w-0">
-                          <h3 className="font-semibold text-orange-900">Payment Required</h3>
-                          <p className="text-sm text-orange-700 break-words">
-                            Complete your payment of ${orderDetail.final_price} to proceed with your
-                            order.
-                          </p>
-                        </div>
-                      </div>
-                      <Button
-                        onClick={initiatePayment}
-                        disabled={initiatingPayment}
-                        className="bg-orange-600 hover:bg-orange-700 w-full sm:w-auto flex-shrink-0"
-                      >
-                        {initiatingPayment ? (
-                          <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Processing...
-                          </>
-                        ) : (
-                          <>
-                            <CreditCard className="h-4 w-4 mr-2" />
-                            Complete Payment
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Order Information */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5" />
-                    Order Information
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-3">
-                      <div className="flex flex-col gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                        <span className="font-medium text-gray-800">Order ID</span>
-                        <code className="bg-blue-100 px-2 py-1 rounded text-xs font-mono break-all w-full overflow-hidden">
-                          {orderDetail.order_id}
-                        </code>
-                      </div>
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 bg-green-50 rounded-lg border border-green-200">
-                        <span className="font-medium text-gray-800">Total Price</span>
-                        <span className="text-xl sm:text-2xl font-bold text-green-700">
-                          ${orderDetail.final_price}
-                        </span>
-                      </div>
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 bg-purple-50 rounded-lg border border-purple-200">
-                        <span className="font-medium text-gray-800">Payment Method</span>
-                        <Badge variant="outline" className="bg-purple-100 text-purple-800 w-fit">
-                          {orderDetail.payment_method.name}
-                        </Badge>
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 bg-orange-50 rounded-lg border border-orange-200">
-                        <span className="font-medium text-gray-800 flex items-center gap-2">
-                          <Calendar className="h-4 w-4" />
-                          Deadline
-                        </span>
-                        <span className="font-medium text-orange-800 text-sm sm:text-base">
-                          {formatDate(orderDetail.deadline)}
-                        </span>
-                      </div>
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <span className="font-medium text-gray-800">Payment Status</span>
-                        <Badge
-                          variant={orderDetail.payment_status === 'paid' ? 'success' : 'warning'}
-                          className="w-fit"
-                        >
-                          {orderDetail.payment_status === 'paid' ? 'Paid' : 'Pending'}
-                        </Badge>
-                      </div>
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 bg-indigo-50 rounded-lg border border-indigo-200">
-                        <span className="font-medium text-gray-800">Service Tier</span>
-                        <Badge variant="outline" className="bg-indigo-100 text-indigo-800 w-fit">
-                          {orderDetail.pricing_tier?.name || 'Standard'}
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Order Requirements */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Order Requirements</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {Object.keys(orderDetail.form_data || {}).length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {Object.entries(orderDetail.form_data || {}).map(([key, value]) => {
-                        const formatValue = (key: string, value: any) => {
-                          if (typeof value !== 'string') {
-                            return JSON.stringify(value);
-                          }
-
-                          // Format specific fields that need title case treatment
-                          if (
-                            ['subject', 'paper_type', 'citation_style'].includes(key.toLowerCase())
-                          ) {
-                            return value.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                          }
-
-                          return value;
-                        };
-
-                        return (
-                          <div key={key} className="p-3 bg-gray-50 rounded-lg border">
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-0">
-                              <span className="font-medium text-gray-700 capitalize">
-                                {key.replace(/_/g, ' ')}
-                              </span>
-                              <span className="text-gray-900 sm:text-right sm:max-w-[60%] break-words">
-                                {formatValue(key, value)}
-                              </span>
-                            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Left Column - Order Details */}
+              <div className="lg:col-span-2 space-y-6">
+                {/* Payment Status Alert */}
+                {orderDetail.payment_status !== 'paid' && (
+                  <Card className="border-orange-200 bg-orange-50">
+                    <CardContent className="pt-6">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div className="flex items-start gap-3">
+                          <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5 flex-shrink-0" />
+                          <div className="min-w-0">
+                            <h3 className="font-semibold text-orange-900">Payment Required</h3>
+                            <p className="text-sm text-orange-700 break-words">
+                              Complete your payment of ${orderDetail.final_price} to proceed with
+                              your order.
+                            </p>
                           </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8 text-gray-500">
-                      <FileText className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                      <p>No specific requirements specified</p>
-                      <p className="text-xs">Standard order processing will apply</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Customer Notes */}
-              {orderDetail.customer_notes && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Additional Instructions</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                      <p className="text-gray-800 whitespace-pre-wrap">
-                        {orderDetail.customer_notes}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Order Files */}
-              <OrderFileManager orderId={orderId} readOnly={orderDetail.status === 'delivered'} />
-
-              {/* Solution Files */}
-              <OrderSolutionManager orderId={orderId} />
-
-              {/* Order Review */}
-              <OrderReviewForm orderId={orderId} onReviewSubmitted={fetchOrderDetail} />
-            </div>
-
-            {/* Right Column - Communication */}
-            <div className="space-y-6">
-              {/* Messages */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <MessageSquare className="h-5 w-5" />
-                    Messages ({messages.length})
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {/* Messages List */}
-                    <div className="max-h-96 overflow-y-auto space-y-3">
-                      {messages.length > 0 ? (
-                        messages.map(message => (
-                          <div
-                            key={message.id}
-                            className={`rounded-lg border ${
-                              message.sender_type === 'customer'
-                                ? 'bg-blue-50 border-blue-200 ml-4'
-                                : 'bg-gray-50 border-gray-200 mr-4'
-                            }`}
-                          >
-                            {/* Message Metadata Header */}
-                            <div className="flex items-center justify-between px-3 py-2 bg-white bg-opacity-60 border-b border-gray-200">
-                              <div className="flex items-center gap-2">
-                                {getSenderIcon(message.sender_type)}
-                                <span className="font-medium text-sm text-gray-700">
-                                  {message.sender_name}
-                                </span>
-                                {getSenderBadge(message.sender_type)}
-                              </div>
-                              <span className="text-xs text-gray-500 font-medium">
-                                {formatShortDate(message.created_at)}
-                              </span>
-                            </div>
-                            {/* Message Content */}
-                            <div className="p-3">
-                              <p className="text-gray-800 text-sm whitespace-pre-wrap leading-relaxed">
-                                {message.message}
-                              </p>
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-center py-8 text-gray-500">
-                          <MessageSquare className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                          <p>No messages yet</p>
-                          <p className="text-xs">Start a conversation with your team!</p>
                         </div>
-                      )}
-                    </div>
-
-                    {/* New Message */}
-                    <div className="border-t pt-4">
-                      <div className="space-y-3">
-                        <Textarea
-                          placeholder="Type your message here..."
-                          value={newMessage}
-                          onChange={e => setNewMessage(e.target.value)}
-                          rows={3}
-                          className="resize-none"
-                        />
                         <Button
-                          onClick={sendMessage}
-                          disabled={!newMessage.trim() || sendingMessage}
-                          className="w-full"
+                          onClick={initiatePayment}
+                          disabled={initiatingPayment}
+                          className="bg-orange-600 hover:bg-orange-700 w-full sm:w-auto flex-shrink-0"
                         >
-                          {sendingMessage ? (
+                          {initiatingPayment ? (
                             <>
                               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                              Sending...
+                              Processing...
                             </>
                           ) : (
                             <>
-                              <Send className="h-4 w-4 mr-2" />
-                              Send Message
+                              <CreditCard className="h-4 w-4 mr-2" />
+                              Complete Payment
                             </>
                           )}
                         </Button>
                       </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Order Information */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileText className="h-5 w-5" />
+                      Order Information
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-3">
+                        <div className="flex flex-col gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                          <span className="font-medium text-gray-800">Order ID</span>
+                          <code className="bg-blue-100 px-2 py-1 rounded text-xs font-mono break-all w-full overflow-hidden">
+                            {orderDetail.order_id}
+                          </code>
+                        </div>
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 bg-green-50 rounded-lg border border-green-200">
+                          <span className="font-medium text-gray-800">Total Price</span>
+                          <span className="text-xl sm:text-2xl font-bold text-green-700">
+                            ${orderDetail.final_price}
+                          </span>
+                        </div>
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                          <span className="font-medium text-gray-800">Payment Method</span>
+                          <Badge variant="outline" className="bg-purple-100 text-purple-800 w-fit">
+                            {orderDetail.payment_method.name}
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 bg-orange-50 rounded-lg border border-orange-200">
+                          <span className="font-medium text-gray-800 flex items-center gap-2">
+                            <Calendar className="h-4 w-4" />
+                            Deadline
+                          </span>
+                          <span className="font-medium text-orange-800 text-sm sm:text-base">
+                            {formatDate(orderDetail.deadline)}
+                          </span>
+                        </div>
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                          <span className="font-medium text-gray-800">Payment Status</span>
+                          <Badge
+                            variant={orderDetail.payment_status === 'paid' ? 'success' : 'warning'}
+                            className="w-fit"
+                          >
+                            {orderDetail.payment_status === 'paid' ? 'Paid' : 'Pending'}
+                          </Badge>
+                        </div>
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 p-3 bg-indigo-50 rounded-lg border border-indigo-200">
+                          <span className="font-medium text-gray-800">Service Tier</span>
+                          <Badge variant="outline" className="bg-indigo-100 text-indigo-800 w-fit">
+                            {orderDetail.pricing_tier?.name || 'Standard'}
+                          </Badge>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+
+                {/* Order Requirements */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Order Requirements</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {Object.keys(orderDetail.form_data || {}).length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {Object.entries(orderDetail.form_data || {}).map(([key, value]) => {
+                          const formatValue = (key: string, value: any) => {
+                            if (typeof value !== 'string') {
+                              return JSON.stringify(value);
+                            }
+
+                            // Format specific fields that need title case treatment
+                            if (
+                              ['subject', 'paper_type', 'citation_style'].includes(
+                                key.toLowerCase()
+                              )
+                            ) {
+                              return value
+                                .replace(/_/g, ' ')
+                                .replace(/\b\w/g, l => l.toUpperCase());
+                            }
+
+                            return value;
+                          };
+
+                          return (
+                            <div key={key} className="p-3 bg-gray-50 rounded-lg border">
+                              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-0">
+                                <span className="font-medium text-gray-700 capitalize">
+                                  {key.replace(/_/g, ' ')}
+                                </span>
+                                <span className="text-gray-900 sm:text-right sm:max-w-[60%] break-words">
+                                  {formatValue(key, value)}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 text-gray-500">
+                        <FileText className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                        <p>No specific requirements specified</p>
+                        <p className="text-xs">Standard order processing will apply</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Customer Notes */}
+                {orderDetail.customer_notes && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Additional Instructions</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <p className="text-gray-800 whitespace-pre-wrap">
+                          {orderDetail.customer_notes}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Order Files */}
+                <OrderFileManager orderId={orderId} readOnly={orderDetail.status === 'delivered'} />
+
+                {/* Solution Files */}
+                <OrderSolutionManager orderId={orderId} />
+
+                {/* Order Review */}
+                <OrderReviewForm orderId={orderId} onReviewSubmitted={fetchOrderDetail} />
+              </div>
+
+              {/* Right Column - Communication */}
+              <div className="space-y-6">
+                {/* Messages */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <MessageSquare className="h-5 w-5" />
+                      Messages ({messages.length})
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {/* Messages List */}
+                      <div className="max-h-96 overflow-y-auto space-y-3">
+                        {messages.length > 0 ? (
+                          messages.map(message => (
+                            <div
+                              key={message.id}
+                              className={`rounded-lg border ${
+                                message.sender_type === 'customer'
+                                  ? 'bg-blue-50 border-blue-200 ml-4'
+                                  : 'bg-gray-50 border-gray-200 mr-4'
+                              }`}
+                            >
+                              {/* Message Metadata Header */}
+                              <div className="flex items-center justify-between px-3 py-2 bg-white bg-opacity-60 border-b border-gray-200">
+                                <div className="flex items-center gap-2">
+                                  {getSenderIcon(message.sender_type)}
+                                  <span className="font-medium text-sm text-gray-700">
+                                    {message.sender_name}
+                                  </span>
+                                  {getSenderBadge(message.sender_type)}
+                                </div>
+                                <span className="text-xs text-gray-500 font-medium">
+                                  {formatShortDate(message.created_at)}
+                                </span>
+                              </div>
+                              {/* Message Content */}
+                              <div className="p-3">
+                                <p className="text-gray-800 text-sm whitespace-pre-wrap leading-relaxed">
+                                  {message.message}
+                                </p>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-center py-8 text-gray-500">
+                            <MessageSquare className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                            <p>No messages yet</p>
+                            <p className="text-xs">Start a conversation with your team!</p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* New Message */}
+                      <div className="border-t pt-4">
+                        <div className="space-y-3">
+                          <Textarea
+                            placeholder="Type your message here..."
+                            value={newMessage}
+                            onChange={e => setNewMessage(e.target.value)}
+                            rows={3}
+                            className="resize-none"
+                          />
+                          <Button
+                            onClick={sendMessage}
+                            disabled={!newMessage.trim() || sendingMessage}
+                            className="w-full"
+                          >
+                            {sendingMessage ? (
+                              <>
+                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                Sending...
+                              </>
+                            ) : (
+                              <>
+                                <Send className="h-4 w-4 mr-2" />
+                                Send Message
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Payment Instructions Modal */}
-      {showPaymentModal && paymentInstructions && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <CreditCard className="h-5 w-5" />
-                <span className="break-words">
-                  Payment Instructions -{' '}
-                  {paymentInstructions.payment_method === 'paypal_personal'
-                    ? 'PayPal.me'
-                    : 'Manual Payment'}
-                </span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 sm:space-y-6">
-              {paymentInstructions.payment_method === 'paypal_personal' && (
-                <>
-                  {/* Order Summary */}
-                  <div className="bg-green-50 p-3 sm:p-4 rounded-lg border border-green-200">
-                    <h3 className="font-semibold text-green-900 mb-3">Payment Summary</h3>
-                    <div className="space-y-2">
-                      <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
-                        <span className="font-medium text-green-800">Order Number:</span>
-                        <code className="bg-green-100 px-2 py-1 rounded text-sm font-mono break-all">
-                          {orderDetail.order_number}
-                        </code>
-                      </div>
-                      <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
-                        <span className="font-medium text-green-800">Amount Due:</span>
-                        <span className="text-lg font-bold text-green-700">
-                          ${paymentInstructions.amount}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-blue-50 p-3 sm:p-4 rounded-lg border border-blue-200">
-                    <h3 className="font-semibold text-blue-900 mb-3">PayPal.me Payment</h3>
-                    <div className="space-y-3">
-                      <p className="text-sm text-blue-700">
-                        Click the button below to complete your payment via PayPal:
-                      </p>
-                      <div className="flex flex-col sm:flex-row gap-2">
-                        <Button
-                          onClick={() => window.open(paymentInstructions.payment_url, '_blank')}
-                          className="bg-blue-600 hover:bg-blue-700 flex-1 sm:flex-none"
-                        >
-                          <ExternalLink className="h-4 w-4 mr-2" />
-                          Pay ${paymentInstructions.amount} with PayPal
-                        </Button>
-                        <Button
-                          variant="outline"
-                          onClick={() =>
-                            copyToClipboard(paymentInstructions.payment_url, 'Payment link')
-                          }
-                          className="w-full sm:w-auto"
-                        >
-                          <Copy className="h-4 w-4 mr-2" />
-                          Copy Link
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Important Instructions */}
-                  <div className="bg-amber-50 p-3 sm:p-4 rounded-lg border border-amber-200">
-                    <h3 className="font-semibold text-amber-900 mb-3">
-                      🔔 Important: Add Your Order ID
-                    </h3>
-                    <div className="space-y-2 text-sm text-amber-800">
-                      <p>
-                        <strong>When making the PayPal payment, please:</strong>
-                      </p>
-                      <ol className="list-decimal list-inside space-y-1 ml-2">
-                        <li>Click "Add a note" or "What's this for?" in PayPal</li>
-                        <li>
-                          Enter your order number:{' '}
-                          <code className="bg-amber-100 px-2 py-1 rounded font-mono">
+        {/* Payment Instructions Modal */}
+        {showPaymentModal && paymentInstructions && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex flex-col sm:flex-row sm:items-center gap-2">
+                  <CreditCard className="h-5 w-5" />
+                  <span className="break-words">
+                    Payment Instructions -{' '}
+                    {paymentInstructions.payment_method === 'paypal_personal'
+                      ? 'PayPal.me'
+                      : 'Manual Payment'}
+                  </span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 sm:space-y-6">
+                {paymentInstructions.payment_method === 'paypal_personal' && (
+                  <>
+                    {/* Order Summary */}
+                    <div className="bg-green-50 p-3 sm:p-4 rounded-lg border border-green-200">
+                      <h3 className="font-semibold text-green-900 mb-3">Payment Summary</h3>
+                      <div className="space-y-2">
+                        <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
+                          <span className="font-medium text-green-800">Order Number:</span>
+                          <code className="bg-green-100 px-2 py-1 rounded text-sm font-mono break-all">
                             {orderDetail.order_number}
                           </code>
-                        </li>
-                        <li>This helps us identify and process your payment quickly</li>
-                      </ol>
-                      <p className="mt-3 font-medium">
-                        ⚡ Payments are typically processed within 1-2 hours during business hours.
-                      </p>
-                    </div>
-                  </div>
-                  {paymentInstructions.instructions && (
-                    <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                      <h3 className="font-semibold text-yellow-900 mb-2">
-                        Additional Instructions
-                      </h3>
-                      <p className="text-sm text-yellow-800 whitespace-pre-wrap">
-                        {paymentInstructions.instructions}
-                      </p>
-                    </div>
-                  )}
-                </>
-              )}
-
-              {paymentInstructions.payment_method === 'manual' && (
-                <>
-                  <div className="bg-green-50 p-3 sm:p-4 rounded-lg border border-green-200">
-                    <h3 className="font-semibold text-green-900 mb-3">Bank Transfer Details</h3>
-                    {paymentInstructions.bank_details && (
-                      <div className="space-y-3 text-sm">
-                        {Object.entries(paymentInstructions.bank_details).map(([key, value]) => (
-                          <div
-                            key={key}
-                            className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2"
-                          >
-                            <span className="font-medium capitalize text-green-800">
-                              {key.replace(/_/g, ' ')}:
-                            </span>
-                            <div className="flex items-center gap-2">
-                              <span className="text-green-700 break-all">{value as string}</span>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() =>
-                                  copyToClipboard(value as string, key.replace(/_/g, ' '))
-                                }
-                                className="flex-shrink-0"
-                              >
-                                <Copy className="h-3 w-3" />
-                              </Button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="bg-blue-50 p-3 sm:p-4 rounded-lg border border-blue-200">
-                    <h3 className="font-semibold text-blue-900 mb-3">Payment Details</h3>
-                    <div className="space-y-3 text-sm">
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2">
-                        <span className="font-medium text-blue-800">Amount:</span>
-                        <div className="flex items-center gap-2">
-                          <span className="text-blue-700 font-semibold">
+                        </div>
+                        <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
+                          <span className="font-medium text-green-800">Amount Due:</span>
+                          <span className="text-lg font-bold text-green-700">
                             ${paymentInstructions.amount}
                           </span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() =>
-                              copyToClipboard(`$${paymentInstructions.amount}`, 'Amount')
-                            }
-                            className="flex-shrink-0"
-                          >
-                            <Copy className="h-3 w-3" />
-                          </Button>
                         </div>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium text-blue-800">Reference:</span>
-                        <div className="flex items-center gap-2">
-                          <span className="text-blue-700 font-mono">
-                            {paymentInstructions.order_reference}
-                          </span>
+                    </div>
+
+                    <div className="bg-blue-50 p-3 sm:p-4 rounded-lg border border-blue-200">
+                      <h3 className="font-semibold text-blue-900 mb-3">PayPal.me Payment</h3>
+                      <div className="space-y-3">
+                        <p className="text-sm text-blue-700">
+                          Click the button below to complete your payment via PayPal:
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-2">
                           <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() =>
-                              copyToClipboard(paymentInstructions.order_reference, 'Reference')
-                            }
+                            onClick={() => window.open(paymentInstructions.payment_url, '_blank')}
+                            className="bg-blue-600 hover:bg-blue-700 flex-1 sm:flex-none"
                           >
-                            <Copy className="h-3 w-3" />
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            Pay ${paymentInstructions.amount} with PayPal
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() =>
+                              copyToClipboard(paymentInstructions.payment_url, 'Payment link')
+                            }
+                            className="w-full sm:w-auto"
+                          >
+                            <Copy className="h-4 w-4 mr-2" />
+                            Copy Link
                           </Button>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  {paymentInstructions.instructions && (
-                    <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                      <h3 className="font-semibold text-yellow-900 mb-2">Important Instructions</h3>
-                      <p className="text-sm text-yellow-800 whitespace-pre-wrap">
-                        {paymentInstructions.instructions}
-                      </p>
+                    {/* Important Instructions */}
+                    <div className="bg-amber-50 p-3 sm:p-4 rounded-lg border border-amber-200">
+                      <h3 className="font-semibold text-amber-900 mb-3">
+                        🔔 Important: Add Your Order ID
+                      </h3>
+                      <div className="space-y-2 text-sm text-amber-800">
+                        <p>
+                          <strong>When making the PayPal payment, please:</strong>
+                        </p>
+                        <ol className="list-decimal list-inside space-y-1 ml-2">
+                          <li>Click "Add a note" or "What's this for?" in PayPal</li>
+                          <li>
+                            Enter your order number:{' '}
+                            <code className="bg-amber-100 px-2 py-1 rounded font-mono">
+                              {orderDetail.order_number}
+                            </code>
+                          </li>
+                          <li>This helps us identify and process your payment quickly</li>
+                        </ol>
+                        <p className="mt-3 font-medium">
+                          ⚡ Payments are typically processed within 1-2 hours during business
+                          hours.
+                        </p>
+                      </div>
                     </div>
-                  )}
-                </>
-              )}
+                    {paymentInstructions.instructions && (
+                      <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                        <h3 className="font-semibold text-yellow-900 mb-2">
+                          Additional Instructions
+                        </h3>
+                        <p className="text-sm text-yellow-800 whitespace-pre-wrap">
+                          {paymentInstructions.instructions}
+                        </p>
+                      </div>
+                    )}
+                  </>
+                )}
 
-              <div className="bg-gray-50 p-4 rounded-lg border">
-                <h3 className="font-semibold text-gray-900 mb-2">Next Steps</h3>
-                <ul className="text-sm text-gray-700 space-y-1">
-                  <li>• Complete your payment using the method above</li>
-                  <li>• Keep your payment confirmation/reference</li>
-                  <li>• We will verify your payment within 24 hours</li>
-                  <li>• You&apos;ll receive an email confirmation once verified</li>
-                  <li>• Your order will then move to "In Progress" status</li>
-                </ul>
-              </div>
-
-              {/* Payment Confirmation Form */}
-              {(paymentInstructions.payment_method === 'manual' ||
-                paymentInstructions.payment_method === 'paypal_personal') && (
-                <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
-                  <h3 className="font-semibold text-indigo-900 mb-3">Confirm Your Payment</h3>
-                  <p className="text-sm text-indigo-700 mb-4">
-                    Once you've completed the payment, provide your payment reference or transaction
-                    ID below to notify us.
-                  </p>
-                  <div className="space-y-3">
-                    <Input
-                      placeholder={
-                        paymentInstructions.payment_method === 'paypal_personal'
-                          ? 'PayPal transaction ID (e.g., 1234567890ABCDEF)'
-                          : 'Bank transfer reference or transaction ID'
-                      }
-                      value={paymentReference}
-                      onChange={e => setPaymentReference(e.target.value)}
-                      className="w-full"
-                    />
-                    <Button
-                      onClick={() => confirmManualPayment(paymentReference)}
-                      disabled={!paymentReference.trim() || confirmingPayment}
-                      className="w-full bg-indigo-600 hover:bg-indigo-700"
-                    >
-                      {confirmingPayment ? (
-                        <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Submitting...
-                        </>
-                      ) : (
-                        <>
-                          <CheckCircle className="h-4 w-4 mr-2" />
-                          Confirm Payment
-                        </>
+                {paymentInstructions.payment_method === 'manual' && (
+                  <>
+                    <div className="bg-green-50 p-3 sm:p-4 rounded-lg border border-green-200">
+                      <h3 className="font-semibold text-green-900 mb-3">Bank Transfer Details</h3>
+                      {paymentInstructions.bank_details && (
+                        <div className="space-y-3 text-sm">
+                          {Object.entries(paymentInstructions.bank_details).map(([key, value]) => (
+                            <div
+                              key={key}
+                              className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2"
+                            >
+                              <span className="font-medium capitalize text-green-800">
+                                {key.replace(/_/g, ' ')}:
+                              </span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-green-700 break-all">{value as string}</span>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() =>
+                                    copyToClipboard(value as string, key.replace(/_/g, ' '))
+                                  }
+                                  className="flex-shrink-0"
+                                >
+                                  <Copy className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       )}
-                    </Button>
-                  </div>
-                </div>
-              )}
+                    </div>
 
-              <div className="flex justify-end gap-3">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setShowPaymentModal(false);
-                    setPaymentInstructions(null);
-                    setPaymentReference('');
-                  }}
-                >
-                  Close
-                </Button>
-                <Button onClick={() => window.location.reload()}>Refresh Order Status</Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-    </div>
+                    <div className="bg-blue-50 p-3 sm:p-4 rounded-lg border border-blue-200">
+                      <h3 className="font-semibold text-blue-900 mb-3">Payment Details</h3>
+                      <div className="space-y-3 text-sm">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2">
+                          <span className="font-medium text-blue-800">Amount:</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-blue-700 font-semibold">
+                              ${paymentInstructions.amount}
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                copyToClipboard(`$${paymentInstructions.amount}`, 'Amount')
+                              }
+                              className="flex-shrink-0"
+                            >
+                              <Copy className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium text-blue-800">Reference:</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-blue-700 font-mono">
+                              {paymentInstructions.order_reference}
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                copyToClipboard(paymentInstructions.order_reference, 'Reference')
+                              }
+                            >
+                              <Copy className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {paymentInstructions.instructions && (
+                      <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                        <h3 className="font-semibold text-yellow-900 mb-2">
+                          Important Instructions
+                        </h3>
+                        <p className="text-sm text-yellow-800 whitespace-pre-wrap">
+                          {paymentInstructions.instructions}
+                        </p>
+                      </div>
+                    )}
+                  </>
+                )}
+
+                <div className="bg-gray-50 p-4 rounded-lg border">
+                  <h3 className="font-semibold text-gray-900 mb-2">Next Steps</h3>
+                  <ul className="text-sm text-gray-700 space-y-1">
+                    <li>• Complete your payment using the method above</li>
+                    <li>• Keep your payment confirmation/reference</li>
+                    <li>• We will verify your payment within 24 hours</li>
+                    <li>• You&apos;ll receive an email confirmation once verified</li>
+                    <li>• Your order will then move to "In Progress" status</li>
+                  </ul>
+                </div>
+
+                {/* Payment Confirmation Form */}
+                {(paymentInstructions.payment_method === 'manual' ||
+                  paymentInstructions.payment_method === 'paypal_personal') && (
+                  <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+                    <h3 className="font-semibold text-indigo-900 mb-3">Confirm Your Payment</h3>
+                    <p className="text-sm text-indigo-700 mb-4">
+                      Once you've completed the payment, provide your payment reference or
+                      transaction ID below to notify us.
+                    </p>
+                    <div className="space-y-3">
+                      <Input
+                        placeholder={
+                          paymentInstructions.payment_method === 'paypal_personal'
+                            ? 'PayPal transaction ID (e.g., 1234567890ABCDEF)'
+                            : 'Bank transfer reference or transaction ID'
+                        }
+                        value={paymentReference}
+                        onChange={e => setPaymentReference(e.target.value)}
+                        className="w-full"
+                      />
+                      <Button
+                        onClick={() => confirmManualPayment(paymentReference)}
+                        disabled={!paymentReference.trim() || confirmingPayment}
+                        className="w-full bg-indigo-600 hover:bg-indigo-700"
+                      >
+                        {confirmingPayment ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Submitting...
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle className="h-4 w-4 mr-2" />
+                            Confirm Payment
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex justify-end gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowPaymentModal(false);
+                      setPaymentInstructions(null);
+                      setPaymentReference('');
+                    }}
+                  >
+                    Close
+                  </Button>
+                  <Button onClick={() => window.location.reload()}>Refresh Order Status</Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      </div>
+    </ProtectedRoute>
   );
 }

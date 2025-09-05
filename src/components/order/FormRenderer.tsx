@@ -52,6 +52,9 @@ interface FormRendererProps {
   onDeadlineChange: (deadline: string) => void;
   files: File[];
   onFilesChange: (files: File[]) => void;
+  validationErrors?: Record<string, string>;
+  touchedFields?: Record<string, boolean>;
+  onFieldTouch?: (fieldName: string) => void;
 }
 
 export default function FormRenderer({
@@ -65,6 +68,9 @@ export default function FormRenderer({
   onDeadlineChange,
   files,
   onFilesChange,
+  validationErrors = {},
+  touchedFields = {},
+  onFieldTouch = () => {},
 }: FormRendererProps) {
   const handleFieldChange = (fieldName: string, value: any) => {
     const newData = { ...formData, [fieldName]: value };
@@ -73,17 +79,31 @@ export default function FormRenderer({
 
   const renderField = (field: FormField) => {
     const value = formData[field.name] || '';
+    const hasError = touchedFields[field.name] && validationErrors[field.name];
+
+    const handleFieldBlur = () => {
+      onFieldTouch(field.name);
+    };
+
+    const fieldClasses = hasError ? 'border-red-500 focus:border-red-500 focus:ring-red-200' : '';
 
     switch (field.type) {
       case 'text':
         return (
-          <Input
-            type="text"
-            value={value}
-            onChange={e => handleFieldChange(field.name, e.target.value)}
-            placeholder={field.config?.placeholder || ''}
-            required={field.required}
-          />
+          <div>
+            <Input
+              type="text"
+              value={value}
+              onChange={e => handleFieldChange(field.name, e.target.value)}
+              onBlur={handleFieldBlur}
+              placeholder={field.config?.placeholder || ''}
+              required={field.required}
+              className={fieldClasses}
+            />
+            {hasError && (
+              <p className="text-sm text-red-600 mt-1">{validationErrors[field.name]}</p>
+            )}
+          </div>
         );
 
       case 'number':

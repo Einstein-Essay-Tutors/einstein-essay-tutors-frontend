@@ -12,6 +12,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { ArrowLeft, User, Mail, Calendar, Shield, Save, Edit } from 'lucide-react';
 import Link from 'next/link';
 import { UserProfile } from '@/types';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -31,12 +32,7 @@ export default function ProfilePage() {
   const { toast } = useToast();
   const router = useRouter();
 
-  // Redirect non-authenticated users
-  useEffect(() => {
-    if (!user && !loading) {
-      router.push('/auth/login');
-    }
-  }, [user, loading, router]);
+  // Profile data is managed by ProtectedRoute and AuthContext
 
   useEffect(() => {
     if (user) {
@@ -135,180 +131,194 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="flex items-center gap-4 mb-8">
-            <Link href="/dashboard">
-              <Button variant="outline" size="sm">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Dashboard
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Profile Settings</h1>
-              <p className="text-gray-600">Manage your account information and preferences</p>
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            {/* Header */}
+            <div className="flex items-center gap-4 mb-8">
+              <Link href="/dashboard">
+                <Button variant="outline" size="sm">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back to Dashboard
+                </Button>
+              </Link>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">Profile Settings</h1>
+                <p className="text-gray-600">Manage your account information and preferences</p>
+              </div>
             </div>
-          </div>
 
-          <div className="grid gap-6 lg:grid-cols-3">
-            {/* Profile Overview */}
-            <div className="lg:col-span-1">
-              <Card>
-                <CardHeader className="text-center">
-                  <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <User className="h-12 w-12 text-white" />
-                  </div>
-                  <CardTitle className="text-xl">
-                    {profile.first_name || profile.last_name
-                      ? `${profile.first_name} ${profile.last_name}`.trim()
-                      : profile.username}
-                  </CardTitle>
-                  <CardDescription className="flex items-center justify-center gap-2">
-                    <Mail className="h-4 w-4" />
-                    {profile.email}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Calendar className="h-4 w-4" />
-                    <span>Joined {formatDate(profile.date_joined)}</span>
-                  </div>
-                  {(profile.is_staff || profile.is_superuser) && (
-                    <div className="flex items-center gap-2 text-sm text-purple-600">
-                      <Shield className="h-4 w-4" />
-                      <span>{profile.is_superuser ? 'Super Admin' : 'Staff Member'}</span>
+            <div className="grid gap-6 lg:grid-cols-3">
+              {/* Profile Overview */}
+              <div className="lg:col-span-1">
+                <Card>
+                  <CardHeader className="text-center">
+                    <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <User className="h-12 w-12 text-white" />
                     </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Profile Form */}
-            <div className="lg:col-span-2">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <div>
-                    <CardTitle>Account Information</CardTitle>
-                    <CardDescription>
-                      Update your personal information and account settings
+                    <CardTitle className="text-xl">
+                      {profile.first_name || profile.last_name
+                        ? `${profile.first_name} ${profile.last_name}`.trim()
+                        : profile.username}
+                    </CardTitle>
+                    <CardDescription className="flex items-center justify-center gap-2">
+                      <Mail className="h-4 w-4" />
+                      {profile.email}
                     </CardDescription>
-                  </div>
-                  <Button variant="outline" onClick={() => setEditing(!editing)} disabled={saving}>
-                    <Edit className="mr-2 h-4 w-4" />
-                    {editing ? 'Cancel' : 'Edit'}
-                  </Button>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="first_name">First Name</Label>
-                      <Input
-                        id="first_name"
-                        value={formData.first_name}
-                        onChange={e =>
-                          setFormData(prev => ({ ...prev, first_name: e.target.value }))
-                        }
-                        disabled={!editing}
-                      />
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Calendar className="h-4 w-4" />
+                      <span>Joined {formatDate(profile.date_joined)}</span>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="last_name">Last Name</Label>
-                      <Input
-                        id="last_name"
-                        value={formData.last_name}
-                        onChange={e =>
-                          setFormData(prev => ({ ...prev, last_name: e.target.value }))
-                        }
-                        disabled={!editing}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email Address</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                      disabled={!editing}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="username">Username</Label>
-                    <Input id="username" value={profile.username} disabled className="bg-gray-50" />
-                    <p className="text-xs text-gray-500">Username cannot be changed</p>
-                  </div>
-
-                  {editing && (
-                    <>
-                      <hr className="my-6" />
-                      <div className="space-y-4">
-                        <h3 className="text-lg font-medium">Change Password</h3>
-                        <p className="text-sm text-gray-600">
-                          Leave blank to keep current password
-                        </p>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="current_password">Current Password</Label>
-                          <Input
-                            id="current_password"
-                            type="password"
-                            value={formData.current_password}
-                            onChange={e =>
-                              setFormData(prev => ({ ...prev, current_password: e.target.value }))
-                            }
-                            placeholder="Enter current password"
-                          />
-                        </div>
-
-                        <div className="grid gap-4 sm:grid-cols-2">
-                          <div className="space-y-2">
-                            <Label htmlFor="new_password">New Password</Label>
-                            <Input
-                              id="new_password"
-                              type="password"
-                              value={formData.new_password}
-                              onChange={e =>
-                                setFormData(prev => ({ ...prev, new_password: e.target.value }))
-                              }
-                              placeholder="Enter new password"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="confirm_password">Confirm Password</Label>
-                            <Input
-                              id="confirm_password"
-                              type="password"
-                              value={formData.confirm_password}
-                              onChange={e =>
-                                setFormData(prev => ({ ...prev, confirm_password: e.target.value }))
-                              }
-                              placeholder="Confirm new password"
-                            />
-                          </div>
-                        </div>
+                    {(profile.is_staff || profile.is_superuser) && (
+                      <div className="flex items-center gap-2 text-sm text-purple-600">
+                        <Shield className="h-4 w-4" />
+                        <span>{profile.is_superuser ? 'Super Admin' : 'Staff Member'}</span>
                       </div>
-                    </>
-                  )}
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
 
-                  {editing && (
-                    <div className="flex justify-end">
-                      <Button onClick={handleUpdateProfile} disabled={saving}>
-                        <Save className="mr-2 h-4 w-4" />
-                        {saving ? 'Saving...' : 'Save Changes'}
-                      </Button>
+              {/* Profile Form */}
+              <div className="lg:col-span-2">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                      <CardTitle>Account Information</CardTitle>
+                      <CardDescription>
+                        Update your personal information and account settings
+                      </CardDescription>
                     </div>
-                  )}
-                </CardContent>
-              </Card>
+                    <Button
+                      variant="outline"
+                      onClick={() => setEditing(!editing)}
+                      disabled={saving}
+                    >
+                      <Edit className="mr-2 h-4 w-4" />
+                      {editing ? 'Cancel' : 'Edit'}
+                    </Button>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="first_name">First Name</Label>
+                        <Input
+                          id="first_name"
+                          value={formData.first_name}
+                          onChange={e =>
+                            setFormData(prev => ({ ...prev, first_name: e.target.value }))
+                          }
+                          disabled={!editing}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="last_name">Last Name</Label>
+                        <Input
+                          id="last_name"
+                          value={formData.last_name}
+                          onChange={e =>
+                            setFormData(prev => ({ ...prev, last_name: e.target.value }))
+                          }
+                          disabled={!editing}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email Address</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                        disabled={!editing}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="username">Username</Label>
+                      <Input
+                        id="username"
+                        value={profile.username}
+                        disabled
+                        className="bg-gray-50"
+                      />
+                      <p className="text-xs text-gray-500">Username cannot be changed</p>
+                    </div>
+
+                    {editing && (
+                      <>
+                        <hr className="my-6" />
+                        <div className="space-y-4">
+                          <h3 className="text-lg font-medium">Change Password</h3>
+                          <p className="text-sm text-gray-600">
+                            Leave blank to keep current password
+                          </p>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="current_password">Current Password</Label>
+                            <Input
+                              id="current_password"
+                              type="password"
+                              value={formData.current_password}
+                              onChange={e =>
+                                setFormData(prev => ({ ...prev, current_password: e.target.value }))
+                              }
+                              placeholder="Enter current password"
+                            />
+                          </div>
+
+                          <div className="grid gap-4 sm:grid-cols-2">
+                            <div className="space-y-2">
+                              <Label htmlFor="new_password">New Password</Label>
+                              <Input
+                                id="new_password"
+                                type="password"
+                                value={formData.new_password}
+                                onChange={e =>
+                                  setFormData(prev => ({ ...prev, new_password: e.target.value }))
+                                }
+                                placeholder="Enter new password"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="confirm_password">Confirm Password</Label>
+                              <Input
+                                id="confirm_password"
+                                type="password"
+                                value={formData.confirm_password}
+                                onChange={e =>
+                                  setFormData(prev => ({
+                                    ...prev,
+                                    confirm_password: e.target.value,
+                                  }))
+                                }
+                                placeholder="Confirm new password"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {editing && (
+                      <div className="flex justify-end">
+                        <Button onClick={handleUpdateProfile} disabled={saving}>
+                          <Save className="mr-2 h-4 w-4" />
+                          {saving ? 'Saving...' : 'Save Changes'}
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 }
