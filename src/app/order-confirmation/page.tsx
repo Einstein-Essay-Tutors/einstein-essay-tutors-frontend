@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { getApiUrl } from '@/lib/config';
@@ -44,57 +44,56 @@ function OrderConfirmationContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get('order_id');
 
+  const fetchOrderDetails = useCallback(async () => {
+    try {
+      setError(null);
+      const response = await fetch(getApiUrl(`get_order_details/${orderId}/`), {
+        headers: getAuthHeaders(),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setOrderDetails({
+          order_id: data.order_id,
+          order_number: data.order_number,
+          final_price: data.final_price,
+          payment_method: {
+            type: data.payment_method.type,
+            name: data.payment_method.name,
+            config: data.payment_method.config,
+          },
+        });
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch order details');
+      }
+    } catch (error) {
+      console.error('Error fetching order details:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load order details';
+      setError(errorMessage);
+      toast({
+        title: 'Error',
+        description: errorMessage,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [orderId, getAuthHeaders, toast]);
+
+  const retryLoadOrder = () => {
+    setLoading(true);
+    fetchOrderDetails();
+  };
+
   useEffect(() => {
     if (!orderId) {
       router.push('/dashboard');
       return;
     }
 
-    const fetchOrderDetails = async () => {
-      try {
-        setError(null);
-        const response = await fetch(getApiUrl(`get_order_details/${orderId}/`), {
-          headers: getAuthHeaders(),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setOrderDetails({
-            order_id: data.order_id,
-            order_number: data.order_number,
-            final_price: data.final_price,
-            payment_method: {
-              type: data.payment_method.type,
-              name: data.payment_method.name,
-              config: data.payment_method.config,
-            },
-          });
-        } else {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to fetch order details');
-        }
-      } catch (error) {
-        console.error('Error fetching order details:', error);
-        const errorMessage =
-          error instanceof Error ? error.message : 'Failed to load order details';
-        setError(errorMessage);
-        toast({
-          title: 'Error',
-          description: errorMessage,
-          variant: 'destructive',
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const retryLoadOrder = () => {
-      setLoading(true);
-      fetchOrderDetails();
-    };
-
     fetchOrderDetails();
-  }, [orderId, router, getAuthHeaders, toast]);
+  }, [orderId, router, fetchOrderDetails]);
 
   const handlePayment = async () => {
     if (!orderDetails) return;

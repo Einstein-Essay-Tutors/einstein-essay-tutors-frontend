@@ -172,7 +172,7 @@ export default function DashboardPage() {
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
                 <p className="text-muted-foreground mt-2">
-                  Welcome back, {user.username}! Here's an overview of your orders.
+                  Welcome back, {user?.username}! Here's an overview of your orders.
                 </p>
               </div>
               <div className="flex gap-2 mt-4 sm:mt-0">
