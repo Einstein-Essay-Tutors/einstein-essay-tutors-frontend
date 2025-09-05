@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { verifyEmail } from '@/lib/api';
+import { authAPI } from '@/lib/api';
 import Link from 'next/link';
 
 function VerifyEmailForm() {
@@ -34,7 +34,7 @@ function VerifyEmailForm() {
     setMessage('');
 
     try {
-      const result = await verifyEmail({ email, otp_code: otpCode });
+      const result = await authAPI.verifyEmail(email, otpCode);
       setIsSuccess(true);
       setMessage(result.message || 'Email verified successfully!');
 
