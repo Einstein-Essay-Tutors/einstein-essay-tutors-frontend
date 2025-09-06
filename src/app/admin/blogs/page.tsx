@@ -100,6 +100,10 @@ export default function AdminBlogsPage() {
   const { toast } = useToast();
   const router = useRouter();
 
+  // Create stable admin status values to prevent unnecessary re-renders
+  const isAdmin = user && (user.is_staff || user.is_superuser);
+  const adminUserId = isAdmin ? user.id : null;
+
   const fetchSubjects = useCallback(async () => {
     try {
       const response = await fetch(getApiUrl('api/admin/blog_subjects/'), {
@@ -161,20 +165,20 @@ export default function AdminBlogsPage() {
       });
       router.push('/dashboard');
     }
-  }, [user, router, toast]);
+  }, [user, router]);
 
   // Fetch data
   useEffect(() => {
-    if (user && (user.is_staff || user.is_superuser)) {
+    if (isAdmin) {
       fetchSubjects();
     }
-  }, [user, fetchSubjects]);
+  }, [adminUserId]);
 
   useEffect(() => {
-    if (user && (user.is_staff || user.is_superuser)) {
+    if (isAdmin) {
       fetchBlogs();
     }
-  }, [statusFilter, searchQuery, currentPage, user, fetchBlogs]);
+  }, [statusFilter, searchQuery, currentPage, adminUserId]);
 
   const resetForm = () => {
     setBlogForm({
