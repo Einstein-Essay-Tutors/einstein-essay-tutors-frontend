@@ -166,6 +166,13 @@ export default function AdminDashboard() {
         const data = await response.json();
         setOrders(data.orders);
         setTotalPages(data.total_pages);
+      } else {
+        console.error('Failed to fetch orders:', response.status, response.statusText);
+        toast({
+          title: 'Error',
+          description: 'Failed to load orders',
+          variant: 'destructive',
+        });
       }
     } catch (error) {
       console.error('Error fetching orders:', error);
@@ -199,9 +206,50 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (user && (user.is_staff || user.is_superuser)) {
-      fetchOrders();
+      const loadOrders = async () => {
+        setOrdersLoading(true);
+        try {
+          const params = new URLSearchParams({
+            page: currentPage.toString(),
+            page_size: '20',
+          });
+
+          if (statusFilter && statusFilter !== 'all') params.append('status', statusFilter);
+          if (paymentFilter && paymentFilter !== 'all')
+            params.append('payment_status', paymentFilter);
+          if (searchQuery) params.append('search', searchQuery);
+
+          const response = await fetch(getApiUrl(`api/admin/orders_list/?${params}`), {
+            headers: getAuthHeaders(),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            setOrders(data.orders);
+            setTotalPages(data.total_pages);
+          } else {
+            console.error('Failed to fetch orders:', response.status, response.statusText);
+            toast({
+              title: 'Error',
+              description: 'Failed to load orders',
+              variant: 'destructive',
+            });
+          }
+        } catch (error) {
+          console.error('Error fetching orders:', error);
+          toast({
+            title: 'Error',
+            description: 'Failed to load orders',
+            variant: 'destructive',
+          });
+        } finally {
+          setOrdersLoading(false);
+        }
+      };
+
+      loadOrders();
     }
-  }, [statusFilter, paymentFilter, searchQuery, currentPage, user, fetchOrders]);
+  }, [statusFilter, paymentFilter, searchQuery, currentPage, user, getAuthHeaders, toast]);
 
   const handleUpdateOrder = async () => {
     if (!selectedOrder) return;

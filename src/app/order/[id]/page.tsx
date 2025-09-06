@@ -589,22 +589,22 @@ export default function OrderDetailPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                 <Link href="/dashboard">
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" className="w-fit">
                     <ArrowLeft className="h-4 w-4 mr-2" />
                     Back to Dashboard
                   </Button>
                 </Link>
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">
+                  <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
                     Order #{orderDetail.order_number}
                   </h1>
                   <p className="text-gray-600">Created {formatDate(orderDetail.created_at)}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 sm:self-start">
                 {getStatusIcon(orderDetail.status)}
                 {getStatusBadge(orderDetail.status)}
               </div>
