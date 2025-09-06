@@ -16,11 +16,26 @@ export function middleware(request: NextRequest) {
     ? "'self' http://localhost:8000 https://api.einsteinessaytutors.com https://accounts.google.com https://www.googleapis.com https://oauth2.googleapis.com https://*.googleapis.com https://securetoken.googleapis.com"
     : "'self' https://api.einsteinessaytutors.com https://accounts.google.com https://www.googleapis.com https://oauth2.googleapis.com https://*.googleapis.com https://securetoken.googleapis.com";
 
+  // Build comprehensive Google OAuth script sources
+  const googleScriptSources = [
+    "'self'",
+    "'unsafe-inline'",
+    "'unsafe-eval'",
+    'https://www.googletagmanager.com',
+    'https://www.google-analytics.com',
+    'https://accounts.google.com',
+    'https://accounts.google.com/gsi/client',
+    'https://apis.google.com',
+    'https://gsi.google.com',
+    'https://*.gstatic.com',
+    'https://ssl.gstatic.com',
+  ].join(' ');
+
   // Set our comprehensive CSP policy that includes all Google OAuth domains
   const csp = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://accounts.google.com https://accounts.google.com/gsi/client https://apis.google.com https://gsi.google.com https://*.gstatic.com https://ssl.gstatic.com",
-    "script-src-elem 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://accounts.google.com https://accounts.google.com/gsi/client https://apis.google.com https://gsi.google.com https://*.gstatic.com https://ssl.gstatic.com",
+    `script-src ${googleScriptSources}`,
+    `script-src-elem ${googleScriptSources}`,
     "style-src 'self' 'unsafe-inline' https://accounts.google.com https://fonts.googleapis.com https://*.gstatic.com https://ssl.gstatic.com",
     "style-src-elem 'self' 'unsafe-inline' https://accounts.google.com https://fonts.googleapis.com https://*.gstatic.com https://ssl.gstatic.com",
     "font-src 'self' https://fonts.gstatic.com https://*.gstatic.com",
