@@ -118,6 +118,10 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const router = useRouter();
 
+  // Create stable admin status values to prevent unnecessary re-renders
+  const isAdmin = user && (user.is_staff || user.is_superuser);
+  const adminUserId = isAdmin ? user.id : null;
+
   const fetchDashboardData = useCallback(async () => {
     try {
       const [statsRes, writersRes] = await Promise.all([
@@ -199,13 +203,13 @@ export default function AdminDashboard() {
   }, [user, router]);
 
   useEffect(() => {
-    if (user && (user.is_staff || user.is_superuser)) {
+    if (isAdmin) {
       fetchDashboardData();
     }
-  }, [user]);
+  }, [adminUserId]);
 
   useEffect(() => {
-    if (user && (user.is_staff || user.is_superuser)) {
+    if (isAdmin) {
       const loadOrders = async () => {
         setOrdersLoading(true);
         try {
@@ -249,7 +253,7 @@ export default function AdminDashboard() {
 
       loadOrders();
     }
-  }, [statusFilter, paymentFilter, searchQuery, currentPage, user]);
+  }, [statusFilter, paymentFilter, searchQuery, currentPage, adminUserId]);
 
   const handleUpdateOrder = async () => {
     if (!selectedOrder) return;
