@@ -113,15 +113,17 @@ export default function LoginForm({ onSuccess, redirectTo = '/dashboard' }: Logi
         {/* Google Login Button */}
         <div className={loading ? 'pointer-events-none opacity-50' : ''}>
           {isConfigured ? (
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              text="continue_with"
-              shape="rectangular"
-              theme="outline"
-              size="large"
-              width="384"
-            />
+            <div className="w-full max-w-sm mx-auto">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                text="continue_with"
+                shape="rectangular"
+                theme="outline"
+                size="large"
+                width="100%"
+              />
+            </div>
           ) : googleLoading ? (
             <div className="flex items-center justify-center py-4">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>

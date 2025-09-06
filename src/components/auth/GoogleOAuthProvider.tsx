@@ -59,7 +59,7 @@ export default function GoogleOAuthProvider({ children }: GoogleOAuthProviderPro
   const contextValue: GoogleOAuthContextType = {
     clientId: clientId || null,
     isLoading: loading,
-    isConfigured: false, // Temporarily disabled due to CSP conflicts
+    isConfigured: !loading && !!clientId,
   };
 
   if (loading) {

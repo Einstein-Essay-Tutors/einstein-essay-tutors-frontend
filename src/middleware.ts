@@ -8,6 +8,14 @@ export function middleware(request: NextRequest) {
   response.headers.delete('content-security-policy');
   response.headers.delete('Content-Security-Policy');
 
+  // Determine environment - check if we're in development
+  const isDevelopment = process.env.NODE_ENV === 'development';
+
+  // Build connect-src directive based on environment
+  const connectSrc = isDevelopment
+    ? "'self' http://localhost:8000 https://api.einsteinessaytutors.com https://accounts.google.com https://www.googleapis.com https://oauth2.googleapis.com"
+    : "'self' https://api.einsteinessaytutors.com https://accounts.google.com https://www.googleapis.com https://oauth2.googleapis.com";
+
   // Set our comprehensive CSP policy that includes Google OAuth domains
   const csp = [
     "default-src 'self'",
@@ -16,7 +24,7 @@ export function middleware(request: NextRequest) {
     "style-src 'self' 'unsafe-inline' https://accounts.google.com https://fonts.googleapis.com",
     "style-src-elem 'self' 'unsafe-inline' https://accounts.google.com https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self' https://api.einsteinessaytutors.com https://accounts.google.com https://www.googleapis.com https://oauth2.googleapis.com",
+    `connect-src ${connectSrc}`,
     "img-src 'self' data: https: blob:",
     "frame-src 'self' https://accounts.google.com",
     "object-src 'none'",

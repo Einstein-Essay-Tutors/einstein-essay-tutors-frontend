@@ -34,6 +34,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(false);
   const { loginWithGoogle: googleAuthLogin, logoutFromGoogle } = useGoogleAuth();
 
   const hasValidTokens = (): boolean => {
@@ -41,12 +42,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    // Check if user is logged in on app start
+    // Check if user is logged in on app start - only run once on mount
     checkAuthStatus();
 
     // Add visibility change listener to refresh session when tab becomes visible
     const handleVisibilityChange = () => {
-      if (!document.hidden && hasValidTokens() && !user) {
+      // Only check auth status if we have tokens but no user data and we're not already checking
+      if (!document.hidden && hasValidTokens() && !user && !isCheckingAuth) {
         checkAuthStatus();
       }
     };
@@ -56,17 +58,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [user]);
+  }, []); // Remove user dependency to prevent infinite loop
 
   const checkAuthStatus = async () => {
+    // Prevent concurrent auth checks
+    if (isCheckingAuth) {
+      return;
+    }
+
+    // If we already have user data and valid tokens, don't make unnecessary API calls
+    if (user && hasValidTokens()) {
+      setLoading(false);
+      return;
+    }
+
+    setIsCheckingAuth(true);
+
     try {
       const token = localStorage.getItem('access_token');
       const refreshToken = localStorage.getItem('refresh_token');
 
       if (token || refreshToken) {
-        // Try to get current user data (this will trigger token refresh if needed)
-        const userData = await authAPI.getCurrentUser();
-        setUser(userData);
+        // Only fetch user data if we don't already have it
+        if (!user) {
+          const userData = await authAPI.getCurrentUser();
+          setUser(userData);
+        }
+      } else {
+        // No tokens available, ensure user is null
+        setUser(null);
       }
     } catch (error: any) {
       console.error('Auth check failed:', error);
@@ -90,6 +110,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } finally {
       setLoading(false);
+      setIsCheckingAuth(false);
     }
   };
 
@@ -164,11 +185,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const refreshSession = async (): Promise<boolean> => {
+    // Prevent concurrent auth checks
+    if (isCheckingAuth) {
+      return false;
+    }
+
     try {
       if (!hasValidTokens()) {
         return false;
       }
 
+      setIsCheckingAuth(true);
       // Try to get user data, which will trigger token refresh if needed
       const userData = await authAPI.getCurrentUser();
       setUser(userData);
@@ -186,6 +213,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // For other errors (network, etc.), return false but don't clear session
       return false;
+    } finally {
+      setIsCheckingAuth(false);
     }
   };
 
