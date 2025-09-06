@@ -144,7 +144,7 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  }, [getAuthHeaders, toast]);
+  }, []);
 
   const fetchOrders = useCallback(async () => {
     setOrdersLoading(true);
@@ -184,7 +184,7 @@ export default function AdminDashboard() {
     } finally {
       setOrdersLoading(false);
     }
-  }, [currentPage, statusFilter, paymentFilter, searchQuery, getAuthHeaders, toast]);
+  }, [currentPage, statusFilter, paymentFilter, searchQuery]);
 
   // Check if user is admin
   useEffect(() => {
@@ -196,13 +196,13 @@ export default function AdminDashboard() {
       });
       router.push('/dashboard');
     }
-  }, [user, router, toast]);
+  }, [user, router]);
 
   useEffect(() => {
     if (user && (user.is_staff || user.is_superuser)) {
       fetchDashboardData();
     }
-  }, [user, fetchDashboardData]);
+  }, [user]);
 
   useEffect(() => {
     if (user && (user.is_staff || user.is_superuser)) {
@@ -249,7 +249,7 @@ export default function AdminDashboard() {
 
       loadOrders();
     }
-  }, [statusFilter, paymentFilter, searchQuery, currentPage, user, getAuthHeaders, toast]);
+  }, [statusFilter, paymentFilter, searchQuery, currentPage, user]);
 
   const handleUpdateOrder = async () => {
     if (!selectedOrder) return;

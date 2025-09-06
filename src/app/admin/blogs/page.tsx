@@ -113,7 +113,7 @@ export default function AdminBlogsPage() {
     } catch (error) {
       console.error('Error fetching subjects:', error);
     }
-  }, [getAuthHeaders]);
+  }, []);
 
   const fetchBlogs = useCallback(async () => {
     setBlogsLoading(true);
@@ -149,7 +149,7 @@ export default function AdminBlogsPage() {
       setBlogsLoading(false);
       setLoading(false);
     }
-  }, [currentPage, statusFilter, searchQuery, getAuthHeaders, toast]);
+  }, [currentPage, statusFilter, searchQuery]);
 
   // Check admin access
   useEffect(() => {

@@ -112,7 +112,7 @@ export default function DashboardPage() {
     };
 
     fetchOrders();
-  }, [user, getAuthHeaders, toast]);
+  }, [user]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {

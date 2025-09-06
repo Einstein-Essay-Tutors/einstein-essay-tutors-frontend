@@ -79,7 +79,7 @@ function OrderConfirmationContent() {
     } finally {
       setLoading(false);
     }
-  }, [orderId, getAuthHeaders, toast]);
+  }, [orderId]);
 
   const retryLoadOrder = () => {
     setLoading(true);
