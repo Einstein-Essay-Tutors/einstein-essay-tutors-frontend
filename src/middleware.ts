@@ -11,8 +11,8 @@ export function middleware(request: NextRequest) {
   // Set our comprehensive CSP policy that includes Google OAuth domains
   const csp = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://accounts.google.com https://apis.google.com https://gsi.google.com",
-    "script-src-elem 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://accounts.google.com https://apis.google.com https://gsi.google.com",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://accounts.google.com https://accounts.google.com/gsi/client https://apis.google.com https://gsi.google.com",
+    "script-src-elem 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://accounts.google.com https://accounts.google.com/gsi/client https://apis.google.com https://gsi.google.com",
     "style-src 'self' 'unsafe-inline' https://accounts.google.com https://fonts.googleapis.com",
     "style-src-elem 'self' 'unsafe-inline' https://accounts.google.com https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
