@@ -121,7 +121,7 @@ export default function LoginForm({ onSuccess, redirectTo = '/dashboard' }: Logi
                 shape="rectangular"
                 theme="outline"
                 size="large"
-                width="100%"
+                width="384"
               />
             </div>
           ) : googleLoading ? (

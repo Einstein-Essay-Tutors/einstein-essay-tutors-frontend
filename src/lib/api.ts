@@ -29,9 +29,11 @@ api.interceptors.response.use(
   response => response,
   async error => {
     if (error.response?.status === 401) {
+      console.log('401 Unauthorized - Attempting token refresh');
       try {
         const refreshToken = localStorage.getItem('refresh_token');
         if (refreshToken) {
+          console.log('Refresh token found, attempting refresh');
           const refreshResponse = await axios.post(`${API_BASE_URL}auth/token/refresh/`, {
             refresh: refreshToken,
           });
@@ -42,11 +44,18 @@ api.interceptors.response.use(
             localStorage.setItem('refresh_token', refreshResponse.data.refresh);
           }
 
+          console.log('Token refreshed successfully, retrying original request');
           // Retry original request
           error.config.headers.Authorization = `Bearer ${refreshResponse.data.access}`;
           return axios(error.config);
+        } else {
+          console.log('No refresh token found, redirecting to login');
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          window.location.href = '/auth/login';
         }
       } catch (refreshError) {
+        console.error('Token refresh failed:', refreshError);
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         window.location.href = '/auth/login';
