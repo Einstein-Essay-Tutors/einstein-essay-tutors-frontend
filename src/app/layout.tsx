@@ -27,6 +27,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
+      <head>
+        {/* Preconnect to Google domains for better performance */}
+        <link rel="preconnect" href="https://accounts.google.com" />
+        <link rel="preconnect" href="https://apis.google.com" />
+        <link rel="preconnect" href="https://ssl.gstatic.com" />
+      </head>
       <body className={`${inter.variable} font-sans antialiased min-h-screen flex flex-col`}>
         <GoogleOAuthProvider>
           <AuthProvider>
