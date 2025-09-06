@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { getApiUrl } from '@/lib/config';
+import { getApiUrl, BASE_APP_URL } from '@/lib/config';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -487,7 +487,7 @@ export default function AdminDashboard() {
             <p className="text-gray-400 mt-2">Manage orders, writers, and system operations</p>
           </div>
           <div className="flex flex-wrap gap-2 sm:gap-3">
-            <Link href="/admin/django-admin" target="_blank">
+            <Link href={`${BASE_APP_URL}/admin`} target="_blank">
               <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
                 <BarChart3 className="h-4 w-4 mr-2" />
                 <span className="hidden sm:inline">Django Admin</span>
