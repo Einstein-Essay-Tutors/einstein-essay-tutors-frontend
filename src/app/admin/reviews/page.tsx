@@ -215,10 +215,10 @@ export default function AdminReviewsPage() {
       <div className="container mx-auto px-4">
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Header */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
               <Link href="/admin">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="w-fit">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Admin
                 </Button>
@@ -233,9 +233,12 @@ export default function AdminReviewsPage() {
           {/* Filters */}
           <Card>
             <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <Filter className="h-5 w-5 text-gray-500" />
-                <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <Filter className="h-5 w-5 text-gray-500" />
+                  <span className="text-sm font-medium text-gray-700">Filter:</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
                   {(['all', 'pending', 'approved', 'rejected'] as const).map(filter => (
                     <Button
                       key={filter}
