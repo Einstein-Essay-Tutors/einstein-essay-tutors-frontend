@@ -1,6 +1,13 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from 'react';
 import { User } from '@/types';
 import { authAPI } from '@/lib/api';
 import { useGoogleAuth } from '@/hooks/useGoogleAuth';
